@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`\`requireLogin()\` does not redirect if logged in 1`] = `<SomeComponent />`;
+
+exports[`\`requireLogin()\` redirects to the \`login()\` route if not logged in 1`] = `
+<Redirect
+  push={false}
+  to="/login"
+/>
+`;

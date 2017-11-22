@@ -1,0 +1,43 @@
+stages:
+  - test
+
+build:
+  image: "node:7"
+  before_script:
+    - apt-get update && apt-get install -yy make wget default-jre
+  script:
+    - make release
+  stage: test
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+  artifacts:
+    paths:
+      - dist/
+      - locales/
+      - index.html
+
+test:
+  image: "node:7"
+  before_script:
+    - apt-get update && apt-get install -yy make wget default-jre
+  script:
+    - make test
+  stage: test
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/
+
+lint:
+  image: "node:7"
+  before_script:
+    - apt-get update && apt-get install -yy make wget default-jre
+  script:
+    - make lint
+  stage: test
+  cache:
+    key: "$CI_PROJECT_ID"
+    paths:
+      - node_modules/

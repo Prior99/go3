@@ -1,0 +1,4 @@
+database: go3
+dialect: postgres
+username: prior
+password: ""
