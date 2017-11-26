@@ -3,8 +3,6 @@ stages:
 
 build:
   image: "node:7"
-  before_script:
-    - apt-get update && apt-get install -yy make wget default-jre
   script:
     - make release
   stage: test
@@ -20,8 +18,6 @@ build:
 
 test:
   image: "node:7"
-  before_script:
-    - apt-get update && apt-get install -yy make wget default-jre
   script:
     - make test
   stage: test
@@ -32,8 +28,6 @@ test:
 
 lint:
   image: "node:7"
-  before_script:
-    - apt-get update && apt-get install -yy make wget default-jre
   script:
     - make lint
   stage: test

@@ -1,7 +1,6 @@
 import { observable, computed, action } from "mobx";
 import { bind } from "bind-decorator";
 import * as isomorphicFetch from "isomorphic-fetch";
-import { RequestStatus } from "request-status";
 import { History } from "history";
 import { routeDashboard } from "routing";
 import { component, inject, initialize } from "tsdi";
@@ -19,11 +18,6 @@ interface LocalStorageApi {
 
 interface ApiError {
     message: string;
-}
-
-interface RequestMetaInfo {
-    error?: ApiError;
-    requestStatus: RequestStatus;
 }
 
 @component
