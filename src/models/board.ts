@@ -6,6 +6,8 @@ import {
     ManyToOne,
     OneToOne,
     BaseEntity,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from "typeorm";
 import { User } from "./user";
 import { Game } from "./game";
@@ -34,10 +36,10 @@ export class Board extends BaseEntity {
     @Column("jsonb")
     public state: Color[];
 
-    @Column("timestamp with time zone")
+    @CreateDateColumn()
     public created: Date;
 
-    @Column("timestamp with time zone")
+    @UpdateDateColumn()
     public updated: Date;
 
     @Column("integer")

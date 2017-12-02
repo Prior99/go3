@@ -6,43 +6,28 @@ import {
     ManyToOne,
     OneToOne,
     BaseEntity,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from "typeorm";
-import { User, dumpUser } from "./user";
-import { pick } from "ramda";
-
-export interface CreateToken {
-    user: User;
-}
-
-export function dumpToken(token: Token): Token {
-    return pick(["id", "created", "user"], {
-        ...token,
-        user: dumpUser(token.user),
-    }) as Token;
-}
+import { User } from "./user";
+import { login, world } from "scopes";
+import { scope, is } from "hyrest";
 
 @Entity()
 export class Token extends BaseEntity {
-    constructor(create?: CreateToken) {
-        super();
-
-        if (create) {
-            this.user = create.user;
-            this.created = new Date();
-            this.updated = new Date();
-        }
-    }
-
     @PrimaryGeneratedColumn("uuid")
+    @scope(world)
     public id: string;
 
     @OneToMany(() => User, user => user.tokens)
+    @scope(login, world)
+    @is()
     public user: User;
 
-    @Column("timestamp with time zone")
+    @CreateDateColumn()
     public created: Date;
 
-    @Column("timestamp with time zone")
+    @UpdateDateColumn()
     public updated: Date;
 
     @Column("timestamp with time zone", { nullable: true })

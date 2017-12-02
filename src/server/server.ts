@@ -3,7 +3,7 @@ import * as BodyParser from "body-parser";
 import * as HTTP from "http-status-codes";
 import { info } from "winston";
 import { cors, logging, error } from "./middlewares";
-import { hyrest } from "hyrest/dist/middleware";
+import { hyrest } from "hyrest/middleware";
 import { Users, Tokens } from "controllers";
 import { TSDI } from "tsdi";
 import { Database } from "server/database";

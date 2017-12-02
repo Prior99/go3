@@ -4,6 +4,8 @@ import {
     Entity,
     ManyToOne,
     BaseEntity,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from "typeorm";
 import { Participant } from "./participant";
 
@@ -12,10 +14,10 @@ export class Game extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     public readonly id: string;
 
-    @Column("timestamp with time zone")
+    @CreateDateColumn()
     public created: Date;
 
-    @Column("timestamp with time zone")
+    @UpdateDateColumn()
     public updated: Date;
 
     @Column("integer")

@@ -5,6 +5,8 @@ import {
     OneToMany,
     JoinTable,
     BaseEntity,
+    CreateDateColumn,
+    UpdateDateColumn,
 } from "typeorm";
 import { User } from "./user";
 import { Game } from "./game";
@@ -15,10 +17,10 @@ export class Participant extends BaseEntity {
     @PrimaryGeneratedColumn("uuid")
     public readonly id: string;
 
-    @Column("timestamp with time zone")
+    @CreateDateColumn()
     public created: Date;
 
-    @Column("timestamp with time zone")
+    @UpdateDateColumn()
     public updated: Date;
 
     @OneToMany(() => Game, game => game.participants)
