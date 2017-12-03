@@ -2520,9 +2520,9 @@ https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
 
-hyrest@0.6.5:
-  version "0.6.5"
-  resolved "https://registry.yarnpkg.com/hyrest/-/hyrest-0.6.5.tgz#11b6734ed2f57ef80da4b60f9833b300726c8114"
+hyrest@0.6.8:
+  version "0.6.8"
+  resolved "https://registry.yarnpkg.com/hyrest/-/hyrest-0.6.8.tgz#d2300911f55c02b06ae5d719b3055b61b50834e9"
   dependencies:
     express "^4.16.2"
     http-status-codes "^1.3.0"
@@ -6167,15 +6167,9 @@ which-module@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/which-module/-/which-module-2.0.0.tgz#d9ef07dce77b9902b8a3a8fa4b31c3e3f7e6e87a"
 
-which@1, which@^1.2.9:
+which@1, which@^1.0.5, which@^1.2.9:
   version "1.2.14"
   resolved "https://registry.yarnpkg.com/which/-/which-1.2.14.tgz#9a87c4378f03e827cecaf1acdf56c736c01c14e5"
-  dependencies:
-    isexe "^2.0.0"
-
-which@^1.0.5:
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/which/-/which-1.3.0.tgz#ff04bdfc010ee547d780bec38e1ac1c2777d253a"
   dependencies:
     isexe "^2.0.0"
 

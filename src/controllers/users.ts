@@ -1,4 +1,4 @@
-import { controller, route, is, created, body, ok, param, notFound } from "hyrest";
+import { controller, route, is, created, body, ok, param, notFound, query } from "hyrest";
 import { inject, component } from "tsdi";
 import { pick } from "ramda";
 import { Connection } from "typeorm";
@@ -24,5 +24,15 @@ export class Users {
         const user = await this.db.getRepository(User).findOneById(id);
         if (!user) { return notFound(`Could not find user with id '${id}'`); }
         return ok(user);
+    }
+
+    @route("GET", "/user").dump(User, world)
+    public async findUsers(@query("search") @is() search: string) {
+        const users = await this.db.getRepository(User).createQueryBuilder()
+            .where("name LIKE :name", { name: `%${search}%` })
+            .limit(100)
+            .getMany();
+        console.log(users)
+        return ok(users);
     }
 }
