@@ -1,26 +1,27 @@
-import { User, Game } from "models";
 import { controller, route, is, created, body, ok, param, notFound } from "hyrest";
-import { Validation } from "./validation";
 import { inject, component } from "tsdi";
-import bind from "bind-decorator";
 import { pick } from "ramda";
+import { Connection } from "typeorm";
+import { User, Game } from "models";
+import { Validation } from "./validation";
 import { hash } from "encrypt";
 import { signup, owner, world } from "scopes";
 
 @controller()
 @component
 export class Users {
+    @inject private db: Connection;
     @inject private validation: Validation;
 
-    @bind @route("POST", "/user").dump(User, owner)
+    @route("POST", "/user").dump(User, owner)
     public async createUser(@body(signup) user: User) {
-        await user.save();
-        return ok(user);
+        await this.db.getRepository(User).save(user);
+        return ok();
     }
 
-    @bind @route("GET", "/user/:id").dump(User, world)
+    @route("GET", "/user/:id").dump(User, world)
     public async getUser(@param("id") @is() id: string) {
-        const user = await User.findOneById(id);
+        const user = await this.db.getRepository(User).findOneById(id);
         if (!user) { return notFound(`Could not find user with id '${id}'`); }
         return ok(user);
     }

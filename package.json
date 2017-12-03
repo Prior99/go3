@@ -6,10 +6,9 @@
     "build:server": "tsc -p . --outDir server/",
     "build:frontend:release": "webpack --config webpack.config-release.js",
     "start:frontend": "webpack-dev-server",
-    "start:server": "DEBUG=tsdi nodemon -e ts,tsx --exec 'ts-node -r tsconfig-paths/register ./src/server/server'",
+    "start:server": "ts-node-dev -r tsconfig-paths/register src/server",
     "lint:src": "tslint --format stylish --type-check --project tsconfig.json --exclude generated/**/*.ts",
-    "lint:style": "stylelint --allow-empty-input src/**/*.scss",
-    "test": "TZ=utc jest"
+    "lint:style": "stylelint --allow-empty-input src/**/*.scss"
   },
   "main": "src/index.tsx",
   "repository": "https://github.com/Prior99/accounting-frontend",
@@ -45,27 +44,6 @@
     "url-pattern": "^1.0.3",
     "winston": "^2.4.0"
   },
-  "jest": {
-    "collectCoverage": true,
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(scss)$": "<rootDir>/jest-scss-preprocessor.js",
-      ".(ts|tsx)": "ts-jest"
-    },
-    "setupTestFrameworkScriptFile": "<rootDir>/jest-setups.js",
-    "testMatch": [
-      "**/__tests__/*.(ts|tsx|js)",
-      "**/__tests__.(ts|tsx|js)"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "src"
-    ]
-  },
   "devDependencies": {
     "@types/enzyme": "^2.8.3",
     "@types/enzyme-to-json": "^1.5.0",
@@ -73,7 +51,6 @@
     "@types/i18next": "^8.4.1",
     "@types/i18next-browser-languagedetector": "^2.0.0",
     "@types/i18next-xhr-backend": "^1.4.0",
-    "@types/jest": "^20.0.2",
     "@types/node": "^8.0.53",
     "@types/ramda": "^0.24.3",
     "@types/react": "^15.0.37",
@@ -88,18 +65,15 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "git-revision-webpack-plugin": "^2.5.1",
-    "jest": "^20.0.4",
     "mobx-react-devtools": "^4.2.15",
     "node-sass": "^4.5.3",
-    "nodemon": "^1.12.1",
     "progress-bar-webpack-plugin": "^1.10.0",
     "react-test-renderer": "^15.6.1",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "stylelint": "^7.13.0",
-    "ts-jest": "^21.2.3",
-    "ts-node": "^3.3.0",
+    "ts-node-dev": "^1.0.0-pre.5",
     "tsconfig-paths": "^2.3.0",
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",

@@ -2,7 +2,7 @@ SHELL:=/bin/bash
 
 default: debug
 
-all: default lint test db
+all: default lint db
 
 .PHONY: debug
 debug: node_modules
@@ -25,21 +25,6 @@ run-frontend: node_modules
 .PHONY: run-server
 run-server: node_modules db
 	yarn start:server
-
-.PHONY: test
-test: node_modules
-	yarn test
-
-.PHONY: release
-release: node_modules
-	yarn run build:frontend:release
-	yarn run build:server
-
-.PHONY: package
-package: clean release
-	rm -Rf node_modules
-	yarn install --production
-	tar cfz `git describe`.tar.gz dist/ index.html config.js node_modules server/
 
 .PHONY: clean-db
 clean-db:

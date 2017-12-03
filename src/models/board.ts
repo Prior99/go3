@@ -5,7 +5,6 @@ import {
     OneToMany,
     ManyToOne,
     OneToOne,
-    BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -14,34 +13,34 @@ import { Game } from "./game";
 import { Color } from "board-color";
 
 @Entity()
-export class Board extends BaseEntity {
+export class Board {
     @PrimaryGeneratedColumn("uuid")
-    public readonly id: string;
+    public readonly id?: string;
 
     @ManyToOne(() => Game)
-    public game: Game;
+    public game?: Game;
 
     @OneToOne(() => Board)
-    public parent: Board;
+    public parent?: Board;
 
     @Column("integer", { nullable: true })
-    public placedAt: number;
+    public placedAt?: number;
 
     @Column("integer", { default: 0 })
-    public prisonersOpponent: number;
+    public prisonersOpponent?: number;
 
     @Column("integer", { default: 0 })
-    public prisonersChallenger: number;
+    public prisonersChallenger?: number;
 
     @Column("jsonb")
-    public state: Color[];
+    public state?: Color[];
 
     @CreateDateColumn()
-    public created: Date;
+    public created?: Date;
 
     @UpdateDateColumn()
-    public updated: Date;
+    public updated?: Date;
 
     @Column("integer")
-    public turn: number;
+    public turn?: number;
 }

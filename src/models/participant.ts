@@ -4,7 +4,6 @@ import {
     Entity,
     OneToMany,
     JoinTable,
-    BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -13,22 +12,22 @@ import { Game } from "./game";
 import { Color } from "board-color";
 
 @Entity()
-export class Participant extends BaseEntity {
+export class Participant {
     @PrimaryGeneratedColumn("uuid")
-    public readonly id: string;
+    public readonly id?: string;
 
     @CreateDateColumn()
-    public created: Date;
+    public created?: Date;
 
     @UpdateDateColumn()
-    public updated: Date;
+    public updated?: Date;
 
     @OneToMany(() => Game, game => game.participants)
-    public game: Game;
+    public game?: Game;
 
     @OneToMany(() => User, user => user.participations)
-    public user: User;
+    public user?: User;
 
     @Column("varchar", { length: 5 })
-    public color: Color;
+    public color?: Color;
 }

@@ -5,31 +5,31 @@ import {
     OneToMany,
     ManyToOne,
     OneToOne,
-    BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
 import { User } from "./user";
-import { login, world } from "scopes";
-import { scope, is } from "hyrest";
+import { Participant } from "./participant";
+import { is, DataType, email, required, length, scope, arrayOf, only, transform } from "hyrest";
+import { login, signup, world, owner } from "scopes";
+import { hash } from "encrypt";
 
 @Entity()
-export class Token extends BaseEntity {
+export class Token {
     @PrimaryGeneratedColumn("uuid")
     @scope(world)
-    public id: string;
+    public id?: string;
 
-    @OneToMany(() => User, user => user.tokens)
-    @scope(login, world)
-    @is()
-    public user: User;
+    @ManyToOne(() => User)
+    @scope(login, world) @is()
+    public user?: User;
 
     @CreateDateColumn()
-    public created: Date;
+    public created?: Date;
 
     @UpdateDateColumn()
-    public updated: Date;
+    public updated?: Date;
 
     @Column("timestamp with time zone", { nullable: true })
-    public deleted: Date;
+    public deleted?: Date;
 }

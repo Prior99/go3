@@ -1,5 +1,5 @@
-import { Board } from "models";
 import { Color } from "board-color";
+import { Board } from "models";
 
 export enum ValidationResult {
     OKAY = "okay",

@@ -3,26 +3,25 @@ import {
     PrimaryGeneratedColumn,
     Entity,
     ManyToOne,
-    BaseEntity,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
 import { Participant } from "./participant";
 
 @Entity()
-export class Game extends BaseEntity {
+export class Game {
     @PrimaryGeneratedColumn("uuid")
-    public readonly id: string;
+    public readonly id?: string;
 
     @CreateDateColumn()
-    public created: Date;
+    public created?: Date;
 
     @UpdateDateColumn()
-    public updated: Date;
+    public updated?: Date;
 
     @Column("integer")
-    public boardSize: number;
+    public boardSize?: number;
 
     @ManyToOne(() => Participant, participant => participant.game)
-    public participants: Participant[];
+    public participants?: Participant[];
 }
