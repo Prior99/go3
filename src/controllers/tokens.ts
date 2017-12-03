@@ -11,10 +11,7 @@ import { login, owner } from "scopes";
 export class Tokens {
     @bind @route("POST", "/token").dump(Token, owner)
     public async createToken(@body(login) credentials: User) {
-        const user = await User.findOne({
-            ...credentials,
-            password: hash(credentials.password),
-        });
+        const user = await User.findOne(credentials);
         if (!user) {
             return unauthorized();
         }
