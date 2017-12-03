@@ -9,8 +9,9 @@ import {
 } from "typeorm";
 import { Token } from "./token";
 import { Participant } from "./participant";
-import { is, DataType, email, required, length, scope, arrayOf } from "hyrest";
+import { is, DataType, email, required, length, scope, arrayOf, only, transform } from "hyrest";
 import { login, signup, world, owner } from "scopes";
+import { hash } from "encrypt";
 
 @Entity()
 export class User extends BaseEntity {
@@ -18,18 +19,15 @@ export class User extends BaseEntity {
     @scope(world)
     public readonly id: string;
 
+    @is().validateCtx(ctx => only(signup, ctx.validation.emailAvailable)).validate(email, required)
     @Column("varchar", { length: 200 })
-    @is().validate(email, required).validateCtx(ctx => {
-        console.log("CTX");
-        console.log(ctx);
-        return [ctx.validation.emailAvailable];
-    })
     @scope(owner, login)
     public email: string;
 
     @Column("varchar", { length: 200 })
     @is().validate(length(8, 255), required)
     @scope(login)
+    @transform(hash)
     public password: string;
 
     @CreateDateColumn()
@@ -46,7 +44,7 @@ export class User extends BaseEntity {
     public tokens: Token[];
 
     @Column("varchar", { length: 200 })
-    @is().validate(length(5, 255), required).validateCtx(ctx => [ctx.validation.nameAvailable])
+    @is().validate(length(5, 255), required).validateCtx(ctx => only(signup, ctx.validation.nameAvailable))
     @scope(world, signup)
     public name: string;
 

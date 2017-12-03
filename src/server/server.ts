@@ -7,6 +7,7 @@ import { hyrest } from "hyrest/middleware";
 import { Users, Tokens } from "controllers";
 import { TSDI } from "tsdi";
 import { Database } from "server/database";
+import { Context } from "server/context";
 
 process.on("unhandledRejection", err => console.error(err));
 
@@ -24,7 +25,7 @@ if (typeof process !== "undefined") {
     http.use(hyrest(
         tsdi.get(Users),
         tsdi.get(Tokens),
-    ));
+    ).context(tsdi.get(Context)));
 
     tsdi.get(Database); // Make sure the database is initialized.
 
