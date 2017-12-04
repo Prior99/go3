@@ -45,6 +45,7 @@ export class User {
 
     @OneToMany(() => Token, token => token.user)
     @is() @specify(() => Token)
+    @scope(owner)
     public tokens?: Token[];
 
     @OneToMany(() => Participant, participant => participant.user)

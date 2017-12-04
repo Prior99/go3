@@ -46,12 +46,12 @@ async function serve() {
     async function exit() {
         info("Exiting...");
         server.close();
-        if (database.conn.isConnected) {
-            try {
+        try {
+            if (database && database.conn && database.conn.isConnected) {
                 await database.conn.close();
-            } catch (err) {
-                error("Could not stop database connection", err);
             }
+        } catch (err) {
+            error("Could not stop database connection", err);
         }
         tsdi.close();
         info("Goodbye.");

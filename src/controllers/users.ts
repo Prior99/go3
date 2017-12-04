@@ -3,8 +3,9 @@ import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
 import { User } from "models";
 import { signup, owner, world } from "scopes";
+import { Token } from "../models";
 
-@controller()
+@controller
 @component
 export class Users {
     @inject private db: Connection;

@@ -11,17 +11,17 @@ import {
 import { User } from "./user";
 import { Participant } from "./participant";
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
-import { login, signup, world, owner } from "scopes";
+import { login, signup, owner } from "scopes";
 import { hash } from "encrypt";
 
 @Entity()
 export class Token {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world)
+    @scope(owner)
     public id?: string;
 
     @ManyToOne(() => User, user => user.tokens)
-    @scope(login, world) @is()
+    @scope(login, owner) @is()
     public user?: User;
 
     @CreateDateColumn()
