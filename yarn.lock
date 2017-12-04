@@ -2520,9 +2520,9 @@ https-browserify@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/https-browserify/-/https-browserify-0.0.1.tgz#3f91365cabe60b77ed0ebba24b454e3e09d95a82"
 
-hyrest@0.6.8:
-  version "0.6.8"
-  resolved "https://registry.yarnpkg.com/hyrest/-/hyrest-0.6.8.tgz#d2300911f55c02b06ae5d719b3055b61b50834e9"
+hyrest@0.6.9:
+  version "0.6.9"
+  resolved "https://registry.yarnpkg.com/hyrest/-/hyrest-0.6.9.tgz#4476578cf6c07d66ae216b19ae1ec5d682ee103b"
   dependencies:
     express "^4.16.2"
     http-status-codes "^1.3.0"

@@ -7,9 +7,10 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import { Participant } from "./participant";
-import { is, DataType, email, required, length, scope, arrayOf, only, transform } from "hyrest";
+import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
 import { login, signup, world, owner } from "scopes";
 import { hash } from "encrypt";
+import { Token } from "./token";
 
 @Entity()
 export class User {
@@ -42,7 +43,11 @@ export class User {
     @scope(world, signup)
     public name?: string;
 
+    @OneToMany(() => Token, token => token.user)
+    @is() @specify(() => Token)
+    public tokens?: Token[];
+
     @OneToMany(() => Participant, participant => participant.user)
-    @arrayOf(Participant)
+    @is() @specify(() => Participant)
     public participations?: Participant[];
 }

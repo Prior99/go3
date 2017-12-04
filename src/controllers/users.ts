@@ -1,17 +1,13 @@
 import { controller, route, is, created, body, ok, param, notFound, query } from "hyrest";
 import { inject, component } from "tsdi";
-import { pick } from "ramda";
 import { Connection } from "typeorm";
-import { User, Game } from "models";
-import { Validation } from "./validation";
-import { hash } from "encrypt";
+import { User } from "models";
 import { signup, owner, world } from "scopes";
 
 @controller()
 @component
 export class Users {
     @inject private db: Connection;
-    @inject private validation: Validation;
 
     @route("POST", "/user").dump(User, owner)
     public async createUser(@body(signup) user: User) {
@@ -32,7 +28,6 @@ export class Users {
             .where("name LIKE :name", { name: `%${search}%` })
             .limit(100)
             .getMany();
-        console.log(users)
         return ok(users);
     }
 }

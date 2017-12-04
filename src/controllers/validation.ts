@@ -1,8 +1,7 @@
 import { controller, route, is, ok, body, DataType } from "hyrest";
 import { inject, component } from "tsdi";
-import bind from "bind-decorator";
 import { Connection } from "typeorm";
-import { User, Game } from "models";
+import { User } from "models";
 
 @controller()
 @component

@@ -7,7 +7,7 @@ import { TSDI } from "tsdi";
 import { Connection } from "typeorm";
 import { Server } from "net";
 import { cors, logging, catchError } from "./middlewares";
-import { Users, Tokens, Validation } from "controllers";
+import { Users, Tokens, Validation, Games } from "controllers";
 import { Context } from "./context";
 import { Database } from "./database";
 
@@ -34,6 +34,7 @@ async function serve() {
         tsdi.get(Users),
         tsdi.get(Tokens),
         tsdi.get(Validation),
+        tsdi.get(Games),
     ).context(tsdi.get(Context)));
 
     // Make sure the database is initialized.

@@ -10,7 +10,7 @@ import {
 } from "typeorm";
 import { User } from "./user";
 import { Participant } from "./participant";
-import { is, DataType, email, required, length, scope, arrayOf, only, transform } from "hyrest";
+import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
 import { login, signup, world, owner } from "scopes";
 import { hash } from "encrypt";
 
@@ -20,7 +20,7 @@ export class Token {
     @scope(world)
     public id?: string;
 
-    @ManyToOne(() => User)
+    @ManyToOne(() => User, user => user.tokens)
     @scope(login, world) @is()
     public user?: User;
 

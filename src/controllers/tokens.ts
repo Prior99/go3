@@ -1,10 +1,8 @@
-import { controller, route, is, created, body, ok, param, unauthorized, populate } from "hyrest";
+import { controller, route, created, body, unauthorized, populate } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
-import { hash } from "encrypt";
 import { login, owner } from "scopes";
 import { User, Token } from "models";
-import { Validation } from "./validation";
 
 @controller()
 @component
@@ -19,6 +17,6 @@ export class Tokens {
         }
         const newToken = populate(login, Token, { user: { id: user.id } });
         await this.db.getRepository(Token).save(newToken);
-        return ok(newToken);
+        return created(newToken);
     }
 }
