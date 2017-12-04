@@ -11,6 +11,6 @@ export class Games {
 
     @route("POST", "/game").dump(Game, owner)
     public async createGame(@body(gameCreate) game: Game): Promise<Game> {
-        return created();
+        return created(game);
     }
 }

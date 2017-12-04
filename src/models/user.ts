@@ -8,14 +8,14 @@ import {
 } from "typeorm";
 import { Participant } from "./participant";
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
-import { login, signup, world, owner } from "scopes";
+import { login, signup, world, owner, gameCreate } from "scopes";
 import { hash } from "encrypt";
 import { Token } from "./token";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world, login)
+    @scope(world, gameCreate) @is(required)
     public id?: string;
 
     @is().validateCtx(ctx => only(signup, ctx.validation.emailAvailable)).validate(email, required)

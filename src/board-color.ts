@@ -3,3 +3,5 @@ export enum Color {
     BLACK = "black",
     WHITE = "white",
 }
+
+export const colors = ["black", "white"];

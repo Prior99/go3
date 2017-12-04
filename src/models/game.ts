@@ -11,13 +11,10 @@ import { world, gameCreate } from "scopes";
 import { is, scope, DataType, oneOf, specify, required, length } from "hyrest";
 import { boardSizes } from "board-sizes";
 
-console.log("PARTICIPANT", Participant);
-
 @Entity()
 export class Game {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world)
-    @is()
+    @scope(world) @is()
     public readonly id?: string;
 
     @CreateDateColumn()
@@ -35,7 +32,7 @@ export class Game {
 
     @ManyToOne(() => Participant, participant => participant.game)
     @scope(gameCreate, world)
-    @is().validate(required, length(2, 2))
-    @specify(() => { console.log("I AM CALLED", Participant); return Participant; })
+    @is().validate(length(2, 2), required)
+    @specify(() => Participant)
     public participants?: Participant[];
 }
