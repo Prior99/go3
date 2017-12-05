@@ -2,10 +2,10 @@ import {
     Column,
     PrimaryGeneratedColumn,
     Entity,
-    OneToMany,
     JoinTable,
     CreateDateColumn,
     UpdateDateColumn,
+    ManyToOne,
 } from "typeorm";
 import { User } from "./user";
 import { Game } from "./game";
@@ -29,11 +29,11 @@ export class Participant {
     @scope(world)
     public updated?: Date;
 
-    @OneToMany(() => Game, game => game.participants)
+    @ManyToOne(() => Game, game => game.participants)
     @scope(world) @specify(() => Game)
     public game?: Game;
 
-    @OneToMany(() => User, user => user.participations)
+    @ManyToOne(() => User, user => user.participations)
     @scope(world, gameCreate) @is().validate(required) @specify(() => User)
     public user?: User;
 

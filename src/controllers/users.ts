@@ -1,7 +1,7 @@
 import { controller, route, is, created, body, ok, param, notFound, query } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
-import { User } from "models";
+import { User, Game, Participant } from "models";
 import { signup, owner, world } from "scopes";
 import { Token } from "../models";
 
@@ -30,5 +30,18 @@ export class Users {
             .limit(100)
             .getMany();
         return ok(users);
+    }
+
+    @route("GET", "/user/:id/games").dump(Game, world)
+    public async listGames(@param("id") @is() id: string) {
+        const user = await this.db.getRepository(User).createQueryBuilder("user")
+            .where("user.id=:id", { id })
+            .innerJoinAndSelect("user.participations", "participation")
+            .innerJoinAndSelect("participation.game", "game")
+            .innerJoinAndSelect("game.participants", "participant")
+            .innerJoinAndSelect("participant.user", "participatingUser")
+            .getOne();
+        if (!user) { return notFound(`Could not find user with id '${id}'`); }
+        return ok(user.participations.map(({ game }) => game));
     }
 }

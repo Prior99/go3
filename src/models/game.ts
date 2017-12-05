@@ -2,7 +2,7 @@ import {
     Column,
     PrimaryGeneratedColumn,
     Entity,
-    ManyToOne,
+    OneToMany,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
@@ -30,7 +30,7 @@ export class Game {
     @is(DataType.int).validate(oneOf(...boardSizes))
     public boardSize?: number;
 
-    @ManyToOne(() => Participant, participant => participant.game)
+    @OneToMany(() => Participant, participant => participant.game)
     @scope(gameCreate, world)
     @is().validate(length(2, 2), required)
     @specify(() => Participant)
