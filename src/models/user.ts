@@ -18,13 +18,16 @@ export class User {
     @scope(world, gameCreate) @is(required)
     public id?: string;
 
-    @is().validateCtx(ctx => only(signup, ctx.validation.emailAvailable)).validate(email, required)
+    @is()
+        .validate(email, required)
+        .validateCtx(ctx => only(signup, value => ctx.validation.emailAvailable(value)))
     @Column("varchar", { length: 200 })
     @scope(owner, login)
     public email?: string;
 
     @Column("varchar", { length: 200 })
-    @is().validate(length(8, 255), required)
+    @is()
+        .validate(length(8, 255), required)
     @scope(login)
     @transform(hash)
     public password?: string;
@@ -39,7 +42,9 @@ export class User {
     public deleted?: Date;
 
     @Column("varchar", { length: 200 })
-    @is().validate(length(5, 255), required).validateCtx(ctx => only(signup, ctx.validation.nameAvailable))
+    @is()
+        .validate(length(5, 255), required)
+        .validateCtx(ctx => only(signup, value => ctx.validation.nameAvailable(value)))
     @scope(world, signup)
     public name?: string;
 

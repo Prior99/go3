@@ -19,9 +19,9 @@ export class PageLogin extends React.Component {
 
     @bind @action private handleEmail({ target }: React.SyntheticInputEvent) { this.email = target.value; }
     @bind @action private handlePassword({ target }: React.SyntheticInputEvent) { this.password = target.value; }
-    @bind private handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+    @bind private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
-        this.login.login(this.email, this.password);
+        await this.login.login(this.email, this.password);
     }
 
     public render() {

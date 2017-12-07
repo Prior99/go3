@@ -4,8 +4,7 @@ import { Connection } from "typeorm";
 import { Participant, Game, User } from "models";
 import { gameCreate, owner } from "scopes";
 
-@controller()
-@component
+@controller @component
 export class Games {
     @inject private db: Connection;
 

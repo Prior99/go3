@@ -21,7 +21,7 @@ export class Token {
     public id?: string;
 
     @ManyToOne(() => User, user => user.tokens)
-    @scope(login, owner) @is()
+    @scope(login, owner) @is() @specify(() => User)
     public user?: User;
 
     @CreateDateColumn()

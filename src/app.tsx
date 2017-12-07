@@ -4,7 +4,7 @@ import { Router } from "react-router";
 import DevTools from "mobx-react-devtools";
 import "style.scss";
 import "factories";
-import "store";
+import { LoginStore } from "store";
 import { ErrorStore } from "store";
 import { TSDI, component, factory } from "tsdi";
 import { History } from "history";
@@ -12,7 +12,7 @@ import { isProductionEnvironment } from "utils/environment";
 import { AppContainer } from "ui/app-container";
 import { PageLogin, PageDashboard, PageSignup } from "pages";
 import { Route, Switch, Redirect } from "react-router-dom";
-import { configureController } from "hyrest";
+import { configureController, ControllerOptions } from "hyrest";
 import { Users, Tokens } from "controllers";
 import * as routes from "routing";
 
@@ -54,6 +54,24 @@ export function App() {
 }
 
 function main() {
+    const controllerOptions: ControllerOptions = {
+        baseUrl,
+        errorHandler: (err) => errors.errors.push({
+            message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
+        }),
+        authorizationProvider: (headers: Headers) => {
+            const loginStore = tsdi.get(LoginStore);
+            if (loginStore.loggedIn) {
+                headers.append("authorization", `Bearer ${loginStore.authToken}`);
+            }
+        },
+    };
+
+    configureController([
+        Users,
+        Tokens,
+    ], controllerOptions);
+
     const tsdi: TSDI = new TSDI();
     tsdi.enableComponentScanner();
 
@@ -68,16 +86,6 @@ function main() {
     );
 
     const errors = tsdi.get(ErrorStore);
-
-    const controllerOptions = {
-        baseUrl,
-        errorHandler: (err) => errors.errors.push({
-            message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
-        }),
-    };
-
-    configureController(Users, controllerOptions);
-    configureController(Tokens, controllerOptions);
 }
 
 main();

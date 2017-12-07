@@ -5,6 +5,7 @@ import { History } from "history";
 import { routeDashboard } from "routing";
 import { component, inject, initialize } from "tsdi";
 import { Users, Tokens } from "controllers";
+import { OwnUserStore } from "./own-user";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";
@@ -20,11 +21,12 @@ interface ApiError {
     message: string;
 }
 
-@component
+@component("LoginStore")
 export class LoginStore {
     @inject private browserHistory: History;
     @inject private users: Users;
     @inject private tokens: Tokens;
+    @inject("OwnUserStore") private ownUser: OwnUserStore;
 
     @observable public authToken: string;
     @observable public userId: string;
@@ -48,6 +50,7 @@ export class LoginStore {
             this.authToken = id;
             this.userId = user.id;
             this.save();
+            await this.ownUser.loadUser();
             this.browserHistory.replace(routeDashboard.path());
         }
         return response;
