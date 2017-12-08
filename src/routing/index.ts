@@ -49,8 +49,13 @@ export const routeCreateGame: Route = {
     path: () => "/create-game",
     pattern: "/create-game",
     navbar: true,
-    title: "CreateGame",
+    title: "Create Game",
     icon: "add",
+};
+
+export const routeGame: Route = {
+    path: (id: string) => `/game/${id}`,
+    pattern: "/game/:id",
 };
 
 export const routes: Route[] = [
@@ -58,6 +63,7 @@ export const routes: Route[] = [
     routeSignup,
     routeDashboard,
     routeCreateGame,
+    routeGame,
 ];
 
 export function getRoute(url: string) {

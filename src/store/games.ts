@@ -6,12 +6,14 @@ import { component, inject, initialize } from "tsdi";
 import { Game } from "../models";
 import { Games, Users } from "controllers";
 import { Color } from "../board-color";
+import { UsersStore } from "./users";
 
 @component("GamesStore")
 export class GamesStore {
     @inject private gamesController: Games;
     @inject private usersController: Users;
     @inject("LoginStore") private login: LoginStore;
+    @inject private users: UsersStore;
 
     @observable private games: Map<string, Game> = new Map();
     @observable public loading = false;
@@ -22,13 +24,18 @@ export class GamesStore {
             await this.loadGames();
         }
     }
+    @bind
+    private async storeGame(game: Game) {
+        this.games.set(game.id, game);
+        await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
+    }
 
     @bind @action
     public async loadGames() {
         this.loading = true;
         if (this.login.loggedIn) {
             const games = await this.usersController.listGames(this.login.userId);
-            games.forEach(game => this.games.set(game.id, game));
+            games.forEach(this.storeGame);
         }
         this.loading = false;
     }
@@ -49,7 +56,7 @@ export class GamesStore {
             ],
             boardSize: size,
         });
-        this.games.set(game.id, game);
+        this.storeGame(game);
         this.loading = false;
         return game;
     }

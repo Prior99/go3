@@ -10,7 +10,7 @@ import { TSDI, component, factory } from "tsdi";
 import { History } from "history";
 import { isProductionEnvironment } from "utils/environment";
 import { AppContainer } from "ui/app-container";
-import { PageLogin, PageDashboard, PageSignup, PageCreateGame } from "pages";
+import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame } from "pages";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { configureController, ControllerOptions } from "hyrest";
 import { Users, Tokens, Games } from "controllers";
@@ -34,6 +34,10 @@ export const pages = [
     {
         route: routes.routeCreateGame,
         component: PageCreateGame,
+    },
+    {
+        route: routes.routeGame,
+        component: PageGame,
     },
 ];
 

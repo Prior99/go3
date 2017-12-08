@@ -5,7 +5,7 @@ import { inject, external } from "tsdi";
 import { User } from "../../models";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
 import { bind } from "bind-decorator";
-import { boardSizes } from "../../board-sizes";
+import { boardSizes, formatBoardSize } from "../../board-sizes";
 
 export interface BoardSizeSelectProps {
     readonly size?: number;
@@ -22,7 +22,7 @@ export class BoardSizeSelect extends React.Component<BoardSizeSelectProps> {
 
     private get boardSizeOptions() {
         return boardSizes.map(size => ({
-            text: `${size} x ${size}`,
+            text: formatBoardSize(size),
             value: size,
         }));
     }

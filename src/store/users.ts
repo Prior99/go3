@@ -30,13 +30,14 @@ export class UsersStore {
     }
 
     @bind
-    public async byId(id: string) {
-        const localUser = this.users.get(id);
-        if (localUser) {
-            return localUser;
-        }
+    public async load(id: string) {
         const user = await this.usersController.getUser(id);
         this.users.set(user.id, user);
         return user;
+    }
+
+    @bind
+    public byId(id: string) {
+        return this.users.get(id);
     }
 }

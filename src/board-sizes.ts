@@ -8,3 +8,7 @@ export const boardSizes = [
     17,
     19,
 ];
+
+export function formatBoardSize(size: number) {
+    return `${size} x ${size}`;
+}

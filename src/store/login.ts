@@ -102,6 +102,5 @@ export class LoginStore {
         }
         this.authToken = deserialized.authToken;
         this.userId = deserialized.userId;
-        this.browserHistory.replace(routeDashboard.path());
     }
 }
