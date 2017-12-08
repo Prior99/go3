@@ -7,16 +7,17 @@ import {
     UpdateDateColumn,
 } from "typeorm";
 import { Participant } from "./participant";
-import { world, gameCreate } from "scopes";
+import { world, gameCreate, turn } from "scopes";
 import { is, scope, DataType, oneOf, specify, required, length } from "hyrest";
 import { boardSizes } from "board-sizes";
 import { formatBoardSize } from "../board-sizes";
 import { Color } from "../board-color";
+import { Board } from "./board";
 
 @Entity()
 export class Game {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world) @is()
+    @scope(world, turn) @is()
     public readonly id?: string;
 
     @CreateDateColumn()
@@ -38,6 +39,9 @@ export class Game {
     @specify(() => Participant)
     public participants?: Participant[];
 
+    @OneToMany(() => Board, board => board.game)
+    public boards: Board[];
+
     private getUserByColor(color: Color) {
         return this.participants.find(participant => participant.color === color).user;
     }
@@ -47,5 +51,9 @@ export class Game {
 
     public get description() {
         return `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board.`;
+    }
+
+    public get currentBoard() {
+        return this.boards[this.boards.length - 1];
     }
 }

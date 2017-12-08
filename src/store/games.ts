@@ -7,9 +7,21 @@ import { Game } from "../models";
 import { Games, Users } from "controllers";
 import { Color } from "../board-color";
 import { UsersStore } from "./users";
+import { routeGame } from "../routing/index";
+import * as pathToRegexp from "path-to-regexp";
+
+function parseGameId(url: string) {
+    const regexp = pathToRegexp(routeGame.pattern);
+    const result = regexp.exec(url);
+    if (!result) {
+        return;
+    }
+    return result[1];
+}
 
 @component("GamesStore")
 export class GamesStore {
+    @inject private browserHistory: History;
     @inject private gamesController: Games;
     @inject private usersController: Users;
     @inject("LoginStore") private login: LoginStore;
@@ -17,13 +29,23 @@ export class GamesStore {
 
     @observable private games: Map<string, Game> = new Map();
     @observable public loading = false;
+    @observable public currentGameId: string;
 
     @initialize
     private async initialize() {
         if (this.login.loggedIn) {
             await this.loadGames();
         }
+        this.browserHistory.listen(this.refreshGameId);
+        this.refreshGameId();
     }
+
+    @bind
+    private async refreshGameId() {
+        this.currentGameId = parseGameId(this.browserHistory.location.pathname);
+        this.loadBoards(this.currentGameId);
+    }
+
     @bind
     private async storeGame(game: Game) {
         this.games.set(game.id, game);
@@ -59,6 +81,12 @@ export class GamesStore {
         this.storeGame(game);
         this.loading = false;
         return game;
+    }
+
+    @bind @action
+    private async loadBoards(gameId: string) {
+        const boards = await this.gamesController.listBoards(gameId);
+        this.games.get(gameId).boards = boards;
     }
 
     @computed
