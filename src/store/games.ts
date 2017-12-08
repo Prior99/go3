@@ -55,7 +55,7 @@ export class GamesStore {
                 },
             ],
             boardSize: size,
-        });
+        } as Game);
         this.storeGame(game);
         this.loading = false;
         return game;

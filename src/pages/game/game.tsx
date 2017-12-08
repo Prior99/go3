@@ -23,9 +23,13 @@ export class PageGame extends React.Component<PageGameProps> {
     @computed private get game() { return this.games.byId(this.id); }
 
     public render() {
+        if (!this.game) {
+            return <Content>"Loading"</Content>;
+        }
         return (
             <Content>
                 <h1>Game</h1>
+                <p>{this.game.description}</p>
             </Content>
         );
     }
