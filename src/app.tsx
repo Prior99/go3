@@ -10,10 +10,10 @@ import { TSDI, component, factory } from "tsdi";
 import { History } from "history";
 import { isProductionEnvironment } from "utils/environment";
 import { AppContainer } from "ui/app-container";
-import { PageLogin, PageDashboard, PageSignup } from "pages";
+import { PageLogin, PageDashboard, PageSignup, PageCreateGame } from "pages";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { configureController, ControllerOptions } from "hyrest";
-import { Users, Tokens } from "controllers";
+import { Users, Tokens, Games } from "controllers";
 import * as routes from "routing";
 
 declare var baseUrl: string;
@@ -30,6 +30,10 @@ export const pages = [
     {
         route: routes.routeDashboard,
         component: PageDashboard,
+    },
+    {
+        route: routes.routeCreateGame,
+        component: PageCreateGame,
     },
 ];
 
@@ -70,6 +74,7 @@ function main() {
     configureController([
         Users,
         Tokens,
+        Games,
     ], controllerOptions);
 
     const tsdi: TSDI = new TSDI();

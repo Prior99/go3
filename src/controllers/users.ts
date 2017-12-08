@@ -18,7 +18,7 @@ export class Users {
     @route("GET", "/user/:id").dump(User, world) @noauth
     public async getUser(@param("id") @is() id: string) {
         const user = await this.db.getRepository(User).findOneById(id);
-        if (!user) { return notFound(`Could not find user with id '${id}'`); }
+        if (!user) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(user);
     }
 
@@ -32,7 +32,7 @@ export class Users {
     }
 
     @route("GET", "/user/:id/games").dump(Game, world) @noauth
-    public async listGames(@param("id") @is() id: string) {
+    public async listGames(@param("id") @is() id: string): Promise<Game[]> {
         const user = await this.db.getRepository(User).createQueryBuilder("user")
             .where("user.id=:id", { id })
             .innerJoinAndSelect("user.participations", "participation")
@@ -40,7 +40,7 @@ export class Users {
             .innerJoinAndSelect("game.participants", "participant")
             .innerJoinAndSelect("participant.user", "participatingUser")
             .getOne();
-        if (!user) { return notFound(`Could not find user with id '${id}'`); }
+        if (!user) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(user.participations.map(({ game }) => game));
     }
 }

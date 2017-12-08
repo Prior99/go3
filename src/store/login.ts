@@ -6,6 +6,7 @@ import { routeDashboard } from "routing";
 import { component, inject, initialize } from "tsdi";
 import { Users, Tokens } from "controllers";
 import { OwnUserStore } from "./own-user";
+import { GamesStore } from "./games";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";
@@ -27,6 +28,7 @@ export class LoginStore {
     @inject private users: Users;
     @inject private tokens: Tokens;
     @inject("OwnUserStore") private ownUser: OwnUserStore;
+    @inject("GamesStore") private games: GamesStore;
 
     @observable public authToken: string;
     @observable public userId: string;
@@ -51,6 +53,7 @@ export class LoginStore {
             this.userId = user.id;
             this.save();
             await this.ownUser.loadUser();
+            await this.games.loadGames();
             this.browserHistory.replace(routeDashboard.path());
         }
         return response;

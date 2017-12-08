@@ -41,7 +41,7 @@ module.exports = {
                 loader: "awesome-typescript-loader",
                 exclude: [
                     /__tests__/,
-                    path.resolve(__dirname, "src/server")
+                    // path.resolve(__dirname, "src/server")
                 ]
             },
             {

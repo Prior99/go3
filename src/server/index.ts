@@ -13,6 +13,7 @@ import { Context } from "./context";
 import { Database } from "./database";
 import { Token } from "../models";
 import * as morgan from "morgan";
+import { getAuthTokenId } from "../authorization";
 
 async function serve() {
     process.on("unhandledRejection", err => { error(err); exit(); });
@@ -44,13 +45,11 @@ async function serve() {
             tsdi.get(Validation),
             tsdi.get(Games),
         )
-        .context(tsdi.get(Context))
+        .context(req => new Context(req))
         .defaultAuthorizationMode(AuthorizationMode.AUTH)
         .authorization(async req => {
-            const header = req.get("authorization");
-            if (!header) { return false; }
-            if (header.substr(0, 7) !== "Bearer ") { return false; }
-            const id = header.substring(7, header.length);
+            const id = getAuthTokenId(req);
+            if (!id) { return false; }
             const token = await tsdi.get(Connection).getRepository(Token).findOne({
                 where: { id },
             });

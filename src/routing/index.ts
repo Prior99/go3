@@ -29,7 +29,6 @@ export const routeLogin: Route = {
     path: () => "/login",
     pattern: "/login",
     unauthorized: true,
-    title: "Login",
 };
 
 export const routeSignup: Route = {
@@ -46,10 +45,19 @@ export const routeDashboard: Route = {
     icon: "dashboard",
 };
 
+export const routeCreateGame: Route = {
+    path: () => "/create-game",
+    pattern: "/create-game",
+    navbar: true,
+    title: "CreateGame",
+    icon: "add",
+};
+
 export const routes: Route[] = [
     routeLogin,
     routeSignup,
     routeDashboard,
+    routeCreateGame,
 ];
 
 export function getRoute(url: string) {
