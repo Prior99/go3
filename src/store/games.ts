@@ -1,4 +1,4 @@
-import { observable, computed, action } from "mobx";
+import { observable, computed, action, extendObservable } from "mobx";
 import { bind } from "bind-decorator";
 import { LoginStore } from ".";
 import { History } from "history";
@@ -43,7 +43,9 @@ export class GamesStore {
     @bind
     private async refreshGameId() {
         this.currentGameId = parseGameId(this.browserHistory.location.pathname);
-        this.loadBoards(this.currentGameId);
+        if (this.currentGameId) {
+            this.loadBoards(this.currentGameId);
+        }
     }
 
     @bind
@@ -86,7 +88,9 @@ export class GamesStore {
     @bind @action
     private async loadBoards(gameId: string) {
         const boards = await this.gamesController.listBoards(gameId);
+        const game = this.games.get(gameId);
         this.games.get(gameId).boards = boards;
+        game.boards = boards;
     }
 
     @computed

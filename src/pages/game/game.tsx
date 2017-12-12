@@ -3,7 +3,7 @@ import { requireLogin } from "utils";
 import { Content } from "ui";
 import { inject, external } from "tsdi";
 import { GamesStore } from "store";
-import { GamesList } from "ui";
+import { GamesList, Board } from "ui";
 import { observer } from "mobx-react";
 import { computed } from "mobx";
 
@@ -21,15 +21,23 @@ export class PageGame extends React.Component<PageGameProps> {
 
     private get id() { return this.props.match.params.id; }
     @computed private get game() { return this.games.byId(this.id); }
+    @computed private get boardState() {
+        return this.game.currentBoard ? this.game.currentBoard.state : undefined;
+    }
 
     public render() {
-        if (!this.game) {
-            return <Content>"Loading"</Content>;
+        const game = this.games.byId(this.id);
+        if (!game) {
+            return <Content>Loading</Content>;
         }
         return (
             <Content>
                 <h1>Game</h1>
-                <p>{this.game.description}</p>
+                <p>{game.description}</p>
+                {
+                    game.boards && game.boards.length > 0 &&
+                    <Board state={this.boardState} size={game.boardSize} />
+                }
             </Content>
         );
     }

@@ -13,6 +13,7 @@ import { boardSizes } from "board-sizes";
 import { formatBoardSize } from "../board-sizes";
 import { Color } from "../board-color";
 import { Board } from "./board";
+import { computed, observable } from "mobx";
 
 @Entity()
 export class Game {
@@ -40,20 +41,29 @@ export class Game {
     public participants?: Participant[];
 
     @OneToMany(() => Board, board => board.game)
+    @observable
     public boards: Board[];
 
     private getUserByColor(color: Color) {
         return this.participants.find(participant => participant.color === color).user;
     }
 
-    private get blackUser() { return this.getUserByColor(Color.BLACK); }
-    private get whiteUser() { return this.getUserByColor(Color.WHITE); }
+    @computed private get blackUser() { return this.getUserByColor(Color.BLACK); }
+    @computed private get whiteUser() { return this.getUserByColor(Color.WHITE); }
 
-    public get description() {
-        return `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board.`;
+    @computed public get description() {
+        return `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board. ` +
+            `Game is at turn ${this.turn}. It's ${this.currentColor}'s turn.`;
     }
 
-    public get currentBoard() {
-        return this.boards[this.boards.length - 1];
+    @computed public get turn() { return this.currentBoard ? this.currentBoard.turn : 0; }
+
+    @computed public get currentColor() {
+        if (this.turn % 2 === 0) {
+            return Color.BLACK;
+        }
+        return Color.WHITE;
     }
+
+    @computed public get currentBoard() { return this.boards ? this.boards[this.boards.length - 1] : undefined; }
 }

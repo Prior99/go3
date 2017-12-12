@@ -22,7 +22,7 @@ export class Board {
 
     @ManyToOne(() => Game)
     @scope(turn)
-    @is().validate(required)
+    @is().validate(required) @specify(() => Game)
     public game?: Game;
 
     @OneToOne(() => Board)

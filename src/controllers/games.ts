@@ -28,20 +28,19 @@ export class Games {
         const participant2 = game.participants[1];
 
         if (participant1.color === participant2.color) {
-            return unprocessableEntity(undefined, "Colors are the same.");
+            return unprocessableEntity<Game>("Colors are the same.");
         }
         if (participant1.user.id === participant2.user.id) {
-            return unprocessableEntity(undefined, "Users are the same.");
+            return unprocessableEntity<Game>("Users are the same.");
         }
         const currentUser = await ctx.currentUser();
         if (currentUser.id !== participant1.user.id && currentUser.id !== participant2.user.id) {
-            return unprocessableEntity(undefined, "Cannot create game for two foreign users,");
+            return unprocessableEntity<Game>("Cannot create game for two foreign users,");
         }
         await this.db.getRepository(Participant).save(game.participants);
         await this.db.getRepository(Game).save(game);
         this.db.getRepository(Board).save(populate(turn, Board, {
             game,
-            parent,
             prisonersBlack: 0,
             prisonersWhite: 0,
             state: Array.from({ length: Math.pow(game.boardSize, 2)}).map(() => Color.EMPTY),
@@ -54,7 +53,7 @@ export class Games {
     public async listBoards(@param("id") @is() id: string): Promise<Board[]> {
         const game = await this.db.getRepository(Game).createQueryBuilder("game")
             .where("game.id=:id", { id })
-            .innerJoinAndSelect("game.boards", "board")
+            .leftJoinAndSelect("game.boards", "board")
             .getOne();
         if (!game) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(game.boards.sort((a, b) => a.turn - b.turn));

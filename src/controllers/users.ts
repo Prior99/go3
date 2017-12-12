@@ -18,7 +18,7 @@ export class Users {
     @route("GET", "/user/:id").dump(User, world) @noauth
     public async getUser(@param("id") @is() id: string) {
         const user = await this.db.getRepository(User).findOneById(id);
-        if (!user) { return notFound(undefined, `Could not find user with id '${id}'`); }
+        if (!user) { return notFound<User>(`Could not find user with id '${id}'`); }
         return ok(user);
     }
 
@@ -35,12 +35,12 @@ export class Users {
     public async listGames(@param("id") @is() id: string): Promise<Game[]> {
         const user = await this.db.getRepository(User).createQueryBuilder("user")
             .where("user.id=:id", { id })
-            .innerJoinAndSelect("user.participations", "participation")
-            .innerJoinAndSelect("participation.game", "game")
-            .innerJoinAndSelect("game.participants", "participant")
-            .innerJoinAndSelect("participant.user", "participatingUser")
+            .leftJoinAndSelect("user.participations", "participation")
+            .leftJoinAndSelect("participation.game", "game")
+            .leftJoinAndSelect("game.participants", "participant")
+            .leftJoinAndSelect("participant.user", "participatingUser")
             .getOne();
-        if (!user) { return notFound(undefined, `Could not find user with id '${id}'`); }
+        if (!user) { return notFound<Game[]>(`Could not find user with id '${id}'`); }
         return ok(user.participations.map(({ game }) => game));
     }
 }

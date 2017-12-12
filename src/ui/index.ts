@@ -6,3 +6,4 @@ export * from "./content";
 export * from "./user-select";
 export * from "./board-size-select";
 export * from "./games-list";
+export * from "./board";
