@@ -10,6 +10,10 @@ import {
     param,
     is,
     notFound,
+    DataType,
+    required,
+    unauthorized,
+    query,
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
@@ -49,13 +53,50 @@ export class Games {
         return created(game);
     }
 
+    @route("GET", "/game/:id").dump(Game, world)
+    public async getGame(@param("id") @is() id: string): Promise<Game> {
+        const game = await this.db.getRepository(Game).findOneById(id);
+        if (!game) {
+            return notFound<Game>(`Could not find game with id ${id}.`);
+        }
+        return ok(game);
+    }
+
     @route("GET", "/game/:id/boards").dump(Board, world)
-    public async listBoards(@param("id") @is() id: string): Promise<Board[]> {
+    public async listBoards(
+        @param("id") @is() id: string,
+        @query("sinceTurn") @is(DataType.int) sinceTurn: number = -1,
+    ): Promise<Board[]> {
         const game = await this.db.getRepository(Game).createQueryBuilder("game")
+            .leftJoinAndSelect("game.boards", "board", "board.turn > :sinceTurn", { sinceTurn })
             .where("game.id=:id", { id })
-            .leftJoinAndSelect("game.boards", "board")
             .getOne();
         if (!game) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(game.boards.sort((a, b) => a.turn - b.turn));
+    }
+
+    @route("POST", "/game/:id/turn").dump(Board, world)
+    public async turn(
+        @param("id") @is() id: string,
+        @body() @is(DataType.int).validate(required) index: number,
+        @context ctx?: Context,
+    ): Promise<Board> {
+        const game = await this.db.getRepository(Game).findOne({
+            where: { id },
+            relations: ["boards", "participants", "participants.user", "boards.game"],
+        });
+        if (!game) {
+            return notFound<Board>(`Could not find game with id ${id}.`);
+        }
+        if ((await ctx.currentUser()).id !== game.currentUser.id) {
+            return unauthorized<Board>();
+        }
+        const message = game.turnValid(index);
+        if (message) {
+            return unprocessableEntity<Board>(message);
+        }
+        const newBoard = game.currentBoard.place(index);
+        await this.db.getRepository(Board).save(newBoard);
+        return ok(newBoard);
     }
 }

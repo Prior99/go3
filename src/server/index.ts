@@ -35,7 +35,7 @@ async function serve() {
     database.connect();
 
     http.use(catchError);
-    http.use(BodyParser.json());
+    http.use(BodyParser.json({ strict: false }));
     http.use(morgan("tiny", { stream: { write: msg => info(msg.trim()) } }));
     http.use(cors);
     http.use(

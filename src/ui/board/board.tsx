@@ -8,9 +8,18 @@ import { Cell } from "./cell";
 export interface BoardProps {
     readonly size: number;
     readonly state: Color[];
+    readonly onPlace?: (index: number) => void;
 }
 
 export class Board extends React.Component<BoardProps> {
+    private handleClick(index: number) {
+        const { onPlace } = this.props;
+        if (!onPlace) {
+            return;
+        }
+        onPlace(index);
+    }
+
     public render() {
         const { size, state } = this.props;
         const style = {
@@ -20,7 +29,17 @@ export class Board extends React.Component<BoardProps> {
         return (
             <div className={css.board} style={style}>
                 {
-                    state.map((color, index) => <Cell color={color} key={index} index={index} />)
+                    state.map((color, index) => {
+                        const handleClick = () => this.handleClick(index);
+                        return (
+                            <Cell
+                                color={color}
+                                key={index}
+                                index={index}
+                                onClick={handleClick}
+                            />
+                        );
+                    })
                 }
             </div>
         );

@@ -95,6 +95,9 @@ module.exports = {
         }
     },
     plugins: [
+        new Webpack.NormalModuleReplacementPlugin(/typeorm$/, result => {
+            result.request = result.request.replace(/typeorm/, "typeorm/browser");
+        }),
         extractCSS,
         new Webpack.DefinePlugin({
             // Taken and adapted from the official README.

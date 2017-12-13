@@ -11,9 +11,10 @@ import { world, gameCreate, turn } from "scopes";
 import { is, scope, DataType, oneOf, specify, required, length } from "hyrest";
 import { boardSizes } from "board-sizes";
 import { formatBoardSize } from "../board-sizes";
-import { Color } from "../board-color";
+import { Color, oppositeColor } from "../board-color";
 import { Board } from "./board";
 import { computed, observable } from "mobx";
+import { bind } from "bind-decorator";
 
 @Entity()
 export class Game {
@@ -48,22 +49,38 @@ export class Game {
         return this.participants.find(participant => participant.color === color).user;
     }
 
-    @computed private get blackUser() { return this.getUserByColor(Color.BLACK); }
-    @computed private get whiteUser() { return this.getUserByColor(Color.WHITE); }
+    @computed public get blackUser() { return this.getUserByColor(Color.BLACK); }
+    @computed public get whiteUser() { return this.getUserByColor(Color.WHITE); }
+    @computed public get currentUser() { return this.getUserByColor(this.currentBoard.currentColor); }
 
     @computed public get description() {
+        if (!this.currentBoard) {
+            return "Loading board.";
+        }
         return `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board. ` +
-            `Game is at turn ${this.turn}. It's ${this.currentColor}'s turn.`;
+            `Game is at turn ${this.turn}. It's ${this.currentBoard.currentColor}'s turn.`;
     }
 
     @computed public get turn() { return this.currentBoard ? this.currentBoard.turn : 0; }
 
-    @computed public get currentColor() {
-        if (this.turn % 2 === 0) {
-            return Color.BLACK;
-        }
-        return Color.WHITE;
-    }
-
     @computed public get currentBoard() { return this.boards ? this.boards[this.boards.length - 1] : undefined; }
+
+    public turnValid(index: number) {
+        if (this.currentBoard.at(index) !== Color.EMPTY) {
+            return "Already occupied.";
+        }
+        const nextBoard = this.currentBoard.mockPlace(index);
+        if (nextBoard.equal(this.currentBoard.parent)) {
+            return "Can not repeat a Ko.";
+        }
+        const group = Array.from(nextBoard.groupAt(index));
+        if (nextBoard.freedoms(group) > 0) {
+            return;
+        }
+        const enemyNeighbours = nextBoard.neighboursOfColor(index, oppositeColor(this.currentBoard.currentColor));
+        if (!enemyNeighbours.some(neighbour => nextBoard.freedoms(Array.from(nextBoard.groupAt(neighbour))) === 0)) {
+            return "Cannot commit suicide.";
+        }
+        return;
+    }
 }

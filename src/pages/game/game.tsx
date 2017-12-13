@@ -5,7 +5,8 @@ import { inject, external } from "tsdi";
 import { GamesStore } from "store";
 import { GamesList, Board } from "ui";
 import { observer } from "mobx-react";
-import { computed } from "mobx";
+import { computed, action } from "mobx";
+import { bind } from "bind-decorator";
 
 export interface PageGameProps {
     readonly match: {
@@ -25,6 +26,10 @@ export class PageGame extends React.Component<PageGameProps> {
         return this.game.currentBoard ? this.game.currentBoard.state : undefined;
     }
 
+    @bind @action private async place(index: number) {
+        await this.games.turn(this.game, index);
+    }
+
     public render() {
         const game = this.games.byId(this.id);
         if (!game) {
@@ -36,7 +41,11 @@ export class PageGame extends React.Component<PageGameProps> {
                 <p>{game.description}</p>
                 {
                     game.boards && game.boards.length > 0 &&
-                    <Board state={this.boardState} size={game.boardSize} />
+                    <Board
+                        state={this.boardState}
+                        size={game.boardSize}
+                        onPlace={this.place}
+                    />
                 }
             </Content>
         );

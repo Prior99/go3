@@ -11,8 +11,7 @@ import { routeGame } from "../routing/index";
 import * as pathToRegexp from "path-to-regexp";
 
 function parseGameId(url: string) {
-    const regexp = pathToRegexp(routeGame.pattern);
-    const result = regexp.exec(url);
+    const result = pathToRegexp(routeGame.pattern).exec(url);
     if (!result) {
         return;
     }
@@ -31,6 +30,8 @@ export class GamesStore {
     @observable public loading = false;
     @observable public currentGameId: string;
 
+    private refreshInterval: number;
+
     @initialize
     private async initialize() {
         if (this.login.loggedIn) {
@@ -45,7 +46,18 @@ export class GamesStore {
         this.currentGameId = parseGameId(this.browserHistory.location.pathname);
         if (this.currentGameId) {
             this.loadBoards(this.currentGameId);
+            this.refreshInterval = setInterval(this.refreshBoards, 1000);
         }
+    }
+
+    @bind
+    private async refreshBoards() {
+        if (this.currentGameId) {
+            const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
+            this.games.get(this.currentGameId).boards.push(...newBoards);
+            return;
+        }
+        clearInterval(this.refreshInterval);
     }
 
     @bind
@@ -88,9 +100,7 @@ export class GamesStore {
     @bind @action
     private async loadBoards(gameId: string) {
         const boards = await this.gamesController.listBoards(gameId);
-        const game = this.games.get(gameId);
         this.games.get(gameId).boards = boards;
-        game.boards = boards;
     }
 
     @computed
@@ -101,5 +111,19 @@ export class GamesStore {
     @bind
     public byId(id: string) {
         return this.games.get(id);
+    }
+
+    @bind @action
+    public async turn(game: Game, index: number) {
+        const board = await this.gamesController.turn(game.id, index);
+        game.boards.push(board);
+    }
+
+    @computed
+    public get currentGame() {
+        if (!this.currentGameId) {
+            return;
+        }
+        return this.byId(this.currentGameId);
     }
 }

@@ -1,4 +1,24 @@
 .cell {
     background: url("assets/grid-background.png");
-    border: 1px solid black;
+    border: 1px solid rgb(0, 0, 0);
+    background: rgb(120, 120, 120);
+    position: relative;
+}
+
+@mixin token {
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    position: absolute;
+}
+
+.black {
+    @include token;
+    background: rgb(0, 0, 0);
+}
+
+.white {
+    @include token;
+    background: rgb(255, 255, 255);
 }
