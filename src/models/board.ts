@@ -29,7 +29,7 @@ export class Board {
         if (typeof parent !== "undefined") {
             this.parent = parent;
             this.game = parent.game;
-            this.state = parent.state;
+            this.state = [...parent.state];
             this.prisonersBlack = parent.prisonersBlack;
             this.prisonersWhite = parent.prisonersWhite;
             this.turn = parent.turn;

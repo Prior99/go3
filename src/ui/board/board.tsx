@@ -37,6 +37,7 @@ export class Board extends React.Component<BoardProps> {
                                 key={index}
                                 index={index}
                                 onClick={handleClick}
+                                size={size}
                             />
                         );
                     })

@@ -5,31 +5,64 @@ import * as css from "./cell.scss";
 import { Color } from "board-color";
 import * as classNames from "classnames";
 import { bind } from "bind-decorator";
+import { inject, external } from "tsdi";
+import { GamesStore, LoginStore } from "store";
 
 export interface CellProps {
     readonly color: Color;
     readonly index: number;
     readonly onClick?: () => void;
+    readonly size: number;
 }
 
+@external @observer
 export class Cell extends React.Component<CellProps> {
+    @inject private games: GamesStore;
+    @inject private login: LoginStore;
+
     @bind private handleClick() {
         const { onClick } = this.props;
         if (!onClick) {
             return;
         }
+        if (!this.valid) {
+            return;
+        }
         onClick();
     }
 
+    @computed private get valid() {
+        const errorMessage = this.games.currentGame.turnValid(this.props.index);
+        console.log(this.games.currentGame.currentBoard.toPos(this.props.index), errorMessage)
+        return this.login.userId === this.games.currentGame.currentUser.id &&
+            typeof errorMessage === "undefined";
+    }
+
     public render() {
-        const { color } = this.props;
+        const { color, size, index } = this.props;
+        const tokenColorClass = classNames({
+            [css.black]: color === Color.BLACK,
+            [css.white]: color === Color.WHITE,
+        });
+        const previewColorClass = classNames(css.preview, {
+            [css.black]: this.games.ownColor === Color.BLACK,
+            [css.white]: this.games.ownColor === Color.WHITE,
+            [css.invalid]: !this.valid,
+        });
+        const cellClass = classNames(css.cell, {
+            [css.cellTop]: index < size,
+            [css.cellRight]: index % size === size - 1,
+            [css.cellBottom]: index > size * (size - 1),
+            [css.cellLeft]: index % size === 0,
+            [css.cellTopLeft]: index === 0,
+            [css.cellTopRight]: index === size - 1,
+            [css.cellBottomRight]: index === size * size - 1,
+            [css.cellBottomLeft]: index === size * (size - 1),
+        });
         return (
-            <div className={css.cell} onClick={this.handleClick}>
-                {
-                    color === Color.BLACK ? <div className={css.black} /> :
-                    color === Color.WHITE ? <div className={css.white} /> :
-                    null // tslint:disable-line
-                }
+            <div className={cellClass} onClick={this.handleClick}>
+                { color !== Color.EMPTY && <div className={tokenColorClass} /> }
+                { color === Color.EMPTY && <div className={previewColorClass} /> }
             </div>
         );
     }

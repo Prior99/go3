@@ -1,8 +1,55 @@
 .cell {
-    background: url("assets/grid-background.png");
-    border: 1px solid rgb(0, 0, 0);
-    background: rgb(120, 120, 120);
+    background-image: url("./grid-background.png");
+    background-size: contain;
     position: relative;
+}
+
+@mixin cellBorder {
+    background-image: url("./grid-background-border.png");
+}
+
+@mixin cellCorner {
+    background-image: url("./grid-background-corner.png");
+}
+
+.cellTop {
+    @include cellBorder;
+    transform: rotate(0deg);
+}
+
+.cellRight {
+    @include cellBorder;
+    transform: rotate(90deg);
+}
+
+.cellBottom {
+    @include cellBorder;
+    transform: rotate(180deg);
+}
+
+.cellLeft {
+    @include cellBorder;
+    transform: rotate(-90deg);
+}
+
+.cellTopLeft {
+    @include cellCorner;
+    transform: rotate(0deg);
+}
+
+.cellTopRight {
+    @include cellCorner;
+    transform: rotate(90deg);
+}
+
+.cellBottomRight {
+    @include cellCorner;
+    transform: rotate(180deg);
+}
+
+.cellBottomLeft {
+    @include cellCorner;
+    transform: rotate(-90deg);
 }
 
 @mixin token {
@@ -11,14 +58,31 @@
     top: 0;
     bottom: 0;
     position: absolute;
+    background-size: contain;
+    box-model: border-box;
+    margin: 1px;
 }
 
 .black {
     @include token;
-    background: rgb(0, 0, 0);
+    background-image: url("./token-black.png");
 }
 
 .white {
     @include token;
-    background: rgb(255, 255, 255);
+    background-image: url("./token-white.png");
+}
+
+.invalid {
+    @include token;
+    background-image: url("./token-invalid.png");
+}
+
+.preview {
+    opacity: 0;
+    transition: opacity 0.1s linear;
+
+    &:hover {
+        opacity: 0.5;
+    }
 }

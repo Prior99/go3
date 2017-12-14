@@ -10,9 +10,9 @@ const gitRevision = new GitRevisionPlugin({ lightweightTags: true });
 module.exports = {
     entry: path.resolve(__dirname, "src/app.tsx"),
     output: {
-        path: __dirname + "/dist",
+        path: __dirname + "/dist/",
         filename: "bundle.js",
-        publicPath: "/dist"
+        publicPath: "/dist/"
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],

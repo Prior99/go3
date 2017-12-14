@@ -69,16 +69,19 @@ export class Game {
         if (this.currentBoard.at(index) !== Color.EMPTY) {
             return "Already occupied.";
         }
-        const nextBoard = this.currentBoard.mockPlace(index);
-        if (nextBoard.equal(this.currentBoard.parent)) {
+        const tempBoard = this.currentBoard.mockPlace(index);
+        const nextBoard = this.currentBoard.place(index);
+        if (nextBoard.equal(this.boards[this.boards.length - 2])) {
             return "Can not repeat a Ko.";
         }
-        const group = Array.from(nextBoard.groupAt(index));
-        if (nextBoard.freedoms(group) > 0) {
+        const group = Array.from(tempBoard.groupAt(index));
+        if (tempBoard.freedoms(group) > 0) {
             return;
         }
-        const enemyNeighbours = nextBoard.neighboursOfColor(index, oppositeColor(this.currentBoard.currentColor));
-        if (!enemyNeighbours.some(neighbour => nextBoard.freedoms(Array.from(nextBoard.groupAt(neighbour))) === 0)) {
+        const enemyNeighbours = tempBoard.neighboursOfColor(index, oppositeColor(this.currentBoard.currentColor));
+        const killedNeighbours =
+            !enemyNeighbours.some(neighbour => tempBoard.freedoms(Array.from(tempBoard.groupAt(neighbour))) === 0);
+        if (killedNeighbours) {
             return "Cannot commit suicide.";
         }
         return;

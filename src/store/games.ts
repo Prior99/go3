@@ -126,4 +126,15 @@ export class GamesStore {
         }
         return this.byId(this.currentGameId);
     }
+
+    @computed
+    public get ownColor() {
+        if (this.login.userId === this.currentGame.whiteUser.id) {
+            return Color.WHITE;
+        }
+        if (this.login.userId === this.currentGame.blackUser.id) {
+            return Color.BLACK;
+        }
+        return;
+    }
 }
