@@ -7,6 +7,7 @@ import { GamesList, Board } from "ui";
 import { observer } from "mobx-react";
 import { computed, action } from "mobx";
 import { bind } from "bind-decorator";
+import * as css from "./game.scss";
 
 export interface PageGameProps {
     readonly match: {
@@ -39,6 +40,7 @@ export class PageGame extends React.Component<PageGameProps> {
             <Content>
                 <h1>Game</h1>
                 <p>{game.description}</p>
+                <div className={css.boardContainer}>
                 {
                     game.boards && game.boards.length > 0 &&
                     <Board
@@ -47,6 +49,7 @@ export class PageGame extends React.Component<PageGameProps> {
                         onPlace={this.place}
                     />
                 }
+                </div>
             </Content>
         );
     }
