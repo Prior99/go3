@@ -54,11 +54,12 @@ export class Game {
     @computed public get currentUser() { return this.getUserByColor(this.currentBoard.currentColor); }
 
     @computed public get description() {
+        const description =
+            `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board.`;
         if (!this.currentBoard) {
-            return "Loading board.";
+            return description;
         }
-        return `${this.blackUser.name} vs ${this.whiteUser.name} on a ${formatBoardSize(this.boardSize)} board. ` +
-            `Game is at turn ${this.turn}. It's ${this.currentBoard.currentColor}'s turn.`;
+        return `${description} Game is at turn ${this.turn}. It's ${this.currentBoard.currentColor}'s turn.`;
     }
 
     @computed public get turn() { return this.currentBoard ? this.currentBoard.turn : 0; }

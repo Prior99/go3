@@ -38,17 +38,26 @@ export class PageGame extends React.Component<PageGameProps> {
         }
         return (
             <Content>
-                <h1>Game</h1>
-                <p>{game.description}</p>
-                <div className={css.boardContainer}>
-                {
-                    game.boards && game.boards.length > 0 &&
-                    <Board
-                        state={this.boardState}
-                        size={game.boardSize}
-                        onPlace={this.place}
-                    />
-                }
+                <div className={css.container}>
+                    <div className={css.game}>
+                        <h1>Game</h1>
+                        <p>{game.description}</p>
+                        <div className={css.boardContainer}>
+                        {
+                            game.boards && game.boards.length > 0 &&
+                            <Board
+                                state={this.boardState}
+                                size={game.boardSize}
+                                onPlace={this.place}
+                            />
+                        }
+                        </div>
+                    </div>
+                    <div className={css.sidebar}>
+                        <h2>Lol</h2>
+                        <p>Lorem ipsum dolor sit amed.</p>
+                        <p>Edipiscir eunt.</p>
+                    </div>
                 </div>
             </Content>
         );

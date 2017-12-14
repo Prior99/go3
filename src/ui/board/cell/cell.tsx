@@ -33,7 +33,6 @@ export class Cell extends React.Component<CellProps> {
 
     @computed private get valid() {
         const errorMessage = this.games.currentGame.turnValid(this.props.index);
-        console.log(this.games.currentGame.currentBoard.toPos(this.props.index), errorMessage)
         return this.login.userId === this.games.currentGame.currentUser.id &&
             typeof errorMessage === "undefined";
     }
