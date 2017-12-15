@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu } from "semantic-ui-react";
+import { Menu, Table } from "semantic-ui-react";
 import { Game } from "models";
 import { observer } from "mobx-react";
 import { formatBoardSize } from "board-sizes";
@@ -40,13 +40,44 @@ export class GamesListItem extends React.Component<GamesListItemProps> {
                     <div className={css.boardContainer}>
                         <PreviewBoard board={board} />
                     </div>
-                    <div className={css.textContainer}>
-                        <p><b>Turn:</b> {board.turn}</p>
-                        <p><b>Prisoners white:</b> {board.prisonersWhite}</p>
-                        <p><b>Score white:</b> {board.getScore(Color.WHITE)}</p>
-                        <p><b>Prisoners black:</b> {board.prisonersBlack}</p>
-                        <p><b>Score black:</b> {board.getScore(Color.BLACK)}</p>
-                        <p><b>Date:</b> {board.created}</p>
+                    <div className={css.firstTable}>
+                        <Table basic>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell>Turn</Table.HeaderCell>
+                                    <Table.HeaderCell>Last turn</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                <Table.Row>
+                                    <Table.Cell>{board.turn}</Table.Cell>
+                                    <Table.Cell>{game.created.toLocaleString()}</Table.Cell>
+                                </Table.Row>
+                            </Table.Body>
+                        </Table>
+                    </div>
+                    <div className={css.secondTable}>
+                        <Table definition basic>
+                            <Table.Header>
+                                <Table.Row>
+                                    <Table.HeaderCell></Table.HeaderCell>
+                                    <Table.HeaderCell>Black</Table.HeaderCell>
+                                    <Table.HeaderCell>White</Table.HeaderCell>
+                                </Table.Row>
+                            </Table.Header>
+                            <Table.Body>
+                                <Table.Row>
+                                    <Table.Cell>Prisoners</Table.Cell>
+                                    <Table.Cell>{board.prisonersBlack}</Table.Cell>
+                                    <Table.Cell>{board.prisonersWhite}</Table.Cell>
+                                </Table.Row>
+                                <Table.Row>
+                                    <Table.Cell>Score</Table.Cell>
+                                    <Table.Cell>{board.getScore(Color.BLACK)}</Table.Cell>
+                                    <Table.Cell>{board.getScore(Color.WHITE)}</Table.Cell>
+                                </Table.Row>
+                            </Table.Body>
+                        </Table>
                     </div>
                 </div>
             </Menu.Item>

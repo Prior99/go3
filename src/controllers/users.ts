@@ -32,14 +32,20 @@ export class Users {
     }
 
     @route("GET", "/user/:id/games").dump(Game, world) @noauth
-    public async listGames(@param("id") @is() id: string): Promise<Game[]> {
-        const user = await this.db.getRepository(User).createQueryBuilder("user")
+    public async listGames(
+        @param("id") @is() id: string,
+        @query("onlyActive") @is() onlyActive?: boolean,
+    ): Promise<Game[]> {
+        let dbQuery = this.db.getRepository(User).createQueryBuilder("user")
             .where("user.id=:id", { id })
             .leftJoinAndSelect("user.participations", "participation")
             .leftJoinAndSelect("participation.game", "game")
             .leftJoinAndSelect("game.participants", "participant")
-            .leftJoinAndSelect("participant.user", "participatingUser")
-            .getOne();
+            .leftJoinAndSelect("participant.user", "participatingUser");
+        if (onlyActive) {
+            dbQuery.where("participant.winner IS NULL");
+        }
+        const user = await dbQuery.getOne();
         if (!user) { return notFound<Game[]>(`Could not find user with id '${id}'`); }
         return ok(user.participations.map(({ game }) => game));
     }

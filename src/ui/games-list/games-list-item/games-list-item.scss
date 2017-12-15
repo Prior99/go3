@@ -1,23 +1,31 @@
 .flexContainer {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: flex-start;
 }
 
-.textContainer {
+@mixin textContainer {
     display: block;
+    margin-left: 10px;
+}
 
-    p {
-        line-height: 1em;
-        margin: 0;
+.firstTable {
+    @include textContainer;
+}
+
+.secondTable {
+    @include textContainer;
+}
+
+@media(max-width: 100vh) {
+    .secondTable {
+        display: none;
     }
 }
 
 .boardContainer {
     display: block;
-    width: 80px;
-    height: 80px;
+    width: 120px;
+    height: 120px;
     position: relative;
-    margin-right: 10px;
 }
-

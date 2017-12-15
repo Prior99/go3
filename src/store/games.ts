@@ -45,6 +45,9 @@ export class GamesStore {
     private async refreshGameId() {
         this.currentGameId = parseGameId(this.browserHistory.location.pathname);
         if (this.currentGameId) {
+            if (!this.currentGame) {
+                await this.loadGame(this.currentGameId);
+            }
             this.loadBoards(this.currentGameId);
             this.refreshInterval = setInterval(this.refreshBoards, 1000);
         }
@@ -52,9 +55,9 @@ export class GamesStore {
 
     @bind
     private async refreshBoards() {
-        if (this.currentGameId) {
+        if (this.currentGame) {
             const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
-            this.games.get(this.currentGameId).boards.push(...newBoards);
+            this.currentGame.boards.push(...newBoards);
             if (this.currentGame.consecutivePasses >= 2) {
                 await this.loadGame(this.currentGameId);
                 await this.loadBoards(this.currentGameId);
@@ -88,7 +91,7 @@ export class GamesStore {
     @bind @action
     public async loadGame(id: string) {
         const game = await this.gamesController.getGame(id);
-        this.games.set(id, game);
+        this.storeGame(game);
         return game;
     }
 

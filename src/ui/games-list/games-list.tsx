@@ -13,7 +13,11 @@ export class GamesList extends React.Component<GamesListProps> {
     public render() {
         return (
             <Menu vertical fluid borderless>
-                {this.props.games.map(game => <GamesListItem game={game} key={game.id}/>)}
+                {
+                    this.props.games
+                        .filter(game => !game.over)
+                        .map(game => <GamesListItem game={game} key={game.id}/>)
+                }
             </Menu>
         );
     }
