@@ -14,6 +14,7 @@ import {
     required,
     unauthorized,
     query,
+    noauth,
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
@@ -53,7 +54,7 @@ export class Games {
         return created(game);
     }
 
-    @route("GET", "/game/:id").dump(Game, world)
+    @route("GET", "/game/:id").dump(Game, world) @noauth
     public async getGame(@param("id") @is() id: string): Promise<Game> {
         const game = await this.db.getRepository(Game).findOne({
             where: { id },
@@ -65,7 +66,7 @@ export class Games {
         return ok(game);
     }
 
-    @route("GET", "/game/:id/boards").dump(Board, world)
+    @route("GET", "/game/:id/boards").dump(Board, world) @noauth
     public async listBoards(
         @param("id") @is() id: string,
         @query("sinceTurn") @is(DataType.int) sinceTurn: number = -1,
@@ -76,6 +77,18 @@ export class Games {
             .getOne();
         if (!game) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(game.boards.sort((a, b) => a.turn - b.turn));
+    }
+
+    @route("GET", "/game/:id/boards/latest").dump(Board, world) @noauth
+    public async latestBoard(
+        @param("id") @is() id: string,
+    ): Promise<Board> {
+        const board = await this.db.getRepository(Board).createQueryBuilder("board")
+            .where("board.game=:id", { id })
+            .orderBy("board.turn", "DESC")
+            .getOne();
+        if (!board) { return notFound(undefined, `Could not find latest board for game with id '${id}'`); }
+        return ok(board);
     }
 
     @route("POST", "/game/:id/turn").dump(Board, world)

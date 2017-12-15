@@ -9,6 +9,8 @@ import { computed } from "mobx/lib/mobx";
 import { History } from "history";
 import { routeGame } from "routing";
 import { bind } from "bind-decorator";
+import * as css from "./games-list-item.scss";
+import { PreviewBoard } from "ui";
 
 export interface GamesListItemProps {
     readonly game: Game;
@@ -23,10 +25,30 @@ export class GamesListItem extends React.Component<GamesListItemProps> {
     }
 
     public render() {
-        const { boardSize } = this.props.game;
+        const { game } = this.props;
+        if (!game) {
+            return null; // tslint:disable-line
+        }
+        const { currentBoard: board, whiteUser, blackUser } = game;
+        if (!board) {
+            return null; // tslint:disable-line
+        }
         return (
             <Menu.Item onClick={this.handleClick}>
-                <p>{this.props.game.description}</p>
+                <h3>{whiteUser.name} vs {blackUser.name}</h3>
+                <div className={css.flexContainer}>
+                    <div className={css.boardContainer}>
+                        <PreviewBoard board={board} />
+                    </div>
+                    <div className={css.textContainer}>
+                        <p><b>Turn:</b> {board.turn}</p>
+                        <p><b>Prisoners white:</b> {board.prisonersWhite}</p>
+                        <p><b>Score white:</b> {board.getScore(Color.WHITE)}</p>
+                        <p><b>Prisoners black:</b> {board.prisonersBlack}</p>
+                        <p><b>Score black:</b> {board.getScore(Color.BLACK)}</p>
+                        <p><b>Date:</b> {board.created}</p>
+                    </div>
+                </div>
             </Menu.Item>
         );
     }

@@ -1,0 +1,23 @@
+.flexContainer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.textContainer {
+    display: block;
+
+    p {
+        line-height: 1em;
+        margin: 0;
+    }
+}
+
+.boardContainer {
+    display: block;
+    width: 80px;
+    height: 80px;
+    position: relative;
+    margin-right: 10px;
+}
+

@@ -70,6 +70,8 @@ export class GamesStore {
     @bind
     private async storeGame(game: Game) {
         this.games.set(game.id, game);
+        const latestBoard = await this.gamesController.latestBoard(game.id);
+        game.boards = [latestBoard];
         await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
     }
 
@@ -85,7 +87,9 @@ export class GamesStore {
 
     @bind @action
     public async loadGame(id: string) {
-        this.games.set(id, await this.gamesController.getGame(id));
+        const game = await this.gamesController.getGame(id);
+        this.games.set(id, game);
+        return game;
     }
 
     @bind @action
