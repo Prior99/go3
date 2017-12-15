@@ -30,7 +30,7 @@ export class GamesStore {
     @observable public loading = false;
     @observable public currentGameId: string;
 
-    private refreshInterval: number;
+    private refreshInterval: any;
 
     @initialize
     private async initialize() {

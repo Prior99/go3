@@ -1,9 +1,8 @@
 import * as React from "react";
 import { requireLogin } from "utils";
-import { Content } from "ui";
+import { Content, Board, GameHistory, GameStatus } from "ui";
 import { inject, external } from "tsdi";
 import { GamesStore } from "store";
-import { GamesList, Board } from "ui";
 import { observer } from "mobx-react";
 import { computed, action } from "mobx";
 import { bind } from "bind-decorator";
@@ -40,23 +39,20 @@ export class PageGame extends React.Component<PageGameProps> {
             <Content>
                 <div className={css.container}>
                     <div className={css.game}>
-                        <h1>Game</h1>
-                        <p>{game.description}</p>
+                        <GameStatus />
                         <div className={css.boardContainer}>
-                        {
-                            game.boards && game.boards.length > 0 &&
-                            <Board
-                                state={this.boardState}
-                                size={game.boardSize}
-                                onPlace={this.place}
-                            />
-                        }
+                            {
+                                game.boards && game.boards.length > 0 &&
+                                <Board
+                                    state={this.boardState}
+                                    size={game.boardSize}
+                                    onPlace={this.place}
+                                />
+                            }
                         </div>
                     </div>
                     <div className={css.sidebar}>
-                        <h2>Lol</h2>
-                        <p>Lorem ipsum dolor sit amed.</p>
-                        <p>Edipiscir eunt.</p>
+                        <GameHistory />
                     </div>
                 </div>
             </Content>

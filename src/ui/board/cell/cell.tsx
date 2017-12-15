@@ -13,6 +13,7 @@ export interface CellProps {
     readonly index: number;
     readonly onClick?: () => void;
     readonly size: number;
+    readonly minimal?: boolean;
 }
 
 @external @observer
@@ -38,7 +39,7 @@ export class Cell extends React.Component<CellProps> {
     }
 
     public render() {
-        const { color, size, index } = this.props;
+        const { color, size, index, minimal } = this.props;
         const tokenColorClass = classNames({
             [css.black]: color === Color.BLACK,
             [css.white]: color === Color.WHITE,
@@ -48,7 +49,7 @@ export class Cell extends React.Component<CellProps> {
             [css.white]: this.games.ownColor === Color.WHITE,
             [css.invalid]: !this.valid,
         });
-        const cellClass = classNames(css.cell, {
+        const cellClass = classNames(css.cell, !minimal ? {
             [css.cellTop]: index < size,
             [css.cellRight]: index % size === size - 1,
             [css.cellBottom]: index > size * (size - 1),
@@ -57,7 +58,7 @@ export class Cell extends React.Component<CellProps> {
             [css.cellTopRight]: index === size - 1,
             [css.cellBottomRight]: index === size * size - 1,
             [css.cellBottomLeft]: index === size * (size - 1),
-        });
+        } : undefined);
         return (
             <div className={cellClass} onClick={this.handleClick}>
                 { color !== Color.EMPTY && <div className={tokenColorClass} /> }

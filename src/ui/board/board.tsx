@@ -9,6 +9,7 @@ export interface BoardProps {
     readonly size: number;
     readonly state: Color[];
     readonly onPlace?: (index: number) => void;
+    readonly minimal?: boolean;
 }
 
 export class Board extends React.Component<BoardProps> {
@@ -21,7 +22,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     public render() {
-        const { size, state } = this.props;
+        const { size, state, minimal } = this.props;
         const style = {
             gridTemplateRows: `repeat(${size}, 1fr)`,
             gridTemplateColumns: `repeat(${size}, 1fr)`,
@@ -33,6 +34,7 @@ export class Board extends React.Component<BoardProps> {
                         const handleClick = () => this.handleClick(index);
                         return (
                             <Cell
+                                minimal={minimal}
                                 color={color}
                                 key={index}
                                 index={index}

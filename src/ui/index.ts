@@ -7,3 +7,6 @@ export * from "./user-select";
 export * from "./board-size-select";
 export * from "./games-list";
 export * from "./board";
+export * from "./game-history";
+export * from "./preview-board";
+export * from "./game-status";
