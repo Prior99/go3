@@ -4,6 +4,7 @@ import { observer } from "mobx-react";
 import { computed } from "mobx";
 import { GamesStore, LoginStore } from "store";
 import { Menu, Label } from "semantic-ui-react";
+import { bind } from "bind-decorator";
 
 @external @observer
 export class GameStatus extends React.Component {
@@ -12,6 +13,11 @@ export class GameStatus extends React.Component {
 
     @computed private get yourTurn() {
         return this.login.userId === this.games.currentGame.currentUser.id;
+    }
+
+    @bind
+    private async handlePass() {
+        await this.games.pass(this.games.currentGame);
     }
 
     public render() {
@@ -24,22 +30,28 @@ export class GameStatus extends React.Component {
             return null; // tslint:disable-line
         }
         return (
-            <Menu fluid>
-                <Menu.Item>
-                    Prisoners Black
+            <Menu fluid stackable>
+                <Menu.Item disabled>
+                    Black
                     <Label>{board.prisonersBlack}</Label>
                 </Menu.Item>
-                <Menu.Item>
-                    Prisoners White
+                <Menu.Item disabled>
+                    White
                     <Label>{board.prisonersWhite}</Label>
                 </Menu.Item>
-                <Menu.Item disabled={!this.yourTurn}>
+                <Menu.Item disabled>
                     {
                         this.yourTurn ?
-                            "It's your turn" :
-                            "it's your opponent's turn"
+                            "Yours" :
+                            "Opponent's"
                     }
                     <Label color="teal">#{board.turn}</Label>
+                </Menu.Item>
+                <Menu.Item onClick={this.yourTurn ? this.handlePass : undefined} disabled={!this.yourTurn}>
+                    Pass
+                    <Label color={game.consecutivePasses > 0 ? "red" : undefined}>
+                        {game.consecutivePasses}
+                    </Label>
                 </Menu.Item>
             </Menu>
         );

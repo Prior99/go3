@@ -99,4 +99,24 @@ export class Games {
         await this.db.getRepository(Board).save(newBoard);
         return ok(newBoard);
     }
+
+    @route("POST", "/game/:id/pass").dump(Board, world)
+    public async pass(
+        @param("id") @is() id: string,
+        @context ctx?: Context,
+    ): Promise<Board> {
+        const game = await this.db.getRepository(Game).findOne({
+            where: { id },
+            relations: ["boards", "participants", "participants.user", "boards.game"],
+        });
+        if (!game) {
+            return notFound<Board>(`Could not find game with id ${id}.`);
+        }
+        if ((await ctx.currentUser()).id !== game.currentUser.id) {
+            return unauthorized<Board>();
+        }
+        const newBoard = game.currentBoard.pass();
+        await this.db.getRepository(Board).save(newBoard);
+        return ok(newBoard);
+    }
 }

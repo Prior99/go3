@@ -87,4 +87,20 @@ export class Game {
         }
         return;
     }
+
+    @computed public get consecutivePasses() {
+        let passes = 0;
+        let lastBoard: Board;
+        for (let board of this.boards.reverse()) {
+            if (lastBoard) {
+                if (board.equal(lastBoard)) {
+                    passes++;
+                } else {
+                    return passes;
+                }
+            }
+            lastBoard = board;
+        }
+        return passes;
+    }
 }

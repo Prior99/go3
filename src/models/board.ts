@@ -168,6 +168,12 @@ export class Board {
         return new Board(this, index);
     }
 
+    public pass(): Board {
+        const nextBoard = new Board(this);
+        nextBoard.turn++;
+        return nextBoard;
+    }
+
     public mockPlace(index: number): Board {
         const board = new Board(this);
         board.state[index] = this.currentColor;

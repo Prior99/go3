@@ -119,6 +119,12 @@ export class GamesStore {
         game.boards.push(board);
     }
 
+    @bind @action
+    public async pass(game: Game) {
+        const board = await this.gamesController.pass(game.id);
+        game.boards.push(board);
+    }
+
     @computed
     public get currentGame() {
         if (!this.currentGameId) {
