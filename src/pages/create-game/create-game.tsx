@@ -7,10 +7,13 @@ import { Content, UserSelect, BoardSizeSelect } from "ui";
 import { Button, Form } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { GamesStore } from "../../store";
+import { History } from "history";
+import { routeGame } from "routing";
 
 @requireLogin @observer @external
 export class PageCreateGame extends React.Component {
     @inject private gamesStore: GamesStore;
+    @inject private browserHistory: History;
 
     @observable private userId: string;
     @observable private size: number;
@@ -19,7 +22,8 @@ export class PageCreateGame extends React.Component {
     @bind @action private handleBoardSize(size: number) { this.size = size; }
     @bind private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
-        await this.gamesStore.createGame(this.userId, this.size);
+        const game = await this.gamesStore.createGame(this.userId, this.size);
+        this.browserHistory.push(routeGame.path(game.id));
     }
 
     public render() {

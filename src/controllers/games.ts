@@ -26,7 +26,7 @@ import { world } from "../scopes/index";
 export class Games {
     @inject private db: Connection;
 
-    @route("POST", "/game").dump(Game, owner)
+    @route("POST", "/game").dump(Game, world)
     public async createGame(@body(gameCreate) game: Game, @context ctx?: Context): Promise<Game> {
         const participant1 = game.participants[0];
         const participant2 = game.participants[1];
@@ -55,7 +55,10 @@ export class Games {
 
     @route("GET", "/game/:id").dump(Game, world)
     public async getGame(@param("id") @is() id: string): Promise<Game> {
-        const game = await this.db.getRepository(Game).findOneById(id);
+        const game = await this.db.getRepository(Game).findOne({
+            where: { id },
+            relations: ["participants", "participants.user"],
+        });
         if (!game) {
             return notFound<Game>(`Could not find game with id ${id}.`);
         }
@@ -88,6 +91,10 @@ export class Games {
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
         }
+        if (game.over) {
+            return unprocessableEntity<Board>("The game is over.");
+        }
+        console.log("USER CHECK", (await ctx.currentUser()).id, game.currentUser.id)
         if ((await ctx.currentUser()).id !== game.currentUser.id) {
             return unauthorized<Board>();
         }
@@ -112,11 +119,27 @@ export class Games {
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
         }
+        if (game.over) {
+            return unprocessableEntity<Board>("The game is over.");
+        }
         if ((await ctx.currentUser()).id !== game.currentUser.id) {
             return unauthorized<Board>();
         }
         const newBoard = game.currentBoard.pass();
         await this.db.getRepository(Board).save(newBoard);
+        if (game.consecutivePasses >= 1) {
+            const scoreBlack = newBoard.getScore(Color.BLACK);
+            const scoreWhite = newBoard.getScore(Color.WHITE);
+            const winningColor = scoreBlack === scoreWhite ? Color.EMPTY :
+                scoreBlack > scoreWhite ?  Color.BLACK : Color.WHITE;
+            game.participants
+                .filter(({ color }) => color === winningColor)
+                .forEach(participant => participant.winner = true);
+            game.participants
+                .filter(({ color }) => color !== winningColor)
+                .forEach(participant => participant.winner = false);
+            await this.db.getRepository(Participant).save(game.participants);
+        }
         return ok(newBoard);
     }
 }

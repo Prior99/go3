@@ -103,4 +103,8 @@ export class Game {
         }
         return passes;
     }
+
+    @computed public get over() {
+        return this.participants.some(participant => participant.winner !== null && participant.winner !== undefined); // tslint:disable-line
+    }
 }

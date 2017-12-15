@@ -121,6 +121,9 @@ export class Board {
         const queue = [index];
         while (queue.length > 0) {
             const current = queue.pop();
+            if (visited.includes(current)) {
+                continue;
+            }
             yield current;
             visited.push(current);
             const unvisitedneighbours = this.neighboursOfSameColor(current)
@@ -178,5 +181,35 @@ export class Board {
         const board = new Board(this);
         board.state[index] = this.currentColor;
         return board;
+    }
+
+    public prisoners(color: Color) {
+        return color === Color.BLACK ? this.prisonersBlack : this.prisonersWhite;
+    }
+
+    public getScore(forColor: Color) {
+        const visited: number[] = [];
+        let score = this.prisoners(forColor);
+        this.state.forEach((color, index) => {
+            if (visited.includes(index) || color !== Color.EMPTY) {
+                return;
+            }
+            const group = Array.from(this.groupAt(index));
+            visited.push(...group);
+            const belongsToColor = group.every(groupIndex => {
+                const neighbours = this.neighbours(groupIndex);
+                return neighbours.every(neighbour => {
+                    const colorAtNeighbour = this.at(neighbour);
+                    if (colorAtNeighbour === oppositeColor(forColor)) {
+                        return false;
+                    }
+                    return true;
+                });
+            });
+            if (belongsToColor) {
+                score += group.length;
+            }
+        });
+        return score;
     }
 }

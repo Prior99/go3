@@ -47,7 +47,10 @@ export class GameStatus extends React.Component {
                     }
                     <Label color="teal">#{board.turn}</Label>
                 </Menu.Item>
-                <Menu.Item onClick={this.yourTurn ? this.handlePass : undefined} disabled={!this.yourTurn}>
+                <Menu.Item
+                    onClick={this.yourTurn && !game.over ? this.handlePass : undefined}
+                    disabled={!this.yourTurn || game.over}
+                >
                     Pass
                     <Label color={game.consecutivePasses > 0 ? "red" : undefined}>
                         {game.consecutivePasses}

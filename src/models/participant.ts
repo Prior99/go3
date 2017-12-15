@@ -41,4 +41,9 @@ export class Participant {
     @scope(world, gameCreate)
     @is().validate(oneOf(...colors), required)
     public color?: Color;
+
+    @Column("bool", { nullable: true })
+    @scope(world)
+    @is()
+    public winner?: boolean;
 }

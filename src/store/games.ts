@@ -55,6 +55,13 @@ export class GamesStore {
         if (this.currentGameId) {
             const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
             this.games.get(this.currentGameId).boards.push(...newBoards);
+            if (this.currentGame.consecutivePasses >= 2) {
+                await this.loadGame(this.currentGameId);
+                await this.loadBoards(this.currentGameId);
+            }
+            if (this.currentGame.over) {
+                clearInterval(this.refreshInterval);
+            }
             return;
         }
         clearInterval(this.refreshInterval);
@@ -74,6 +81,11 @@ export class GamesStore {
             games.forEach(this.storeGame);
         }
         this.loading = false;
+    }
+
+    @bind @action
+    public async loadGame(id: string) {
+        this.games.set(id, await this.gamesController.getGame(id));
     }
 
     @bind @action
@@ -123,6 +135,10 @@ export class GamesStore {
     public async pass(game: Game) {
         const board = await this.gamesController.pass(game.id);
         game.boards.push(board);
+        if (game.consecutivePasses >= 1) {
+            await this.loadGame(game.id);
+            await this.loadBoards(game.id);
+        }
     }
 
     @computed

@@ -6,6 +6,7 @@ import { Menu } from "semantic-ui-react";
 import { Board } from "models";
 import { PreviewBoard } from "ui";
 import * as css from "./history-entry.scss";
+import { Color } from "board-color";
 
 export interface HistoryEntryProps {
     readonly board: Board;
@@ -26,7 +27,9 @@ export class HistoryEntry extends React.Component<HistoryEntryProps> {
                         <p><b>Turn:</b> {board.turn}</p>
                         <p><b>Placed at:</b> {col} / {row}</p>
                         <p><b>Prisoners white:</b> {board.prisonersWhite}</p>
+                        <p><b>Score white:</b> {board.getScore(Color.WHITE)}</p>
                         <p><b>Prisoners black:</b> {board.prisonersBlack}</p>
+                        <p><b>Score black:</b> {board.getScore(Color.BLACK)}</p>
                         <p><b>Date:</b> {board.created}</p>
                     </div>
                 </div>

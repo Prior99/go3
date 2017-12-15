@@ -44,8 +44,7 @@ export class PageGame extends React.Component<PageGameProps> {
                             {
                                 game.boards && game.boards.length > 0 &&
                                 <Board
-                                    state={this.boardState}
-                                    size={game.boardSize}
+                                    game={game}
                                     onPlace={this.place}
                                 />
                             }
