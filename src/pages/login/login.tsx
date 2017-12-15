@@ -24,12 +24,18 @@ export class PageLogin extends React.Component {
         await this.login.login(this.email, this.password);
     }
 
+    @computed private get passwordValid() { return this.password.length >= 8; }
+    @computed private get emailValid() { return this.email.length >= 5; }
+    @computed private get allValid() {
+        return this.passwordValid && this.emailValid;
+    }
+
     public render() {
         return (
             <Content>
                 <h1>Go 3</h1>
                 <Form size="large" onSubmit={this.handleSubmit}>
-                    <Form.Field>
+                    <Form.Field error={!this.emailValid}>
                         <Input
                             size="large"
                             icon="user"
@@ -40,7 +46,7 @@ export class PageLogin extends React.Component {
                             onChange={this.handleEmail}
                         />
                     </Form.Field>
-                    <Form.Field>
+                    <Form.Field error={!this.passwordValid}>
                         <Input
                             size="large"
                             icon="lock"
@@ -52,7 +58,7 @@ export class PageLogin extends React.Component {
                             onChange={this.handlePassword}
                         />
                     </Form.Field>
-                    <Button type="submit" fluid color="green">Login</Button>
+                    <Button disabled={!this.allValid} type="submit" fluid color="green">Login</Button>
                 </Form>
                 <p>Don't have an account? Signup <Link to={routeSignup.path()}>here</Link>.</p>
             </Content>

@@ -29,12 +29,20 @@ export class PageSignup extends React.Component {
         this.signup.signup(this.email, this.password, this.name);
     }
 
+    @computed private get repeatValid() { return this.repeat === this.password; }
+    @computed private get passwordValid() { return this.password.length >= 8; }
+    @computed private get nameValid() { return this.name.length >= 5; }
+    @computed private get emailValid() { return this.email.length >= 5; }
+    @computed private get allValid() {
+        return this.repeatValid && this.passwordValid && this.emailValid && this.nameValid;
+    }
+
     public render() {
         return (
             <Content>
                 <h1>Signup</h1>
                 <Form size="large" onSubmit={this.handleSubmit}>
-                    <Form.Field>
+                    <Form.Field error={!this.nameValid}>
                         <Input
                             size="large"
                             icon="user"
@@ -45,7 +53,7 @@ export class PageSignup extends React.Component {
                             onChange={this.handleName}
                         />
                     </Form.Field>
-                    <Form.Field>
+                    <Form.Field error={!this.emailValid}>
                         <Input
                             size="large"
                             icon="user"
@@ -56,7 +64,7 @@ export class PageSignup extends React.Component {
                             onChange={this.handleEmail}
                         />
                     </Form.Field>
-                    <Form.Field>
+                    <Form.Field error={!this.passwordValid}>
                         <Input
                             size="large"
                             icon="lock"
@@ -68,7 +76,7 @@ export class PageSignup extends React.Component {
                             onChange={this.handlePassword}
                         />
                     </Form.Field>
-                    <Form.Field>
+                    <Form.Field error={!this.repeatValid}>
                         <Input
                             size="large"
                             icon="repeat"
@@ -80,7 +88,7 @@ export class PageSignup extends React.Component {
                             onChange={this.handleRepeat}
                         />
                     </Form.Field>
-                    <Button type="submit" fluid color="green">Signup</Button>
+                    <Button disabled={!this.allValid} type="submit" fluid color="green">Signup</Button>
                 </Form>
                 <p>Already have an account? Login <Link to={routeLogin.path()}>here</Link>.</p>
             </Content>
