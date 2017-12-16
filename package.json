@@ -6,7 +6,7 @@
     "build:server": "tsc -p . --outDir server/",
     "build:frontend:release": "webpack --config webpack.config-release.js",
     "start:frontend": "webpack-dev-server",
-    "start:server": "ts-node-dev -r tsconfig-paths/register src/server",
+    "start:server": "ts-node-dev src/server",
     "lint:src": "tslint --format stylish --type-check --project tsconfig.json --exclude generated/**/*.ts",
     "lint:style": "stylelint --allow-empty-input src/**/*.scss",
     "test": "jest"
@@ -17,10 +17,16 @@
   "license": "MIT",
   "jest": {
     "collectCoverage": true,
-    "moduleFileExtensions": ["ts", "tsx", "js"],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
     "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
+      "^.+\\.(scss)$": "<rootDir>/jest-scss-preprocessor.js",
+      ".(ts|tsx)": "ts-jest"
     },
+    "setupTestFrameworkScriptFile": "<rootDir>/jest-setups.js",
     "testMatch": [
       "**/__tests__/*.(ts|tsx|js)"
     ],
@@ -34,7 +40,6 @@
     "@types/yamljs": "^0.2.30",
     "bind-decorator": "^1.0.11",
     "body-parser": "^1.18.2",
-    "change-case": "^3.0.1",
     "classnames": "^2.2.5",
     "express": "^4.16.2",
     "http-status-codes": "^1.3.0",
@@ -47,32 +52,23 @@
     "ramda": "^0.24.1",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "react-icons": "^2.2.7",
     "react-router-dom": "^4.1.2",
-    "recharts": "^1.0.0-beta.1",
     "reflect-metadata": "^0.1.10",
     "semantic-ui-react": "^0.77.0",
-    "sqlite3": "^3.1.13",
     "tsdi": "^0.14.0",
     "typeorm": "0.1.7",
-    "url-pattern": "^1.0.3",
     "winston": "^2.4.0"
   },
   "devDependencies": {
     "@types/enzyme": "^2.8.3",
     "@types/enzyme-to-json": "^1.5.0",
     "@types/http-status-codes": "^1.0.29",
-    "@types/i18next": "^8.4.1",
-    "@types/i18next-browser-languagedetector": "^2.0.0",
-    "@types/i18next-xhr-backend": "^1.4.0",
     "@types/jest": "^21.1.8",
     "@types/node": "^8.0.53",
     "@types/ramda": "^0.24.3",
     "@types/react": "^15.0.37",
     "@types/react-dom": "^15.5.1",
     "@types/react-router-dom": "^4.0.7",
-    "@types/react-test-renderer": "^15.5.1",
-    "autoprefixer": "^7.1.2",
     "awesome-typescript-loader": "^3.2.1",
     "css-loader": "^0.28.4",
     "enzyme": "^2.9.1",
@@ -84,14 +80,12 @@
     "mobx-react-devtools": "^4.2.15",
     "node-sass": "^4.5.3",
     "progress-bar-webpack-plugin": "^1.10.0",
-    "react-test-renderer": "^15.6.1",
     "resolve-url-loader": "^2.1.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "stylelint": "^7.13.0",
     "ts-jest": "^21.2.4",
     "ts-node-dev": "^1.0.0-pre.5",
-    "tsconfig-paths": "^2.3.0",
     "tslint": "^5.5.0",
     "typescript": "^2.4.1",
     "webpack": "^3.2.0",

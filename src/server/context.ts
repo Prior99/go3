@@ -1,8 +1,8 @@
 import { inject, external } from "tsdi";
-import { Validation } from "controllers";
 import { Request } from "express";
 import { Connection } from "typeorm";
 
+import { Validation } from "../controllers";
 import { User } from "../models";
 
 import { getAuthTokenId } from "./utils";
