@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { is, scope, DataType, oneOf, specify, required } from "hyrest";
 
-import { Color, colors } from "../board-color";
+import { Color, colors } from "../utils";
 import { world, gameCreate } from "../scopes";
 
 import { User, Game } from ".";

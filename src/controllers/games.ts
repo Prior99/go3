@@ -22,7 +22,7 @@ import { Connection } from "typeorm";
 import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
 import { Context } from "../server/context";
-import { Color } from "../board-color";
+import { Color } from "../utils";
 
 @controller @component
 export class Games {

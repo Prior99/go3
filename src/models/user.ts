@@ -9,7 +9,7 @@ import {
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
 
 import { login, signup, world, owner, gameCreate } from "../scopes";
-import { hash } from "../encrypt";
+import { hash } from "../utils";
 
 import { Participant, Token } from ".";
 

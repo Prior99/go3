@@ -13,10 +13,10 @@ import { DataType, scope, required, is, specify } from "hyrest";
 import { bind } from "bind-decorator";
 import { computed } from "mobx";
 
-import { Color, oppositeColor } from "../board-color";
+import { Color, oppositeColor } from "../utils";
+import { turn, world } from "../scopes";
 
 import { User, Game } from ".";
-import { turn, world } from "../scopes";
 
 export interface Position {
     col: number;

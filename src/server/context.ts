@@ -3,8 +3,9 @@ import { Validation } from "controllers";
 import { Request } from "express";
 import { Connection } from "typeorm";
 
-import { getAuthTokenId } from "../authorization";
 import { User } from "../models";
+
+import { getAuthTokenId } from "./utils";
 
 @external
 export class Context {

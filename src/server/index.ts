@@ -11,7 +11,7 @@ import * as morgan from "morgan";
 
 import { Users, Tokens, Validation, Games } from "../controllers";
 import { Token } from "../models";
-import { getAuthTokenId } from "../authorization";
+import { getAuthTokenId } from "./utils";
 
 import { cors, catchError } from "./middlewares";
 import { Context } from "./context";
