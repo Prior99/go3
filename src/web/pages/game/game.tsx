@@ -3,6 +3,7 @@ import { computed, action } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
 import { bind } from "bind-decorator";
+import { Segment } from "semantic-ui-react";
 
 import { requireLogin } from "../../utils";
 import { Content, Board, GameHistory, GameStatus } from "../../ui";
@@ -41,13 +42,15 @@ export class PageGame extends React.Component<PageGameProps> {
                 <div className={css.container}>
                     <div className={css.game}>
                         <GameStatus />
-                        <div className={css.boardContainer}>
+                        <div >
                             {
                                 game.boards && game.boards.length > 0 &&
-                                <Board
-                                    game={game}
-                                    onPlace={this.place}
-                                />
+                                <Segment className={css.boardContainer}>
+                                    <Board
+                                        game={game}
+                                        onPlace={this.place}
+                                    />
+                                </Segment>
                             }
                         </div>
                     </div>
