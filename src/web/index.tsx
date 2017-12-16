@@ -93,7 +93,7 @@ function main() {
             <Router history={tsdi.get("history")}>
                 <App />
             </Router>
-            {!isProductionEnvironment() && <DevTools />}
+            {!isProductionEnvironment() && <DevTools position={{ bottom: 0 }} />}
         </div>,
         document.getElementById("root"),
     );

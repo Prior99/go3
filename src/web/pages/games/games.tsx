@@ -26,6 +26,7 @@ export class PageGames extends React.Component {
                         </Statistic.Group>
                     )
                 }
+                <br />
                 {
                     this.games.all.length > 0 ? (
                         <GamesList games={this.games.all}/>

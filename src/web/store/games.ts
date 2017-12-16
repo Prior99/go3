@@ -3,9 +3,10 @@ import { bind } from "bind-decorator";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
 import * as pathToRegexp from "path-to-regexp";
+import { formatDistance } from "date-fns";
 
 import { routeGame, routeGames } from "../routing/index";
-import { Color } from "../../utils";
+import { Color, formatBoardSize } from "../../utils";
 import { Game } from "../../models";
 import { Games, Users } from "../../controllers";
 
@@ -38,7 +39,7 @@ export class GamesStore {
     private async initialize() {
         this.browserHistory.listen(this.refreshGameId);
         this.refreshGameId();
-        this.refreshGames();
+        this.loadGames();
         this.refreshGamesInterval = setInterval(this.refreshGames, 5000);
     }
 
@@ -55,9 +56,6 @@ export class GamesStore {
     }
 
     @bind private async refreshGames() {
-        if (!this.login.loggedIn) {
-            return;
-        }
         if (!pathToRegexp(routeGames.pattern).exec(this.browserHistory.location.pathname)){
             return;
         }
@@ -179,5 +177,18 @@ export class GamesStore {
             return Color.BLACK;
         }
         return;
+    }
+
+    @computed
+    public get possibleTurns() {
+        return this.all.filter(game => game.currentUser.id === this.login.userId);
+    }
+
+    public format(game: Game) {
+        const opponent = game.getOpponent(this.login.userId).name;
+        const size = formatBoardSize(game.boardSize);
+        const turn = game.turn;
+        const created = formatDistance(game.created, new Date());
+        return `Game from ${created} ago vs ${opponent} on a ${size} board at turn ${turn}`;
     }
 }
