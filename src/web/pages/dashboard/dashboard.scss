@@ -1,1 +1,19 @@
-@import "~colors.scss";
+.chartsContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pieContainer {
+    width: 500px;
+    margin-bottom: 50px;
+}
+
+.lineContainer {
+    width: 500px;
+    flex-grow: 1;
+    margin-right: 50px
+}

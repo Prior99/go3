@@ -34,7 +34,7 @@ export class User {
     public password?: string;
 
     @CreateDateColumn()
-    @scope(world)
+    @scope(world) @specify(() => Date)
     public created?: Date;
 
     @UpdateDateColumn()

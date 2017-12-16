@@ -12,13 +12,16 @@ import {
     populate,
     context,
     unauthorized,
+    dump,
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
+import { startOfDay, compareAsc } from "date-fns";
 
 import { User, Game, Participant, Token, UserStats  } from "../models";
 import { signup, owner, world } from "../scopes";
 import { Context } from "../server/context";
+import { WinLossChartDataPoint } from "../models/user-stats/win-loss-chart-data-point";
 
 @controller @component
 export class Users {
@@ -78,8 +81,19 @@ export class Users {
             });
             return opponents;
         }, [] as User[]).length;
-        const winLossChart = [];
-
+        const dateMap = participations.reduce((map, { updated, winner, game }) => {
+            const day = startOfDay(updated);
+            let dataPoint = map.get(day.toUTCString());
+            if (!dataPoint) {
+                dataPoint = new WinLossChartDataPoint(day);
+                map.set(day.toUTCString(), dataPoint);
+            }
+            if (winner) { dataPoint.wins++; }
+            if (game.tie) { dataPoint.ties++; }
+            if (!winner && game.over && !game.tie) { dataPoint.losses++; }
+            return map;
+        }, new Map() as Map<string, WinLossChartDataPoint>);
+        const winLossChart = Array.from(dateMap.values()).sort((a, b) => compareAsc(a.date, b.date));
         const userStats = populate(world, UserStats, {
             wins, losses, ties, friends, uniqueOpponents, winLossChart, active,
         });

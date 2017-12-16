@@ -87,11 +87,11 @@ export class Board {
     public state?: Color[];
 
     @CreateDateColumn()
-    @scope(world)
+    @scope(world) @specify(() => Date)
     public created?: Date;
 
     @UpdateDateColumn()
-    @scope(world)
+    @scope(world) @specify(() => Date)
     public updated?: Date;
 
     @Column("integer")

@@ -11,3 +11,5 @@ export * from "./game-history";
 export * from "./preview-board";
 export * from "./game-status";
 export * from "./user-stats";
+export * from "./win-loss-line-chart";
+export * from "./win-loss-pie-chart";

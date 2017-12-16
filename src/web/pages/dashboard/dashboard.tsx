@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { Table } from "semantic-ui-react";
 
 import { requireLogin } from "../../utils";
-import { Content, GamesList, UserStats } from "../../ui";
+import { Content, GamesList, UserStats, WinLossLineChart, WinLossPieChart } from "../../ui";
 import { inject, external } from "tsdi";
 import { GamesStore, OwnUserStore } from "../../store";
 import * as css from "./dashboard.scss";
@@ -23,6 +23,14 @@ export class PageDashboard extends React.Component {
             <Content>
                 <h1>Dashboard</h1>
                 <UserStats userId={this.ownUser.user.id} />
+                <div className={css.chartsContainer}>
+                    <div className={css.lineContainer}>
+                        <WinLossLineChart userId={this.ownUser.user.id} />
+                    </div>
+                    <div className={css.pieContainer}>
+                        <WinLossPieChart userId={this.ownUser.user.id} />
+                    </div>
+                </div>
                 <Table>
                     <Table.Body>
                         <Table.Row>

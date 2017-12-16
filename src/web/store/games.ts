@@ -4,7 +4,7 @@ import { History } from "history";
 import { component, inject, initialize } from "tsdi";
 import * as pathToRegexp from "path-to-regexp";
 
-import { routeGame } from "../routing/index";
+import { routeGame, routeGames } from "../routing/index";
 import { Color } from "../../utils";
 import { Game } from "../../models";
 import { Games, Users } from "../../controllers";
@@ -55,9 +55,13 @@ export class GamesStore {
     }
 
     @bind private async refreshGames() {
-        if (this.login.loggedIn) {
-            await this.loadGames();
+        if (!this.login.loggedIn) {
+            return;
         }
+        if (!pathToRegexp(routeGames.pattern).exec(this.browserHistory.location.pathname)){
+            return;
+        }
+        await this.loadGames();
     }
 
     @bind
@@ -79,13 +83,9 @@ export class GamesStore {
 
     @bind
     private async storeGame(game: Game) {
-        const old = this.games.get(game.id);
-        if (old && old.equals(game)) {
-            return;
-        }
-        this.games.set(game.id, game);
         const latestBoard = await this.gamesController.latestBoard(game.id);
         game.boards = [latestBoard];
+        this.games.set(game.id, game);
         await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
     }
 
@@ -129,6 +129,9 @@ export class GamesStore {
 
     @bind @action
     private async loadBoards(gameId: string) {
+        if (!this.byId(gameId)) {
+            return;
+        }
         const boards = await this.gamesController.listBoards(gameId);
         this.games.get(gameId).boards = boards;
     }

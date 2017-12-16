@@ -22,11 +22,11 @@ export class Game {
     public readonly id?: string;
 
     @CreateDateColumn()
-    @scope(world)
+    @scope(world) @specify(() => Date)
     public created?: Date;
 
     @UpdateDateColumn()
-    @scope(world)
+    @scope(world) @specify(() => Date)
     public updated?: Date;
 
     @Column("integer")

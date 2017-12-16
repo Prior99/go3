@@ -46,7 +46,7 @@ export function newRating(oldRating: number, otherRating: number, result: GameRe
     const actualScore = scoreFromResult(result);
     const expectedScore = winningExpectancy(otherRating - oldRating);
     let difference = actualScore - expectedScore;
-    return oldRating + magnitude(oldRating) * (actualScore - expectedScore);
+    return Math.round(oldRating + magnitude(oldRating) * (actualScore - expectedScore));
 }
 
 export function rankFromRating(rating: number): Rank {
@@ -60,4 +60,20 @@ export function rankFromRating(rating: number): Rank {
         rank: Math.round((rating - 2000) / 100),
         rankClass: RankClass.DAN,
     };
+}
+
+export function formatRank(rating: number) {
+    const rank = rankFromRating(rating);
+    if (rank.rankClass === RankClass.KYU) {
+        return `${rank.rank} Kyu`;
+    }
+    return `${rank.rank} Dan`;
+}
+
+export function formatRankShort(rating: number) {
+    const rank = rankFromRating(rating);
+    if (rank.rankClass === RankClass.KYU) {
+        return `${rank.rank}k`;
+    }
+    return `${rank.rank}d`;
 }
