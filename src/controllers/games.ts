@@ -103,10 +103,14 @@ export class Games {
         @body() @is(DataType.int).validate(required) index: number,
         @context ctx?: Context,
     ): Promise<Board> {
-        const game = await this.db.getRepository(Game).findOne({
-            where: { id },
-            relations: ["boards", "participants", "participants.user", "boards.game"],
-        });
+        const game = await this.db.getRepository(Game).createQueryBuilder("game")
+            .leftJoinAndSelect("game.boards", "board")
+            .leftJoinAndSelect("game.participants", "participant")
+            .leftJoinAndSelect("participant.user", "user")
+            .leftJoinAndSelect("board.game", "boardGame")
+            .where("game.id=:id", { id })
+            .orderBy("board.turn", "ASC")
+            .getOne();
 
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
@@ -133,10 +137,14 @@ export class Games {
         @param("id") @is() id: string,
         @context ctx?: Context,
     ): Promise<Board> {
-        const game = await this.db.getRepository(Game).findOne({
-            where: { id },
-            relations: ["boards", "participants", "participants.user", "boards.game"],
-        });
+        const game = await this.db.getRepository(Game).createQueryBuilder("game")
+            .leftJoinAndSelect("game.boards", "board")
+            .leftJoinAndSelect("game.participants", "participant")
+            .leftJoinAndSelect("participant.user", "user")
+            .leftJoinAndSelect("board.game", "boardGame")
+            .where("game.id=:id", { id })
+            .orderBy("board.turn", "ASC")
+            .getOne();
 
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
