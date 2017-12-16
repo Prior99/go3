@@ -11,7 +11,7 @@ import { is, DataType, email, required, length, scope, specify, only, transform 
 import { login, signup, world, owner, gameCreate } from "../scopes";
 import { hash } from "../utils";
 
-import { Participant, Token } from ".";
+import { Participant, Token, Friendship } from ".";
 
 @Entity()
 export class User {
@@ -63,4 +63,12 @@ export class User {
     @is(DataType.int)
     @scope(world)
     public rating?: number;
+
+    @OneToMany(() => Friendship, friendship => friendship.from)
+    @is() @specify(() => Friendship)
+    public friends?: Friendship[];
+
+    @OneToMany(() => Friendship, friendship => friendship.to)
+    @is() @specify(() => Friendship)
+    public friendOf?: Friendship[];
 }

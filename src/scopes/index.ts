@@ -6,3 +6,4 @@ export const world = createScope();
 export const owner = createScope().include(world);
 export const gameCreate = createScope();
 export const turn = createScope();
+export const friendshipCreate = createScope();
