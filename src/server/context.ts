@@ -9,7 +9,7 @@ import { getAuthTokenId } from "./utils";
 
 @external
 export class Context {
-    @inject public validation: Validation;
+    @inject("validation") public validation: Validation;
     @inject private db: Connection;
 
     private authTokenId: string;

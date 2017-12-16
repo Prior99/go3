@@ -4,7 +4,7 @@ import { Connection } from "typeorm";
 
 import { User } from "../models";
 
-@controller @component
+@controller @component("validation")
 export class Validation {
     @inject public db: Connection;
 

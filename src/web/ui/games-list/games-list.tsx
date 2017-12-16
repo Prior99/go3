@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Menu } from "semantic-ui-react";
+import { Menu, Segment } from "semantic-ui-react";
 import { observer } from "mobx-react";
 
 import { Game } from "../../../models";
@@ -13,13 +13,13 @@ export interface GamesListProps {
 export class GamesList extends React.Component<GamesListProps> {
     public render() {
         return (
-            <Menu vertical fluid borderless>
+            <Segment.Group>
                 {
                     this.props.games
                         .filter(game => !game.over)
                         .map(game => <GamesListItem game={game} key={game.id}/>)
                 }
-            </Menu>
+            </Segment.Group>
         );
     }
 }

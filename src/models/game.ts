@@ -44,13 +44,31 @@ export class Game {
     @observable
     public boards: Board[];
 
-    private getUserByColor(color: Color) {
+    public getUserByColor(color: Color) {
         return this.participants.find(participant => participant.color === color).user;
     }
 
     @computed public get blackUser() { return this.getUserByColor(Color.BLACK); }
     @computed public get whiteUser() { return this.getUserByColor(Color.WHITE); }
     @computed public get currentUser() { return this.getUserByColor(this.currentBoard.currentColor); }
+
+    public getOpponent(userId: string) {
+        if (this.blackUser.id === userId) {
+            return this.whiteUser;
+        }
+        if (this.whiteUser.id === userId) {
+            return this.blackUser;
+        }
+    }
+
+    public getColorForUser(userId: string) {
+        if (this.blackUser.id === userId) {
+            return Color.BLACK;
+        }
+        if (this.whiteUser.id === userId) {
+            return Color.WHITE;
+        }
+    }
 
     @computed public get description() {
         const description =
