@@ -2,10 +2,11 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
-import { User } from "../../models";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
 import { bind } from "bind-decorator";
+
 import { boardSizes, formatBoardSize } from "../../board-sizes";
+import { User } from "../../models";
 
 export interface BoardSizeSelectProps {
     readonly size?: number;

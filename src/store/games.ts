@@ -1,14 +1,15 @@
 import { observable, computed, action, extendObservable } from "mobx";
 import { bind } from "bind-decorator";
-import { LoginStore } from ".";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
-import { Game } from "../models";
-import { Games, Users } from "controllers";
-import { Color } from "../board-color";
-import { UsersStore } from "./users";
-import { routeGame } from "../routing/index";
 import * as pathToRegexp from "path-to-regexp";
+
+import { routeGame } from "../routing/index";
+import { Color } from "../board-color";
+import { Game } from "../models";
+import { Games, Users } from "../controllers";
+
+import { LoginStore, UsersStore } from ".";
 
 function parseGameId(url: string) {
     const result = pathToRegexp(routeGame.pattern).exec(url);

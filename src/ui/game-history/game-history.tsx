@@ -1,10 +1,12 @@
 import * as React from "react";
-import { GamesStore } from "store";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
 import { Menu } from "semantic-ui-react";
-import { HistoryEntry } from "./history-entry";
 import { computed } from "mobx";
+
+import { GamesStore } from "../../store";
+
+import { HistoryEntry } from "./history-entry";
 
 @external @observer
 export class GameHistory extends React.Component {

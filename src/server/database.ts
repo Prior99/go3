@@ -2,7 +2,8 @@ import { component, factory, initialize } from "tsdi";
 import { createConnection, Connection } from "typeorm";
 import { info } from "winston";
 import * as Yaml from "yamljs";
-import { User, Token, Game, Board, Participant } from "models";
+
+import { User, Token, Game, Board, Participant } from "../models";
 
 @component
 export class Database {

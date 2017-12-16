@@ -2,13 +2,14 @@ import * as React from "react";
 import { observable, action } from "mobx";
 import { bind } from "bind-decorator";
 import { observer } from "mobx-react";
-import { requireLogin } from "utils";
-import { Content, UserSelect, BoardSizeSelect } from "ui";
 import { Button, Form } from "semantic-ui-react";
 import { inject, external } from "tsdi";
-import { GamesStore } from "../../store";
 import { History } from "history";
-import { routeGame } from "routing";
+
+import { requireLogin } from "../../utils";
+import { Content, UserSelect, BoardSizeSelect } from "../../ui";
+import { GamesStore } from "../../store";
+import { routeGame } from "../../routing";
 
 @requireLogin @observer @external
 export class PageCreateGame extends React.Component {

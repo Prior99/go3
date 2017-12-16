@@ -1,11 +1,13 @@
 import * as React from "react";
-import * as css from "./app-container.scss";
 import { observer } from "mobx-react";
-import { Errors, AppBar, AppSidebar  } from "ui";
 import { Sidebar, Segment, Menu, Icon } from "semantic-ui-react";
 import * as classNames from "classnames";
 import { inject, external } from "tsdi";
-import { SidebarStore, LoginStore } from "store";
+
+import { SidebarStore, LoginStore } from "../../store";
+import { Errors, AppBar, AppSidebar  } from "..";
+
+import * as css from "./app-container.scss";
 
 declare var SOFTWARE_VERSION: string;
 

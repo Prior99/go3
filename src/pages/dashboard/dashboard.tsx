@@ -1,11 +1,12 @@
 import * as React from "react";
-import * as css from "./dashboard.scss";
-import { requireLogin } from "utils";
-import { Content } from "ui";
-import { inject, external } from "tsdi";
-import { GamesStore } from "store";
-import { GamesList } from "ui";
 import { observer } from "mobx-react";
+
+import { requireLogin } from "../../utils";
+import { Content, GamesList } from "../../ui";
+import { inject, external } from "tsdi";
+import { GamesStore } from "../../store";
+
+import * as css from "./dashboard.scss";
 
 @requireLogin @external @observer
 export class PageDashboard extends React.Component {

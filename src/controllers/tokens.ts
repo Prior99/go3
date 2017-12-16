@@ -1,8 +1,9 @@
 import { controller, route, created, body, unauthorized, populate, noauth } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
-import { login, owner } from "scopes";
-import { User, Token } from "models";
+
+import { login, owner } from "../scopes";
+import { User, Token } from "../models";
 
 @controller @component
 export class Tokens {

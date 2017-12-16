@@ -2,9 +2,10 @@ import * as React from "react";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
 import { computed } from "mobx";
-import { GamesStore, LoginStore } from "store";
 import { Menu, Label } from "semantic-ui-react";
 import { bind } from "bind-decorator";
+
+import { GamesStore, LoginStore } from "../../store";
 
 @external @observer
 export class GameStatus extends React.Component {

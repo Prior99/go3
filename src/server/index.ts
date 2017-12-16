@@ -7,13 +7,15 @@ import { AuthorizationMode } from "hyrest";
 import { TSDI } from "tsdi";
 import { Connection } from "typeorm";
 import { Server } from "net";
+import * as morgan from "morgan";
+
+import { Users, Tokens, Validation, Games } from "../controllers";
+import { Token } from "../models";
+import { getAuthTokenId } from "../authorization";
+
 import { cors, catchError } from "./middlewares";
-import { Users, Tokens, Validation, Games } from "controllers";
 import { Context } from "./context";
 import { Database } from "./database";
-import { Token } from "../models";
-import * as morgan from "morgan";
-import { getAuthTokenId } from "../authorization";
 
 async function serve() {
     process.on("unhandledRejection", err => { error(err); exit(); });

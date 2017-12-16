@@ -1,11 +1,13 @@
 import * as React from "react";
-import { requireLogin } from "utils";
-import { Content, Board, GameHistory, GameStatus } from "ui";
-import { inject, external } from "tsdi";
-import { GamesStore } from "store";
-import { observer } from "mobx-react";
 import { computed, action } from "mobx";
+import { observer } from "mobx-react";
+import { inject, external } from "tsdi";
 import { bind } from "bind-decorator";
+
+import { requireLogin } from "../../utils";
+import { Content, Board, GameHistory, GameStatus } from "../../ui";
+import { GamesStore } from "../../store";
+
 import * as css from "./game.scss";
 
 export interface PageGameProps {

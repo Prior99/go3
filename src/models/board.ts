@@ -9,14 +9,14 @@ import {
     UpdateDateColumn,
     JoinColumn,
 } from "typeorm";
-import { User } from "./user";
-import { Game } from "./game";
-import { Color } from "board-color";
 import { DataType, scope, required, is, specify } from "hyrest";
-import { turn, world } from "../scopes";
 import { bind } from "bind-decorator";
 import { computed } from "mobx";
-import { oppositeColor } from "../board-color";
+
+import { Color, oppositeColor } from "../board-color";
+
+import { User, Game } from ".";
+import { turn, world } from "../scopes";
 
 export interface Position {
     col: number;

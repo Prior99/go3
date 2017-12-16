@@ -1,14 +1,16 @@
 import * as React from "react";
-import { LoginStore } from "store";
-import * as css from "./login.scss";
 import { Link } from "react-router-dom";
-import { routeSignup } from "routing";
 import { observable, action, computed } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
 import bind from "bind-decorator";
 import { Input, Button, Form } from "semantic-ui-react";
-import { Content } from "ui";
+
+import { LoginStore } from "../../store";
+import { routeSignup } from "../../routing";
+import { Content } from "../../ui";
+
+import * as css from "./login.scss";
 
 @external @observer
 export class PageLogin extends React.Component {

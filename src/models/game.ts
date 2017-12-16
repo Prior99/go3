@@ -6,15 +6,15 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { Participant } from "./participant";
-import { world, gameCreate, turn } from "scopes";
 import { is, scope, DataType, oneOf, specify, required, length } from "hyrest";
-import { boardSizes } from "board-sizes";
-import { formatBoardSize } from "../board-sizes";
-import { Color, oppositeColor } from "../board-color";
-import { Board } from "./board";
 import { computed, observable } from "mobx";
 import { bind } from "bind-decorator";
+
+import { world, gameCreate, turn } from "../scopes";
+import { boardSizes, formatBoardSize } from "../board-sizes";
+import { Color, oppositeColor } from "../board-color";
+
+import { Participant, Board } from ".";
 
 @Entity()
 export class Game {

@@ -1,11 +1,13 @@
 import * as React from "react";
-import { GamesStore } from "store";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
-import { Board } from "models";
 import { bind } from "bind-decorator";
+
+import { Board } from "../../models";
+import { Color } from "../../board-color";
+import { GamesStore } from "../../store";
+
 import * as css from "./preview-board.scss";
-import { Color } from "board-color";
 
 export interface PreviewBoardProps {
     readonly board: Board;

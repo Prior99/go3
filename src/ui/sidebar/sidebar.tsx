@@ -1,10 +1,11 @@
 import * as React from "react";
 import { Sidebar, Menu } from "semantic-ui-react";
 import { observer } from "mobx-react";
-import { SidebarStore, LoginStore } from "store";
 import { inject, external } from "tsdi";
 import { History } from "history";
-import { routes } from "routing";
+
+import { routes } from "../../routing";
+import { SidebarStore, LoginStore } from "../../store";
 
 @observer @external
 export class AppSidebar extends React.Component {

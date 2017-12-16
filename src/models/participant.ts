@@ -7,12 +7,12 @@ import {
     UpdateDateColumn,
     ManyToOne,
 } from "typeorm";
-import { User } from "./user";
-import { Game } from "./game";
-import { Color } from "board-color";
-import { world, gameCreate } from "scopes";
 import { is, scope, DataType, oneOf, specify, required } from "hyrest";
-import { colors } from "../board-color";
+
+import { Color, colors } from "../board-color";
+import { world, gameCreate } from "../scopes";
+
+import { User, Game } from ".";
 
 @Entity()
 export class Participant {

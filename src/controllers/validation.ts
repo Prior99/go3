@@ -1,7 +1,8 @@
 import { controller, route, is, ok, body, DataType, noauth } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
-import { User } from "models";
+
+import { User } from "../models";
 
 @controller @component
 export class Validation {

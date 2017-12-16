@@ -1,12 +1,14 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
-import * as css from "./cell.scss";
-import { Color } from "board-color";
 import * as classNames from "classnames";
-import { bind } from "bind-decorator";
 import { inject, external } from "tsdi";
-import { GamesStore, LoginStore } from "store";
+import { bind } from "bind-decorator";
+
+import { GamesStore, LoginStore } from "../../../store";
+import { Color } from "../../../board-color";
+
+import * as css from "./cell.scss";
 
 export interface CellProps {
     readonly color: Color;

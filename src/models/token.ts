@@ -8,11 +8,12 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { User } from "./user";
-import { Participant } from "./participant";
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
-import { login, signup, owner } from "scopes";
-import { hash } from "encrypt";
+
+import { login, signup, owner } from "../scopes";
+import { hash } from "../encrypt";
+
+import { User, Participant } from ".";
 
 @Entity()
 export class Token {

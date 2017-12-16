@@ -1,11 +1,13 @@
 import * as React from "react";
-import * as style from "./style.scss";
-import { Errors } from "ui";
 import { Sidebar, Menu, Icon } from "semantic-ui-react";
-import { SidebarStore, OwnUserStore, LoginStore } from "store";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed } from "mobx";
+
+import { SidebarStore, OwnUserStore, LoginStore } from "../../store";
+import { Errors } from "..";
+
+import * as css from "./style.scss";
 
 @external @observer
 export class AppBar extends React.Component {
@@ -17,7 +19,7 @@ export class AppBar extends React.Component {
 
     public render() {
         return (
-            <Menu color="green" inverted className={style.appBar} attached>
+            <Menu color="green" inverted className={css.appBar} attached>
                 <Menu.Menu position={"left" as "right"}>
                     {
                         this.sidebarButtonVisible &&

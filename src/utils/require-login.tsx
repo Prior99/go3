@@ -1,9 +1,10 @@
 import * as React from "react";
 import { Redirect } from "react-router-dom";
 import { observer } from "mobx-react";
-import { LoginStore } from "store";
-import { routeLogin } from "routing";
 import { inject, external } from "tsdi";
+
+import { LoginStore } from "../store";
+import { routeLogin } from "../routing";
 
 type ReactComponent<P> = React.StatelessComponent<P> | React.ComponentClass<P>;
 

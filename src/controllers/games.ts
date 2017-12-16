@@ -18,11 +18,12 @@ import {
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
+
 import { Participant, Game, User, Board } from "../models";
-import { gameCreate, owner, turn } from "scopes";
+import { gameCreate, owner, turn, world } from "../scopes";
 import { Context } from "../server/context";
 import { Color } from "../board-color";
-import { world } from "../scopes/index";
+
 @controller @component
 export class Games {
     @inject private db: Connection;

@@ -1,12 +1,14 @@
 import * as React from "react";
-import { GamesStore } from "store";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
 import { Menu } from "semantic-ui-react";
-import { Board } from "models";
-import { PreviewBoard } from "ui";
+
+import { Board } from "../../../models";
+import { GamesStore } from "../../../store";
+import { Color } from "../../../board-color";
+import { PreviewBoard } from "../..";
+
 import * as css from "./history-entry.scss";
-import { Color } from "board-color";
 
 export interface HistoryEntryProps {
     readonly board: Board;

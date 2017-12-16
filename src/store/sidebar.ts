@@ -1,7 +1,8 @@
 import { observable, computed, action } from "mobx";
 import { bind } from "bind-decorator";
 import { component, initialize } from "tsdi";
-import { breakpointL } from "breakpoints";
+
+import { breakpointL } from "../breakpoints";
 
 @component
 export class SidebarStore {

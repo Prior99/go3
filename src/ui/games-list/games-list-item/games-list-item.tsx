@@ -1,16 +1,18 @@
 import * as React from "react";
 import { Menu, Table } from "semantic-ui-react";
-import { Game } from "models";
 import { observer } from "mobx-react";
-import { formatBoardSize } from "board-sizes";
-import { Color } from "board-color";
 import { external, inject } from "tsdi";
-import { computed } from "mobx/lib/mobx";
+import { computed } from "mobx";
 import { History } from "history";
-import { routeGame } from "routing";
 import { bind } from "bind-decorator";
+
+import { Color } from "../../../board-color";
+import { formatBoardSize } from "../../../board-sizes";
+import { routeGame } from "../../../routing";
+import { Game } from "../../../models";
+import { PreviewBoard } from "../..";
+
 import * as css from "./games-list-item.scss";
-import { PreviewBoard } from "ui";
 
 export interface GamesListItemProps {
     readonly game: Game;

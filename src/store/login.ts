@@ -2,11 +2,12 @@ import { observable, computed, action } from "mobx";
 import { bind } from "bind-decorator";
 import * as isomorphicFetch from "isomorphic-fetch";
 import { History } from "history";
-import { routeDashboard } from "routing";
 import { component, inject, initialize } from "tsdi";
-import { Users, Tokens } from "controllers";
-import { OwnUserStore } from "./own-user";
-import { GamesStore } from "./games";
+
+import { Users, Tokens } from "../controllers";
+import { routeDashboard } from "../routing";
+
+import { GamesStore, OwnUserStore  } from ".";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";

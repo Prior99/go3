@@ -1,9 +1,11 @@
 import { observable, computed, action } from "mobx";
 import { bind } from "bind-decorator";
 import { component, initialize, inject } from "tsdi";
-import { User } from "models";
-import { Users } from "controllers";
-import { LoginStore } from "store";
+
+import { User } from "../models";
+import { Users } from "../controllers";
+
+import { LoginStore } from ".";
 
 @component("OwnUserStore")
 export class OwnUserStore {

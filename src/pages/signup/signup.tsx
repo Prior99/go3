@@ -5,10 +5,12 @@ import { observable, action, computed } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
 import bind from "bind-decorator";
-import { LoginStore, SignupStore } from "store";
-import * as css from "./signup.scss";
 import { Input, Button, Form } from "semantic-ui-react";
-import { Content } from "ui";
+
+import { LoginStore, SignupStore } from "../../store";
+import { Content } from "../../ui";
+
+import * as css from "./signup.scss";
 
 @external @observer
 export class PageSignup extends React.Component {

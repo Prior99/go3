@@ -1,20 +1,20 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { Router } from "react-router";
 import DevTools from "mobx-react-devtools";
-import "style.scss";
-import "factories";
-import { LoginStore } from "store";
-import { ErrorStore } from "store";
 import { TSDI, component, factory } from "tsdi";
 import { History } from "history";
-import { isProductionEnvironment } from "utils/environment";
-import { AppContainer } from "ui/app-container";
-import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame } from "pages";
 import { Route, Switch, Redirect } from "react-router-dom";
+import { Router } from "react-router";
 import { configureController, ControllerOptions } from "hyrest";
-import { Users, Tokens, Games } from "controllers";
-import * as routes from "routing";
+
+import { Users, Tokens, Games } from "./controllers";
+import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame } from "./pages";
+import { isProductionEnvironment } from "./utils";
+import { AppContainer } from "./ui";
+import * as routes from "./routing";
+import "./style.scss";
+import "./factories";
+import { LoginStore, ErrorStore } from "./store";
 
 declare var baseUrl: string;
 

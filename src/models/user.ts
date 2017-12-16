@@ -6,11 +6,12 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { Participant } from "./participant";
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
-import { login, signup, world, owner, gameCreate } from "scopes";
-import { hash } from "encrypt";
-import { Token } from "./token";
+
+import { login, signup, world, owner, gameCreate } from "../scopes";
+import { hash } from "../encrypt";
+
+import { Participant, Token } from ".";
 
 @Entity()
 export class User {
