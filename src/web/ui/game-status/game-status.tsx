@@ -24,11 +24,11 @@ export class GameStatus extends React.Component {
     public render() {
         const { currentGame: game } = this.games;
         if (!game) {
-            return null; // tslint:disable-line
+            return null;
         }
         const { currentBoard: board } = game;
         if (!board) {
-            return null; // tslint:disable-line
+            return null;
         }
         return (
             <Menu fluid stackable>

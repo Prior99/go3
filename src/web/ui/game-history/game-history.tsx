@@ -17,7 +17,7 @@ export class GameHistory extends React.Component {
 
     public render() {
         if (!this.games.currentGame || !this.games.currentGame.boards) {
-            return null; // tslint:disable-line
+            return null;
         }
         return (
             <Menu vertical fluid>

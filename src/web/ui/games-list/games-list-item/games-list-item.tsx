@@ -27,11 +27,11 @@ export class GamesListItem extends React.Component<GamesListItemProps> {
     public render() {
         const { game } = this.props;
         if (!game) {
-            return null; // tslint:disable-line
+            return null;
         }
         const { currentBoard: board, whiteUser, blackUser } = game;
         if (!board) {
-            return null; // tslint:disable-line
+            return null;
         }
         return (
             <Menu.Item onClick={this.handleClick}>

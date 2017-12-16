@@ -71,7 +71,7 @@ export class Game {
         }
         const tempBoard = this.currentBoard.mockPlace(index);
         const nextBoard = this.currentBoard.place(index);
-        if (nextBoard.equal(this.boards[this.boards.length - 2])) {
+        if (nextBoard.equals(this.boards[this.boards.length - 2])) {
             return "Can not repeat a Ko.";
         }
         const group = Array.from(tempBoard.groupAt(index));
@@ -92,7 +92,7 @@ export class Game {
         let lastBoard: Board;
         for (let board of this.boards.reverse()) {
             if (lastBoard) {
-                if (board.equal(lastBoard)) {
+                if (board.equals(lastBoard)) {
                     passes++;
                 } else {
                     return passes;
@@ -104,6 +104,16 @@ export class Game {
     }
 
     @computed public get over() {
-        return this.participants.some(participant => participant.winner !== null && participant.winner !== undefined); // tslint:disable-line
+        return this.participants.some(participant => participant.winner !== null && participant.winner !== undefined);
+    }
+
+    @computed public get tie() {
+        return this.participants.every(participant => participant.winner === false);
+    }
+
+    public equals(other: Game) {
+        return this.id === other.id &&
+            this.participants.every((participant, index) => participant.equals(other.participants[index])) &&
+            this.currentBoard.equals(other.currentBoard);
     }
 }

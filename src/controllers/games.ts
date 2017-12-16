@@ -22,7 +22,7 @@ import { Connection } from "typeorm";
 import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
 import { Context } from "../server/context";
-import { Color } from "../utils";
+import { Color, newRating, GameResult } from "../utils";
 
 @controller @component
 export class Games {
@@ -43,6 +43,10 @@ export class Games {
         if (currentUser.id !== participant1.user.id && currentUser.id !== participant2.user.id) {
             return unprocessableEntity<Game>("Cannot create game for two foreign users,");
         }
+
+        participant1.rating = participant1.user.rating;
+        participant2.rating = participant2.user.rating;
+
         await this.db.getRepository(Participant).save(game.participants);
         await this.db.getRepository(Game).save(game);
         this.db.getRepository(Board).save(populate(turn, Board, {
@@ -52,6 +56,7 @@ export class Games {
             state: Array.from({ length: Math.pow(game.boardSize, 2)}).map(() => Color.EMPTY),
             turn: 0,
         }));
+
         return created(game);
     }
 
@@ -102,20 +107,22 @@ export class Games {
             where: { id },
             relations: ["boards", "participants", "participants.user", "boards.game"],
         });
+
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
         }
         if (game.over) {
             return unprocessableEntity<Board>("The game is over.");
         }
-        console.log("USER CHECK", (await ctx.currentUser()).id, game.currentUser.id)
         if ((await ctx.currentUser()).id !== game.currentUser.id) {
             return unauthorized<Board>();
         }
+
         const message = game.turnValid(index);
         if (message) {
             return unprocessableEntity<Board>(message);
         }
+
         const newBoard = game.currentBoard.place(index);
         await this.db.getRepository(Board).save(newBoard);
         return ok(newBoard);
@@ -130,6 +137,7 @@ export class Games {
             where: { id },
             relations: ["boards", "participants", "participants.user", "boards.game"],
         });
+
         if (!game) {
             return notFound<Board>(`Could not find game with id ${id}.`);
         }
@@ -139,20 +147,31 @@ export class Games {
         if ((await ctx.currentUser()).id !== game.currentUser.id) {
             return unauthorized<Board>();
         }
+
         const newBoard = game.currentBoard.pass();
         await this.db.getRepository(Board).save(newBoard);
+
         if (game.consecutivePasses >= 1) {
             const scoreBlack = newBoard.getScore(Color.BLACK);
             const scoreWhite = newBoard.getScore(Color.WHITE);
             const winningColor = scoreBlack === scoreWhite ? Color.EMPTY :
                 scoreBlack > scoreWhite ?  Color.BLACK : Color.WHITE;
-            game.participants
-                .filter(({ color }) => color === winningColor)
-                .forEach(participant => participant.winner = true);
-            game.participants
-                .filter(({ color }) => color !== winningColor)
-                .forEach(participant => participant.winner = false);
+            if (scoreBlack === scoreWhite) {
+                game.participants.forEach(participant => participant.winner = false);
+                const participant1 = game.participants[0];
+                const participant2 = game.participants[1];
+                participant1.user.rating = newRating(participant1.rating, participant2.rating, GameResult.TIE);
+                participant2.user.rating = newRating(participant2.rating, participant1.rating, GameResult.TIE);
+            } else {
+                const winner = game.participants.find(({ color }) => color === winningColor);
+                const loser = game.participants.find(({ color }) => color !== winningColor);
+                winner.winner = true;
+                loser.winner = false;
+                winner.user.rating = newRating(winner.rating, loser.rating, GameResult.WIN);
+                loser.user.rating = newRating(loser.rating, winner.rating, GameResult.LOSS);
+            }
             await this.db.getRepository(Participant).save(game.participants);
+            await this.db.getRepository(User).save(game.participants.map(participant => participant.user));
         }
         return ok(newBoard);
     }

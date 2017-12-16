@@ -34,6 +34,7 @@ export class User {
     public password?: string;
 
     @CreateDateColumn()
+    @scope(world)
     public created?: Date;
 
     @UpdateDateColumn()
@@ -57,4 +58,9 @@ export class User {
     @OneToMany(() => Participant, participant => participant.user)
     @is() @specify(() => Participant)
     public participations?: Participant[];
+
+    @Column("int", { default: 100 })
+    @is(DataType.int)
+    @scope(world)
+    public rating?: number;
 }

@@ -4,7 +4,7 @@ import { History } from "history";
 import { component, inject } from "tsdi";
 
 import { Users } from "../../controllers";
-import { User } from "../../models";
+import { User, UserStats } from "../../models";
 
 import { LoginStore, OwnUserStore } from ".";
 
@@ -13,6 +13,7 @@ export class UsersStore {
     @inject private usersController: Users;
 
     @observable private users: Map<string, User> = new Map();
+    @observable private userStats: Map<string, UserStats> = new Map();
     @observable public loading = false;
 
     @bind @action
@@ -31,7 +32,7 @@ export class UsersStore {
         return Array.from(this.users.values());
     }
 
-    @bind
+    @bind @action
     public async load(id: string) {
         const user = await this.usersController.getUser(id);
         this.users.set(user.id, user);
@@ -41,5 +42,17 @@ export class UsersStore {
     @bind
     public byId(id: string) {
         return this.users.get(id);
+    }
+
+    @bind @action
+    public async loadStats(id: string) {
+        const stats = await this.usersController.getUserStats(id);
+        this.userStats.set(id, stats);
+        return stats;
+    }
+
+    @bind
+    public statsById(id: string) {
+        return this.userStats.get(id);
     }
 }

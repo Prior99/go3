@@ -46,4 +46,13 @@ export class Participant {
     @scope(world)
     @is()
     public winner?: boolean;
+
+    @Column("int", { default: 100 })
+    @is(DataType.int)
+    @scope(world)
+    public rating?: number;
+
+    public equals(other: Participant) {
+        return this.id === other.id && this.winner === other.winner;
+    }
 }

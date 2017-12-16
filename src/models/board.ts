@@ -111,7 +111,7 @@ export class Board {
         return Color.WHITE;
     }
 
-    public equal(other: Board) {
+    public equals(other: Board) {
         if (!other) {
             return false;
         }

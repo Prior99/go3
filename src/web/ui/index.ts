@@ -10,3 +10,4 @@ export * from "./board";
 export * from "./game-history";
 export * from "./preview-board";
 export * from "./game-status";
+export * from "./user-stats";

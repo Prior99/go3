@@ -31,15 +31,15 @@ export class GamesStore {
     @observable public loading = false;
     @observable public currentGameId: string;
 
-    private refreshInterval: any;
+    private refreshBoardsInterval: any;
+    private refreshGamesInterval: any;
 
     @initialize
     private async initialize() {
-        if (this.login.loggedIn) {
-            await this.loadGames();
-        }
         this.browserHistory.listen(this.refreshGameId);
         this.refreshGameId();
+        this.refreshGames();
+        this.refreshGamesInterval = setInterval(this.refreshGames, 5000);
     }
 
     @bind
@@ -50,7 +50,13 @@ export class GamesStore {
                 await this.loadGame(this.currentGameId);
             }
             this.loadBoards(this.currentGameId);
-            this.refreshInterval = setInterval(this.refreshBoards, 1000);
+            this.refreshBoardsInterval = setInterval(this.refreshBoards, 1000);
+        }
+    }
+
+    @bind private async refreshGames() {
+        if (this.login.loggedIn) {
+            await this.loadGames();
         }
     }
 
@@ -64,15 +70,19 @@ export class GamesStore {
                 await this.loadBoards(this.currentGameId);
             }
             if (this.currentGame.over) {
-                clearInterval(this.refreshInterval);
+                clearInterval(this.refreshBoardsInterval);
             }
             return;
         }
-        clearInterval(this.refreshInterval);
+        clearInterval(this.refreshBoardsInterval);
     }
 
     @bind
     private async storeGame(game: Game) {
+        const old = this.games.get(game.id);
+        if (old && old.equals(game)) {
+            return;
+        }
         this.games.set(game.id, game);
         const latestBoard = await this.gamesController.latestBoard(game.id);
         game.boards = [latestBoard];
@@ -83,7 +93,7 @@ export class GamesStore {
     public async loadGames() {
         this.loading = true;
         if (this.login.loggedIn) {
-            const games = await this.usersController.listGames(this.login.userId);
+            const games = await this.usersController.listGames(this.login.userId, true);
             games.forEach(this.storeGame);
         }
         this.loading = false;

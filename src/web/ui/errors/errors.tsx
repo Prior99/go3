@@ -12,7 +12,7 @@ export class Errors extends React.PureComponent<{}> {
     public render() {
         const { latestError, dismiss } = this.errors;
         if (!latestError) {
-            return null; // tslint:disable-line
+            return null;
         }
         return (
             <Modal onClose={dismiss} open basic size="small">

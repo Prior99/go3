@@ -45,6 +45,14 @@ export const routeDashboard: Route = {
     icon: "dashboard",
 };
 
+export const routeGames: Route = {
+    path: () => "/games",
+    pattern: "/games",
+    navbar: true,
+    title: "Games",
+    icon: "list layout",
+};
+
 export const routeCreateGame: Route = {
     path: () => "/create-game",
     pattern: "/create-game",
@@ -64,6 +72,7 @@ export const routes: Route[] = [
     routeDashboard,
     routeCreateGame,
     routeGame,
+    routeGames,
 ];
 
 export function getRoute(url: string) {

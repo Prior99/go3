@@ -1,9 +1,24 @@
-import { controller, route, is, created, body, ok, param, notFound, query, noauth } from "hyrest";
+import {
+    controller,
+    route,
+    is,
+    created,
+    body,
+    ok,
+    param,
+    notFound,
+    query,
+    noauth,
+    populate,
+    context,
+    unauthorized,
+} from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
 
-import { User, Game, Participant, Token } from "../models";
+import { User, Game, Participant, Token, UserStats  } from "../models";
 import { signup, owner, world } from "../scopes";
+import { Context } from "../server/context";
 
 @controller @component
 export class Users {
@@ -20,6 +35,56 @@ export class Users {
         const user = await this.db.getRepository(User).findOneById(id);
         if (!user) { return notFound<User>(`Could not find user with id '${id}'`); }
         return ok(user);
+    }
+
+    @route("GET", "/user/:id/owner").dump(User, owner)
+    public async getOwnUser(@param("id") @is() id: string, @context ctx?: Context) {
+        const user = await this.db.getRepository(User).findOneById(id);
+        if (!user) { return notFound<User>(`Could not find user with id '${id}'`); }
+        if (user.id !== (await ctx.currentUser()).id) {
+            return unauthorized<User>();
+        }
+        return ok(user);
+    }
+
+    @route("GET", "/user/:id/stats").dump(UserStats, world) @noauth
+    public async getUserStats(@param("id") @is() id: string): Promise<UserStats> {
+        const user = await this.db.getRepository(User).findOne({
+            where: { id },
+            relations: [
+                "participations",
+                "participations.game",
+                "game.participants",
+                "participants.user",
+                "participations.user",
+            ],
+        });
+
+        if (!user) { return notFound<UserStats>(`Could not find user with id '${id}'`); }
+
+        const { participations } = user;
+        const active = participations.reduce((count, current) => current.winner === null ? count + 1 : count , 0);
+        const wins = participations.reduce((count, current) => current.winner ? count + 1 : count , 0);
+        const ties = participations.reduce((count, current) => current.game.tie ? count + 1 : count , 0);
+        const losses = participations.length - wins - ties;
+        const friends = 0;
+        const uniqueOpponents = participations.reduce((opponents, current) => {
+            const { participants } = current.game;
+            participants.forEach(participant => {
+                const included = opponents.map(opponent => opponent.id).includes(participant.user.id);
+                if (!included && participant.user.id !== user.id) {
+                    opponents.push(participant.user);
+                }
+            });
+            return opponents;
+        }, [] as User[]).length;
+        const winLossChart = [];
+
+        const userStats = populate(world, UserStats, {
+            wins, losses, ties, friends, uniqueOpponents, winLossChart, active,
+        });
+
+        return ok(userStats);
     }
 
     @route("GET", "/user").dump(User, world) @noauth

@@ -87,7 +87,7 @@ export class LoginStore {
     @bind
     private load() {
         const serialized = localStorage.getItem(localStorageIdentifier);
-        if (serialized === null) { // tslint:disable-line
+        if (serialized === null) {
             return;
         }
         let deserialized: LocalStorageApi;
