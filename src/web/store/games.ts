@@ -38,8 +38,8 @@ export class GamesStore {
     @initialize
     private async initialize() {
         this.browserHistory.listen(this.refreshGameId);
-        this.refreshGameId();
-        this.loadGames();
+        await this.refreshGameId();
+        await this.loadGames();
         this.refreshGamesInterval = setInterval(this.refreshGames, 5000);
     }
 
@@ -50,15 +50,12 @@ export class GamesStore {
             if (!this.currentGame) {
                 await this.loadGame(this.currentGameId);
             }
-            this.loadBoards(this.currentGameId);
+            await this.loadBoards(this.currentGameId);
             this.refreshBoardsInterval = setInterval(this.refreshBoards, 1000);
         }
     }
 
     @bind private async refreshGames() {
-        if (!pathToRegexp(routeGames.pattern).exec(this.browserHistory.location.pathname)){
-            return;
-        }
         await this.loadGames();
     }
 
@@ -81,8 +78,15 @@ export class GamesStore {
 
     @bind
     private async storeGame(game: Game) {
+        const old = this.byId(game.id);
+        if (old && old.equals(game)) {
+            return;
+        }
         const latestBoard = await this.gamesController.latestBoard(game.id);
-        game.boards = [latestBoard];
+        game.boards = old ? old.boards : [];
+        if (!game.boards.find(board => latestBoard.id === board.id)) {
+            game.boards.push(latestBoard);
+        }
         this.games.set(game.id, game);
         await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
     }
@@ -92,7 +96,7 @@ export class GamesStore {
         this.loading = true;
         if (this.login.loggedIn) {
             const games = await this.usersController.listGames(this.login.userId, true);
-            games.forEach(this.storeGame);
+            await Promise.all(games.map(game => this.storeGame(game)));
         }
         this.loading = false;
     }
@@ -100,7 +104,7 @@ export class GamesStore {
     @bind @action
     public async loadGame(id: string) {
         const game = await this.gamesController.getGame(id);
-        this.storeGame(game);
+        await this.storeGame(game);
         return game;
     }
 
@@ -120,7 +124,7 @@ export class GamesStore {
             ],
             boardSize: size,
         } as Game);
-        this.storeGame(game);
+        await this.storeGame(game);
         this.loading = false;
         return game;
     }
