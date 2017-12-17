@@ -28,10 +28,12 @@ export class OwnUserStore {
         }
     }
 
+    @bind
     private storeFollower(followership: Followership) {
         this.followers.set(followership.id, followership);
     }
 
+    @bind
     private storeFollowing(fllowership: Followership) {
         this.following.set(fllowership.id, fllowership);
     }
@@ -61,17 +63,17 @@ export class OwnUserStore {
     }
 
     @bind @action
-    public async removeFollowing(id: string) {
-        const followership = this.followingById(id);
+    public async removeFollowing(userId: string) {
+        const followership = this.followershipByFollowingId(userId);
         await this.followerships.deleteFollowership(followership.id);
-        this.following.delete(id);
+        this.following.delete(followership.id);
     }
 
     @bind @action
-    public async addFollowing(id: string) {
+    public async addFollowing(userId: string) {
         const followership = await this.followerships.createFollowership({
             follower: { id: this.user.id },
-            followed: { id },
+            followed: { id: userId },
         });
         this.storeFollowing(followership);
     }

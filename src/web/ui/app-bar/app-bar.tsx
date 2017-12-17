@@ -67,7 +67,13 @@ export class AppBar extends React.Component {
                         userStats && user && [
                             <Menu.Item
                                 icon="group"
-                                content={`Following ${userStats.following}`}
+                                content={`Following ${this.ownUser.allFollowing.length}`}
+                                key="following"
+                                onClick={() => this.browserHistory.push(routeFollow.path())}
+                            />,
+                            <Menu.Item
+                                icon="group"
+                                content={`Followers ${this.ownUser.allFollowers.length}`}
                                 key="following"
                                 onClick={() => this.browserHistory.push(routeFollow.path())}
                             />,

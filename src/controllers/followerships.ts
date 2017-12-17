@@ -13,6 +13,7 @@ import {
     context,
     unauthorized,
     dump,
+    unprocessableEntity,
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
@@ -29,12 +30,15 @@ export class Followerships {
 
     @route("DELETE", "/followership/:id")
     public async deleteFollowership(@param("id") @is() id: string, @context ctx?: Context) {
-        const followership = await this.db.getRepository(Followership).findOneById(id);
+        const followership = await this.db.getRepository(Followership).findOne({
+            where: { id },
+            relations: ["follower"],
+        });
         if (!followership) { return notFound(`Could not find followership with id '${id}'.`); }
         if ((await ctx.currentUser()).id !== followership.follower.id) {
             return unauthorized("Can not delete foreign followership.");
         }
-        await this.db.getRepository(Followership).delete(followership);
+        await this.db.getRepository(Followership).delete({ id });
         return ok();
     }
 
@@ -43,8 +47,14 @@ export class Followerships {
         if ((await ctx.currentUser()).id !== followership.follower.id) {
             return unauthorized<Followership>("Cannot create followership for other user.");
         }
+        if (followership.follower.id === followership.followed.id) {
+            return unprocessableEntity<Followership>("Cannot follow yourself.");
+        }
         await this.db.getRepository(Followership).save(followership);
-        return ok(followership);
+        return ok(await this.db.getRepository(Followership).findOne({
+            where: { id: followership.id },
+            relations: ["follower", "followed"],
+        }));
     }
 
     @route("GET", "/user/:id/following").dump(Followership, world) @noauth
