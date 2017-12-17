@@ -31,7 +31,7 @@ export class Game {
 
     @Column("integer")
     @scope(gameCreate, world)
-    @is(DataType.int).validate(oneOf(...boardSizes))
+    @is(DataType.int).validate(required, oneOf(...boardSizes))
     public boardSize?: number;
 
     @OneToMany(() => Participant, participant => participant.game)

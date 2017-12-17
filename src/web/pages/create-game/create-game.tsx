@@ -1,5 +1,5 @@
 import * as React from "react";
-import { observable, action } from "mobx";
+import { observable, action, computed } from "mobx";
 import { bind } from "bind-decorator";
 import { observer } from "mobx-react";
 import { Button, Form } from "semantic-ui-react";
@@ -26,6 +26,9 @@ export class PageCreateGame extends React.Component {
         const game = await this.gamesStore.createGame(this.userId, this.size);
         this.browserHistory.push(routeGame.path(game.id));
     }
+    @computed private get allValid() {
+        return Boolean(this.userId && this.size);
+    }
 
     public render() {
         return (
@@ -38,7 +41,7 @@ export class PageCreateGame extends React.Component {
                     <Form.Field>
                         <BoardSizeSelect onChange={this.handleBoardSize} size={this.size} />
                     </Form.Field>
-                    <Button type="submit" fluid color="green">Create Game</Button>
+                    <Button type="submit" disabled={!this.allValid} fluid color="green">Create Game</Button>
                 </Form>
             </Content>
         );
