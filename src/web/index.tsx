@@ -7,9 +7,9 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import { Router } from "react-router";
 import { configureController, ControllerOptions } from "hyrest";
 
-import { Users, Tokens, Games } from "../controllers";
+import { Users, Tokens, Games, Followerships } from "../controllers";
 import { isProductionEnvironment } from "../utils";
-import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame, PageGames } from "./pages";
+import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame, PageGames, PageFollow } from "./pages";
 import { AppContainer } from "./ui";
 import * as routes from "./routing";
 import "./global.scss";
@@ -42,6 +42,10 @@ export const pages = [
     {
         route: routes.routeGame,
         component: PageGame,
+    },
+    {
+        route: routes.routeFollow,
+        component: PageFollow,
     },
 ];
 
@@ -83,6 +87,7 @@ function main() {
         Users,
         Tokens,
         Games,
+        Followerships,
     ], controllerOptions);
 
     const tsdi: TSDI = new TSDI();

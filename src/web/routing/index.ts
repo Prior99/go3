@@ -66,6 +66,14 @@ export const routeGame: Route = {
     pattern: "/game/:id",
 };
 
+export const routeFollow: Route = {
+    path: (id: string) => `/follow`,
+    pattern: "/follow",
+    navbar: true,
+    title: "Following / Followers",
+    icon: "group",
+};
+
 export const routes: Route[] = [
     routeLogin,
     routeSignup,
@@ -73,6 +81,7 @@ export const routes: Route[] = [
     routeCreateGame,
     routeGame,
     routeGames,
+    routeFollow,
 ];
 
 export function getRoute(url: string) {

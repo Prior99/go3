@@ -8,15 +8,15 @@ import {
 } from "typeorm";
 import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
 
-import { login, signup, world, owner, gameCreate } from "../scopes";
+import { login, signup, world, owner, gameCreate, followershipCreate } from "../scopes";
 import { hash } from "../utils";
 
-import { Participant, Token, Friendship } from ".";
+import { Participant, Token, Followership } from ".";
 
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world, gameCreate) @is(required)
+    @scope(world, gameCreate, followershipCreate) @is(required)
     public id?: string;
 
     @is()
@@ -64,11 +64,11 @@ export class User {
     @scope(world)
     public rating?: number;
 
-    @OneToMany(() => Friendship, friendship => friendship.from)
-    @is() @specify(() => Friendship)
-    public friends?: Friendship[];
+    @OneToMany(() => Followership, followership => followership.follower)
+    @is() @specify(() => Followership)
+    public following?: Followership[];
 
-    @OneToMany(() => Friendship, friendship => friendship.to)
-    @is() @specify(() => Friendship)
-    public friendOf?: Friendship[];
+    @OneToMany(() => Followership, followership => followership.followed)
+    @is() @specify(() => Followership)
+    public followers?: Followership[];
 }

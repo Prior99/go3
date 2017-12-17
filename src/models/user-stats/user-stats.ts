@@ -31,7 +31,7 @@ export class UserStats {
 
     @scope(world)
     @is(DataType.int)
-    public friends?: number;
+    public following?: number;
 
     @scope(world)
     @is(DataType.int)

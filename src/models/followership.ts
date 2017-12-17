@@ -7,12 +7,12 @@ import {
 } from "typeorm";
 import { is, scope, specify, required } from "hyrest";
 
-import { world, friendshipCreate } from "../scopes";
+import { world, followershipCreate } from "../scopes";
 
 import { User } from ".";
 
 @Entity()
-export class Friendship {
+export class Followership {
     @PrimaryGeneratedColumn("uuid")
     @scope(world)
     @is()
@@ -26,11 +26,11 @@ export class Friendship {
     @scope(world) @specify(() => Date)
     public updated?: Date;
 
-    @ManyToOne(() => User, user => user.friends)
-    @scope(world, friendshipCreate) @is().validate(required) @specify(() => User)
-    public from?: User;
+    @ManyToOne(() => User, user => user.following)
+    @scope(world, followershipCreate) @is().validate(required) @specify(() => User)
+    public follower?: User;
 
-    @ManyToOne(() => User, user => user.friendOf)
-    @scope(world, friendshipCreate) @is().validate(required) @specify(() => User)
-    public to?: User;
+    @ManyToOne(() => User, user => user.followers)
+    @scope(world, followershipCreate) @is().validate(required) @specify(() => User)
+    public followed?: User;
 }

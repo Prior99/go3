@@ -40,14 +40,14 @@ export class UserStats extends React.Component<UserStatsProps> {
         if (!userStats) {
             return null;
         }
-        const { wins, losses, ties, uniqueOpponents, friends, inactive } = userStats;
+        const { wins, losses, ties, uniqueOpponents, following, inactive } = userStats;
         return [
             <Statistic label="Games" value={inactive} key="games" />,
             <Statistic label="Won" value={wins} key="wins" color="green" />,
             <Statistic label="Lost" value={losses} key="losses" color="red" />,
             <Statistic label="Tie" value={ties} key="tie" color="yellow" />,
             <Statistic label="Opponents" value={uniqueOpponents} key="opponents" />,
-            <Statistic label="Friends" value={friends} key="friends"/>,
+            <Statistic label="Following" value={following} key="following"/>,
         ];
     }
 

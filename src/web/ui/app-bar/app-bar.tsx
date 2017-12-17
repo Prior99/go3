@@ -8,7 +8,7 @@ import { History } from "history";
 
 import { SidebarStore, OwnUserStore, LoginStore, GamesStore } from "../../store";
 import { Errors } from "..";
-import { routeGame, routeGames, routeDashboard } from "../../routing";
+import { routeGame, routeGames, routeDashboard, routeFollow } from "../../routing";
 import * as css from "./style.scss";
 
 @external @observer
@@ -67,8 +67,9 @@ export class AppBar extends React.Component {
                         userStats && user && [
                             <Menu.Item
                                 icon="group"
-                                content={`${userStats.friends} Friends`}
-                                key="friends"
+                                content={`Following ${userStats.following}`}
+                                key="following"
+                                onClick={() => this.browserHistory.push(routeFollow.path())}
                             />,
                             <Menu.Item
                                 icon="star"

@@ -3,7 +3,7 @@ import { createConnection, Connection } from "typeorm";
 import { info } from "winston";
 import * as Yaml from "yamljs";
 
-import { User, Token, Game, Board, Participant, Friendship } from "../models";
+import { User, Token, Game, Board, Participant, Followership } from "../models";
 
 @component
 export class Database {
@@ -19,7 +19,7 @@ export class Database {
                 Game,
                 Board,
                 Participant,
-                Friendship,
+                Followership,
             ],
             ...Yaml.load("./database.yml"),
         });

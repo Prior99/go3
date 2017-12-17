@@ -13,3 +13,5 @@ export * from "./game-status";
 export * from "./user-stats";
 export * from "./win-loss-line-chart";
 export * from "./win-loss-pie-chart";
+export * from "./user-card";
+export * from "./user-card-list";
