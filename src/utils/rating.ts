@@ -4,16 +4,6 @@ export enum GameResult {
     TIE = "tie",
 }
 
-export enum RankClass {
-    KYU = "kyu",
-    DAN = "dan",
-}
-
-export interface Rank {
-    rank: number;
-    rankClass: RankClass;
-}
-
 /**
  * Implementation of the official EGF rating system.
  * http://www.europeangodatabase.eu/EGD/EGF_rating_system.php
@@ -47,33 +37,4 @@ export function newRating(oldRating: number, otherRating: number, result: GameRe
     const expectedScore = winningExpectancy(otherRating - oldRating);
     let difference = actualScore - expectedScore;
     return Math.round(oldRating + magnitude(oldRating) * (actualScore - expectedScore));
-}
-
-export function rankFromRating(rating: number): Rank {
-    if (rating < 2100) {
-        return {
-            rank: Math.round((2000 - rating) / 100 + 1),
-            rankClass: RankClass.KYU,
-        };
-    }
-    return {
-        rank: Math.round((rating - 2000) / 100),
-        rankClass: RankClass.DAN,
-    };
-}
-
-export function formatRank(rating: number) {
-    const rank = rankFromRating(rating);
-    if (rank.rankClass === RankClass.KYU) {
-        return `${rank.rank} Kyu`;
-    }
-    return `${rank.rank} Dan`;
-}
-
-export function formatRankShort(rating: number) {
-    const rank = rankFromRating(rating);
-    if (rank.rankClass === RankClass.KYU) {
-        return `${rank.rank}k`;
-    }
-    return `${rank.rank}d`;
 }

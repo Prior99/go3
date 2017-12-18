@@ -9,7 +9,7 @@ import { Connection } from "typeorm";
 import { Server } from "net";
 import * as morgan from "morgan";
 
-import { Users, Tokens, Validation, Games, Followerships } from "../controllers";
+import { Users, Tokens, Validation, Games, Followerships, Feed } from "../controllers";
 import { Token } from "../models";
 import { getAuthTokenId } from "./utils";
 
@@ -47,6 +47,7 @@ async function serve() {
             tsdi.get(Validation),
             tsdi.get(Games),
             tsdi.get(Followerships),
+            tsdi.get(Feed),
         )
         .context(req => new Context(req))
         .defaultAuthorizationMode(AuthorizationMode.AUTH)

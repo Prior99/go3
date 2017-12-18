@@ -7,7 +7,6 @@ import {
     ok,
     param,
     notFound,
-    query,
     noauth,
     populate,
     context,
@@ -17,12 +16,10 @@ import {
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
-import { startOfDay, compareAsc } from "date-fns";
 
-import { User, Game, Participant, Token, UserStats, Followership } from "../models";
-import { signup, owner, world, followershipCreate } from "../scopes";
+import { User, Followership } from "../models";
+import { world, followershipCreate } from "../scopes";
 import { Context } from "../server/context";
-import { WinLossChartDataPoint } from "../models/user-stats/win-loss-chart-data-point";
 
 @controller @component
 export class Followerships {
@@ -42,7 +39,7 @@ export class Followerships {
         return ok();
     }
 
-    @route("POST", "/followership").dump(Followership, owner)
+    @route("POST", "/followership").dump(Followership, world)
     public async createFollowership(@body(followershipCreate) followership: Followership, @context ctx?: Context) {
         if ((await ctx.currentUser()).id !== followership.follower.id) {
             return unauthorized<Followership>("Cannot create followership for other user.");
@@ -51,7 +48,7 @@ export class Followerships {
             return unprocessableEntity<Followership>("Cannot follow yourself.");
         }
         await this.db.getRepository(Followership).save(followership);
-        return ok(await this.db.getRepository(Followership).findOne({
+        return created(await this.db.getRepository(Followership).findOne({
             where: { id: followership.id },
             relations: ["follower", "followed"],
         }));

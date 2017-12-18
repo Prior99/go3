@@ -11,7 +11,7 @@ import { computed, observable } from "mobx";
 import { bind } from "bind-decorator";
 
 import { world, gameCreate, turn } from "../scopes";
-import { boardSizes, formatBoardSize, Color, oppositeColor } from "../utils";
+import { boardSizes, formatBoardSize, Color, oppositeColor, newRating, GameResult } from "../utils";
 
 import { Participant, Board } from ".";
 
@@ -133,5 +133,13 @@ export class Game {
         return this.id === other.id &&
             this.participants.every((participant, index) => participant.equals(other.participants[index])) &&
             this.currentBoard.equals(other.currentBoard);
+    }
+
+    public newRating(userId: string) {
+        const participant = this.participants.find(({ user }) => user.id === userId);
+        const other = this.participants.find(current => current !== participant);
+        const gameResult = participant.winner ? GameResult.WIN :
+            other.winner ? GameResult.LOSS : GameResult.TIE;
+        return newRating(participant.rating, other.rating, gameResult);
     }
 }

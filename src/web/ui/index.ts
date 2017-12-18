@@ -15,3 +15,4 @@ export * from "./win-loss-line-chart";
 export * from "./win-loss-pie-chart";
 export * from "./user-card";
 export * from "./user-card-list";
+export * from "./feed-list";

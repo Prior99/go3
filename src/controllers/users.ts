@@ -22,7 +22,7 @@ import * as gravatar from "gravatar-url";
 import { User, Game, Participant, Token, UserStats  } from "../models";
 import { signup, owner, world } from "../scopes";
 import { Context } from "../server/context";
-import { WinLossChartDataPoint } from "../models/user-stats/win-loss-chart-data-point";
+import { WinLossChartDataPoint } from "../models";
 
 @controller @component
 export class Users {

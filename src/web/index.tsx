@@ -7,7 +7,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import { Router } from "react-router";
 import { configureController, ControllerOptions } from "hyrest";
 
-import { Users, Tokens, Games, Followerships } from "../controllers";
+import { Users, Tokens, Games, Followerships, Feed } from "../controllers";
 import { isProductionEnvironment } from "../utils";
 import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame, PageGames, PageFollow } from "./pages";
 import { AppContainer } from "./ui";
@@ -88,6 +88,7 @@ function main() {
         Tokens,
         Games,
         Followerships,
+        Feed,
     ], controllerOptions);
 
     const tsdi: TSDI = new TSDI();
