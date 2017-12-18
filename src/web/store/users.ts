@@ -35,7 +35,7 @@ export class UsersStore {
 
     @bind @action
     public async load(id: string) {
-        const existing = this.byId(id);
+        const existing = this.users.get(id);
         if (existing) {
             return existing;
         }

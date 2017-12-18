@@ -8,7 +8,7 @@ import { History } from "history";
 
 import { SidebarStore, OwnUserStore, LoginStore, GamesStore, UsersStore } from "../../store";
 import { Errors } from "..";
-import { routeGame, routeGames, routeDashboard, routeFollow } from "../../routing";
+import { routeGame, routeGames, routeDashboard, routeFollow, routeUser } from "../../routing";
 import * as css from "./style.scss";
 
 @external @observer
@@ -103,6 +103,10 @@ export class AppBar extends React.Component {
                                     <Dropdown.Item
                                         content="Dashboard"
                                         onClick={() => this.browserHistory.push(routeDashboard.path())}
+                                    />
+                                    <Dropdown.Item
+                                        content="Profile"
+                                        onClick={() => this.browserHistory.push(routeUser.path(this.login.userId))}
                                     />
                                     <Dropdown.Item content="Logout" onClick={this.login.logout} />
                                 </Dropdown.Menu>

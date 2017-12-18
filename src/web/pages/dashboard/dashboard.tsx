@@ -1,16 +1,13 @@
 import * as React from "react";
 import { observer } from "mobx-react";
-import { Table } from "semantic-ui-react";
 
 import { requireLogin } from "../../utils";
-import { Content, GamesList, UserStats, WinLossLineChart, WinLossPieChart } from "../../ui";
+import { Content, GamesList, UserStats, UserTable, UserCharts } from "../../ui";
 import { inject, external } from "tsdi";
-import { GamesStore, OwnUserStore } from "../../store";
-import * as css from "./dashboard.scss";
+import { OwnUserStore } from "../../store";
 
 @requireLogin @external @observer
 export class PageDashboard extends React.Component {
-    @inject private games: GamesStore;
     @inject private ownUser: OwnUserStore;
 
     public render() {
@@ -22,35 +19,9 @@ export class PageDashboard extends React.Component {
         return (
             <Content>
                 <h1>Dashboard</h1>
-                <UserStats userId={this.ownUser.user.id} />
-                <div className={css.chartsContainer}>
-                    <div className={css.lineContainer}>
-                        <WinLossLineChart userId={this.ownUser.user.id} />
-                    </div>
-                    <div className={css.pieContainer}>
-                        <WinLossPieChart userId={this.ownUser.user.id} />
-                    </div>
-                </div>
-                <Table>
-                    <Table.Body>
-                        <Table.Row>
-                            <Table.Cell>Name</Table.Cell>
-                            <Table.Cell>{name}</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Email</Table.Cell>
-                            <Table.Cell>{email}</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Joined</Table.Cell>
-                            <Table.Cell>{created.toLocaleDateString()}</Table.Cell>
-                        </Table.Row>
-                        <Table.Row>
-                            <Table.Cell>Id</Table.Cell>
-                            <Table.Cell>{id}</Table.Cell>
-                        </Table.Row>
-                    </Table.Body>
-                </Table>
+                <UserStats userId={id} />
+                <UserCharts userId={id} />
+                <UserTable user={user} />
             </Content>
         );
     }

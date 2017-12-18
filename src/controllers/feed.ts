@@ -8,7 +8,7 @@ import { world } from "../scopes";
 import { Context } from "../server/context";
 import { Rank, newRating, GameResult } from "../utils";
 
-const feedLimit = 20;
+const feedLimit = 50;
 
 @controller @component
 export class Feed {

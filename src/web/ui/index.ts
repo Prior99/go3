@@ -16,3 +16,5 @@ export * from "./win-loss-pie-chart";
 export * from "./user-card";
 export * from "./user-card-list";
 export * from "./feed-list";
+export * from "./user-table";
+export * from "./user-charts";

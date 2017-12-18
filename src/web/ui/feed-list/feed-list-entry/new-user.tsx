@@ -3,8 +3,11 @@ import { observer } from "mobx-react";
 import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
+import { History } from "history";
+import { bind } from "bind-decorator";
 
 import { FeedItem, FeedEvent } from "../../../../models";
+import { routeUser } from "../../../routing";
 import { UsersStore, LoginStore } from "../../../store";
 
 export interface FeedListEntryNewUserProps {
@@ -15,6 +18,12 @@ export interface FeedListEntryNewUserProps {
 export class FeedListEntryNewUser extends React.Component<FeedListEntryNewUserProps> {
     @inject private users: UsersStore;
     @inject private login: LoginStore;
+    @inject private browserHistory: History;
+
+    @bind
+    private toUser() {
+        this.browserHistory.push(routeUser.path(this.props.item.user.id));
+    }
 
     public render() {
         const { event, user, game, date } = this.props.item;
@@ -28,7 +37,7 @@ export class FeedListEntryNewUser extends React.Component<FeedListEntryNewUserPr
                 </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>
-                        <Feed.User>{name}</Feed.User> joined <Feed.Date>{ago} ago</Feed.Date>
+                        <Feed.User onClick={this.toUser}>{name}</Feed.User> joined <Feed.Date>{ago} ago</Feed.Date>
                     </Feed.Summary>
                 </Feed.Content>
             </Feed.Event>

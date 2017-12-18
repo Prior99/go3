@@ -10,7 +10,7 @@ import { User } from "../../../models";
 import { formatRank } from "../../../utils";
 import { OwnUserStore, GamesStore, UsersStore } from "../../store";
 import { BoardSizeSelect } from "..";
-import { routeGame } from "../../routing";
+import { routeGame, routeUser } from "../../routing";
 
 export interface UserCardProps {
     readonly user: User;
@@ -50,6 +50,11 @@ export class UserCard extends React.Component<UserCardProps> {
         this.browserHistory.push(routeGame.path(game.id));
     }
 
+    @bind
+    private toUser() {
+        this.browserHistory.push(routeUser.path(this.props.user.id));
+    }
+
     public render() {
         const { followedByCurrentUser, followsCurrentUser, avatar } = this;
         const { name, rating } = this.props.user;
@@ -58,7 +63,7 @@ export class UserCard extends React.Component<UserCardProps> {
             <Card>
                 <Card.Content>
                     <Image floated="right" size="mini" src={avatar} />
-                    <Card.Header>{name}</Card.Header>
+                    <Card.Header><a onClick={this.toUser}>{name}</a></Card.Header>
                     <Card.Meta>{rank}</Card.Meta>
                 </Card.Content>
                 <Card.Content extra>
