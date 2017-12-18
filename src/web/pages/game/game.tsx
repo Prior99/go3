@@ -34,7 +34,7 @@ export class PageGame extends React.Component<PageGameProps> {
 
     public render() {
         const game = this.games.byId(this.id);
-        if (!game) {
+        if (!game || !game.currentBoard) {
             return <Content>Loading</Content>;
         }
         return (

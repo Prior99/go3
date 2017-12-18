@@ -40,7 +40,7 @@ export class GamesStore {
         this.browserHistory.listen(this.refreshGameId);
         await this.refreshGameId();
         await this.loadGames();
-        this.refreshGamesInterval = setInterval(this.refreshGames, 5000);
+        this.refreshGamesInterval = setInterval(this.refreshGames, 10000);
     }
 
     @bind
@@ -174,6 +174,9 @@ export class GamesStore {
 
     @computed
     public get ownColor() {
+        if (!this.currentGameId) {
+            return;
+        }
         if (this.login.userId === this.currentGame.whiteUser.id) {
             return Color.WHITE;
         }

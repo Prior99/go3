@@ -34,6 +34,10 @@ export class UsersStore {
 
     @bind @action
     public async load(id: string) {
+        const existing = this.byId(id);
+        if (existing) {
+            return existing;
+        }
         const user = await this.usersController.getUser(id);
         this.users.set(user.id, user);
         return user;

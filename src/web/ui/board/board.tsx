@@ -53,11 +53,10 @@ export class Board extends React.Component<BoardProps> {
                             return (
                                 <Cell
                                     minimal={minimal}
-                                    color={color}
+                                    game={game}
                                     key={index}
                                     index={index}
                                     onClick={handleClick}
-                                    size={size}
                                 />
                             );
                         })

@@ -7,19 +7,18 @@ import { bind } from "bind-decorator";
 
 import { GamesStore, LoginStore } from "../../../store";
 import { Color } from "../../../../utils";
+import { Game } from "../../../../models";
 import * as css from "./cell.scss";
 
 export interface CellProps {
-    readonly color: Color;
+    readonly game: Game;
     readonly index: number;
     readonly onClick?: () => void;
-    readonly size: number;
     readonly minimal?: boolean;
 }
 
 @external @observer
 export class Cell extends React.Component<CellProps> {
-    @inject private games: GamesStore;
     @inject private login: LoginStore;
 
     @bind private handleClick() {
@@ -34,31 +33,34 @@ export class Cell extends React.Component<CellProps> {
     }
 
     @computed private get valid() {
-        const errorMessage = this.games.currentGame.turnValid(this.props.index);
-        return this.login.userId === this.games.currentGame.currentUser.id &&
-            typeof errorMessage === "undefined";
+        const { game, index } = this.props;
+        const errorMessage = game.turnValid(index);
+        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
     public render() {
-        const { color, size, index, minimal } = this.props;
+        const { game, index, minimal } = this.props;
+        const { boardSize } = game;
+        const color = game.currentBoard.at(index);
+        const ownColor = game.getColorForUser(this.login.userId);
         const tokenColorClass = classNames({
             [css.black]: color === Color.BLACK,
             [css.white]: color === Color.WHITE,
         });
         const previewColorClass = classNames(css.preview, {
-            [css.black]: this.games.ownColor === Color.BLACK,
-            [css.white]: this.games.ownColor === Color.WHITE,
+            [css.black]: ownColor === Color.BLACK,
+            [css.white]: ownColor === Color.WHITE,
             [css.invalid]: !this.valid,
         });
         const cellClass = classNames(css.cell, !minimal ? {
-            [css.cellTop]: index < size,
-            [css.cellRight]: index % size === size - 1,
-            [css.cellBottom]: index > size * (size - 1),
-            [css.cellLeft]: index % size === 0,
+            [css.cellTop]: index < boardSize,
+            [css.cellRight]: index % boardSize === boardSize - 1,
+            [css.cellBottom]: index > boardSize * (boardSize - 1),
+            [css.cellLeft]: index % boardSize === 0,
             [css.cellTopLeft]: index === 0,
-            [css.cellTopRight]: index === size - 1,
-            [css.cellBottomRight]: index === size * size - 1,
-            [css.cellBottomLeft]: index === size * (size - 1),
+            [css.cellTopRight]: index === boardSize - 1,
+            [css.cellBottomRight]: index === boardSize * boardSize - 1,
+            [css.cellBottomLeft]: index === boardSize * (boardSize - 1),
         } : undefined);
         return (
             <div className={cellClass} onClick={this.handleClick}>

@@ -40,25 +40,30 @@ export class AppBar extends React.Component {
                                 content={`${userStats.active} Active`}
                                 key="active"
                                 onClick={() => this.browserHistory.push(routeGames.path())}
+                                className={css.weak}
                             />,
-                            <Dropdown
-                                item
-                                text={`${this.games.possibleTurns.length} Possible Turns`}
-                                key="turns"
-                            >
-                                <Dropdown.Menu>
-                                    <Dropdown.Header>Games</Dropdown.Header>
-                                    {
-                                        this.games.possibleTurns.map(game => (
-                                            <Dropdown.Item
-                                                key={game.id}
-                                                content={this.games.format(game)}
-                                                onClick={() => this.browserHistory.push(routeGame.path(game.id))}
-                                            />
-                                        ))
-                                    }
-                                </Dropdown.Menu>
-                            </Dropdown>,
+                            this.games.possibleTurns.length > 0 ? (
+                                <Dropdown
+                                    item
+                                    text={`${this.games.possibleTurns.length} Possible Turns`}
+                                    key="turns"
+                                >
+                                    <Dropdown.Menu>
+                                        <Dropdown.Header>Games</Dropdown.Header>
+                                        {
+                                            this.games.possibleTurns.map(game => (
+                                                <Dropdown.Item
+                                                    key={game.id}
+                                                    content={this.games.format(game)}
+                                                    onClick={() => this.browserHistory.push(routeGame.path(game.id))}
+                                                />
+                                            ))
+                                        }
+                                    </Dropdown.Menu>
+                                </Dropdown>
+                            ) : (
+                                <Menu.Item content="No possible turns" key="turns" />
+                            ),
                         ]
                     }
                 </Menu.Menu>
@@ -70,22 +75,25 @@ export class AppBar extends React.Component {
                                 content={`Following ${this.ownUser.allFollowing.length}`}
                                 key="following"
                                 onClick={() => this.browserHistory.push(routeFollow.path())}
+                                className={css.veryweak}
                             />,
                             <Menu.Item
                                 icon="group"
                                 content={`Followers ${this.ownUser.allFollowers.length}`}
-                                key="following"
+                                key="followers"
                                 onClick={() => this.browserHistory.push(routeFollow.path())}
+                                className={css.veryweak}
                             />,
                             <Menu.Item
                                 icon="star"
                                 content={formatRank(user.rating)}
                                 key="rating"
                                 onClick={() => this.browserHistory.push(routeDashboard.path())}
+                                className={css.weak}
                             />,
                             <Menu.Item
                                 icon="user"
-                                content={this.ownUser.user.email}
+                                content={this.ownUser.user.name}
                                 key="user"
                             />,
                         ]
