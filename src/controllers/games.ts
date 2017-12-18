@@ -185,8 +185,8 @@ export class Games {
                 }
                 await transaction.getRepository(Participant).save(game.participants);
                 await transaction.getRepository(User).save(game.participants.map(participant => participant.user));
-                return newBoard;
             }
+            return newBoard;
         });
         return ok(finalBoard);
     }

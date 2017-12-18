@@ -4,7 +4,7 @@ import { History } from "history";
 import { component, inject } from "tsdi";
 
 import { Users } from "../../controllers";
-
+import { User } from "../../models";
 import { LoginStore, OwnUserStore } from ".";
 
 @component

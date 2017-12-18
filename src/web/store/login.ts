@@ -8,6 +8,7 @@ import { Users, Tokens } from "../../controllers";
 import { routeDashboard } from "../routing";
 
 import { GamesStore, OwnUserStore  } from ".";
+import { User } from "../../models";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";
@@ -65,6 +66,7 @@ export class LoginStore {
         this.clearStorage();
         this.authToken = undefined;
         this.userId = undefined;
+        location.reload();
     }
 
     @bind

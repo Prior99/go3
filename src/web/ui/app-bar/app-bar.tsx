@@ -1,12 +1,12 @@
 import { formatRank } from "../../../utils";
 import * as React from "react";
-import { Sidebar, Menu, Icon, Dropdown } from "semantic-ui-react";
+import { Sidebar, Menu, Dropdown, Image } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed } from "mobx";
 import { History } from "history";
 
-import { SidebarStore, OwnUserStore, LoginStore, GamesStore } from "../../store";
+import { SidebarStore, OwnUserStore, LoginStore, GamesStore, UsersStore } from "../../store";
 import { Errors } from "..";
 import { routeGame, routeGames, routeDashboard, routeFollow } from "../../routing";
 import * as css from "./style.scss";
@@ -18,8 +18,17 @@ export class AppBar extends React.Component {
     @inject private login: LoginStore;
     @inject private games: GamesStore;
     @inject private browserHistory: History;
+    @inject private users: UsersStore;
 
     @computed private get sidebarButtonVisible() { return !this.sidebar.alwaysOpen && this.login.loggedIn; }
+    @computed private get avatar() {
+        const { userId } = this.login;
+        const avatar = this.users.avatarById(userId);
+        if (!avatar) {
+            this.users.loadAvatar(userId);
+        }
+        return avatar;
+    }
 
     public render() {
         const { userStats, user } = this.ownUser;
@@ -91,11 +100,20 @@ export class AppBar extends React.Component {
                                 onClick={() => this.browserHistory.push(routeDashboard.path())}
                                 className={css.weak}
                             />,
-                            <Menu.Item
-                                icon="user"
-                                content={this.ownUser.user.name}
+                            <Dropdown
+                                item
                                 key="user"
-                            />,
+                                trigger={<Image circular size="mini" src={this.avatar} />}
+                            >
+                                <Dropdown.Menu>
+                                    <Dropdown.Header>Logged in in as {this.ownUser.user.name}</Dropdown.Header>
+                                    <Dropdown.Item
+                                        content="Dashboard"
+                                        onClick={() => this.browserHistory.push(routeDashboard.path())}
+                                    />
+                                    <Dropdown.Item content="Logout" onClick={this.login.logout} />
+                                </Dropdown.Menu>
+                            </Dropdown>,
                         ]
                     }
                 </Menu.Menu>

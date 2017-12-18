@@ -17,6 +17,7 @@ import {
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
 import { startOfDay, compareAsc } from "date-fns";
+import * as gravatar from "gravatar-url";
 
 import { User, Game, Participant, Token, UserStats  } from "../models";
 import { signup, owner, world } from "../scopes";
@@ -48,6 +49,15 @@ export class Users {
             return unauthorized<User>();
         }
         return ok(user);
+    }
+
+    @route("GET", "/user/:id/avatar") @noauth
+    public async getUserAvatar(@param("id") @is() id: string) {
+        const user = await this.db.getRepository(User).findOneById(id);
+        if (!user) { return notFound<string>(`Could not find user with id '${id}'`); }
+        return ok({
+            body: gravatar(user.email, { size: 200, default: "identicon" }),
+        });
     }
 
     @route("GET", "/user/:id/stats").dump(UserStats, world) @noauth

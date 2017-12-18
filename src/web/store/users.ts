@@ -14,6 +14,7 @@ export class UsersStore {
 
     @observable private users: Map<string, User> = new Map();
     @observable private userStats: Map<string, UserStats> = new Map();
+    @observable private avatars: Map<string, string> = new Map();
     @observable public loading = false;
 
     @bind @action
@@ -55,8 +56,20 @@ export class UsersStore {
         return stats;
     }
 
+    @bind @action
+    public async loadAvatar(id: string) {
+        const avatar = await this.usersController.getUserAvatar(id);
+        this.avatars.set(id, avatar);
+        return avatar;
+    }
+
     @bind
     public statsById(id: string) {
         return this.userStats.get(id);
+    }
+
+    @bind
+    public avatarById(id: string) {
+        return this.avatars.get(id);
     }
 }
