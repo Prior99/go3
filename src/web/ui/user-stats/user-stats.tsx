@@ -17,15 +17,7 @@ export interface UserStatsProps {
 export class UserStats extends React.Component<UserStatsProps> {
     @inject private users: UsersStore;
 
-    @computed private get user() {
-        const { userId } = this.props;
-        const user = this.users.byId(userId);
-        if (!user) {
-            this.users.load(userId);
-        }
-        return user;
-    }
-
+    @computed private get user() { return this.users.byId(this.props.userId); }
     @computed private get userStats() { return this.users.statsById(this.props.userId); }
 
     private renderUserStatsStatistics() {

@@ -67,7 +67,7 @@ export const routeGame: Route = {
 };
 
 export const routeFollow: Route = {
-    path: (id: string) => `/follow`,
+    path: () => "/follow",
     pattern: "/follow",
     navbar: true,
     title: "Following / Followers",
@@ -75,11 +75,16 @@ export const routeFollow: Route = {
 };
 
 export const routeFeed: Route = {
-    path: (id: string) => `/feed`,
+    path: () => "/feed",
     pattern: "/feed",
     navbar: true,
     title: "Feed",
     icon: "bell",
+};
+
+export const routeUser: Route = {
+    path: (id: string) => `/user/${id}`,
+    pattern: "/user/:id",
 };
 
 export const routes: Route[] = [
@@ -91,6 +96,7 @@ export const routes: Route[] = [
     routeGames,
     routeFollow,
     routeFeed,
+    routeUser,
 ];
 
 export function getRoute(url: string) {

@@ -46,7 +46,9 @@ export class UsersStore {
 
     @bind
     public byId(id: string) {
-        return this.users.get(id);
+        const user = this.users.get(id);
+        if (!user) { this.load(id); }
+        return user;
     }
 
     @bind @action
