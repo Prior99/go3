@@ -36,6 +36,16 @@ export class Rank {
     public equals(other: Rank) {
         return this.rank === other.rank && this.rankClass === other.rankClass;
     }
+
+    public greaterThan(other: Rank) {
+        if (this.rankClass === other.rankClass) {
+            return this.rankClass === RankClass.KYU ? this.rank < other.rank : this.rank > other.rank;
+        }
+        if (this.rankClass === RankClass.DAN) {
+            return true;
+        }
+        return false;
+    }
 }
 
 export function formatRank(rating: number) {

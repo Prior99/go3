@@ -16,14 +16,7 @@ export interface WinLossLineChartProps {
 export class WinLossLineChart extends React.Component<WinLossLineChartProps> {
     @inject private users: UsersStore;
 
-    @computed private get userStats() {
-        const { userId } = this.props;
-        const stats = this.users.statsById(userId);
-        if (!stats) {
-            this.users.loadStats(userId);
-        }
-        return stats;
-    }
+    @computed private get userStats() { return this.users.statsById(this.props.userId); }
 
     @bind
     private xAxisTickFormatter(index: number) {

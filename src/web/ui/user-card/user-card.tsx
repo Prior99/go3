@@ -38,14 +38,7 @@ export class UserCard extends React.Component<UserCardProps> {
         return Boolean(this.size);
     }
 
-    @computed private get avatar() {
-        const { user } = this.props;
-        const avatar = this.users.avatarById(user.id);
-        if (!avatar) {
-            this.users.loadAvatar(user.id);
-        }
-        return avatar;
-    }
+    @computed private get avatar() { return this.users.avatarById(this.props.user.id); }
 
     @bind @action private async unfollow() { await this.ownUser.removeFollowing(this.props.user.id); }
     @bind @action private async follow() { await this.ownUser.addFollowing(this.props.user.id); }

@@ -9,7 +9,16 @@ import { configureController, ControllerOptions } from "hyrest";
 
 import { Users, Tokens, Games, Followerships, Feed } from "../controllers";
 import { isProductionEnvironment } from "../utils";
-import { PageLogin, PageDashboard, PageSignup, PageCreateGame, PageGame, PageGames, PageFollow } from "./pages";
+import {
+    PageLogin,
+    PageDashboard,
+    PageSignup,
+    PageCreateGame,
+    PageGame,
+    PageGames,
+    PageFollow,
+    PageFeed,
+} from "./pages";
 import { AppContainer } from "./ui";
 import * as routes from "./routing";
 import "./global.scss";
@@ -46,6 +55,10 @@ export const pages = [
     {
         route: routes.routeFollow,
         component: PageFollow,
+    },
+    {
+        route: routes.routeFeed,
+        component: PageFeed,
     },
 ];
 

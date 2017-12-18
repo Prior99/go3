@@ -65,11 +65,15 @@ export class UsersStore {
 
     @bind
     public statsById(id: string) {
-        return this.userStats.get(id);
+        const stats = this.userStats.get(id);
+        if (!stats) { this.loadStats(id); }
+        return stats;
     }
 
     @bind
     public avatarById(id: string) {
-        return this.avatars.get(id);
+        const avatar = this.avatars.get(id);
+        if (!avatar) { this.loadAvatar(id); }
+        return avatar;
     }
 }

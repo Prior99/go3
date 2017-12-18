@@ -1,0 +1,25 @@
+$avatarDistance: 7px;
+
+.multiAvatarGroup {
+    position: relative;
+}
+
+.multiAvatar {
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    position: absolute !important;
+
+    &:first-child {
+        left: -$avatarDistance;
+        right: $avatarDistance;
+        z-index: 4;
+    }
+
+    &:last-child {
+        left: $avatarDistance;
+        right: -$avatarDistance;
+        z-index: 5;
+    }
+}
