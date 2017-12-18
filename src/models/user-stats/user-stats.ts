@@ -35,6 +35,10 @@ export class UserStats {
 
     @scope(world)
     @is(DataType.int)
+    public followers?: number;
+
+    @scope(world)
+    @is(DataType.int)
     public uniqueOpponents?: number;
 
     @scope(world)

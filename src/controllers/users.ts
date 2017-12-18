@@ -70,6 +70,8 @@ export class Users {
                 "game.participants",
                 "participants.user",
                 "participations.user",
+                "following",
+                "followers",
             ],
         });
 
@@ -80,7 +82,8 @@ export class Users {
         const wins = participations.reduce((count, current) => current.winner ? count + 1 : count , 0);
         const ties = participations.reduce((count, current) => current.game.tie ? count + 1 : count , 0);
         const losses = participations.length - wins - ties;
-        const following = 0;
+        const following = user.following.length;
+        const followers = user.followers.length;
         const uniqueOpponents = participations.reduce((opponents, current) => {
             const { participants } = current.game;
             participants.forEach(participant => {
@@ -105,7 +108,7 @@ export class Users {
         }, new Map() as Map<string, WinLossChartDataPoint>);
         const winLossChart = Array.from(dateMap.values()).sort((a, b) => compareAsc(a.date, b.date));
         const userStats = populate(world, UserStats, {
-            wins, losses, ties, following, uniqueOpponents, winLossChart, active,
+            wins, losses, ties, following, followers, uniqueOpponents, winLossChart, active,
         });
 
         return ok(userStats);
