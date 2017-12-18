@@ -77,7 +77,7 @@ export class UserCard extends React.Component<UserCardProps> {
                                 <Button color="green" icon="add" onClick={this.follow} content="Follow" />
                             )
                         }
-                        <Button color="blue" icon="add" onClick={this.togglePlay} content="Play" />
+                        <Button color="blue" onClick={this.togglePlay} content="Play" />
                     </Button.Group>
                 </Card.Content>
                 {

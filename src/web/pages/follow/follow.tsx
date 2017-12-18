@@ -34,7 +34,7 @@ export class PageFollow extends React.Component {
         if (!allFollowers) {
             return [];
         }
-        return allFollowers.map(followership => followership.followed);
+        return allFollowers.map(followership => followership.follower);
     }
 
     public render() {
