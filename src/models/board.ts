@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
     JoinColumn,
 } from "typeorm";
-import { DataType, scope, required, is, specify } from "hyrest";
+import { DataType, scope, required, is, specify, uuid } from "hyrest";
 import { bind } from "bind-decorator";
 import { computed } from "mobx";
 
@@ -55,6 +55,7 @@ export class Board {
 
     @PrimaryGeneratedColumn("uuid")
     @scope(world)
+    @is().validate(uuid)
     public readonly id?: string;
 
     @ManyToOne(() => Game, game => game.boards)
@@ -213,5 +214,12 @@ export class Board {
             }
         });
         return score;
+    }
+
+    public get winningColor() {
+        const scoreBlack = this.getScore(Color.BLACK);
+        const scoreWhite = this.getScore(Color.WHITE);
+        return scoreBlack === scoreWhite ? Color.EMPTY :
+            scoreBlack > scoreWhite ?  Color.BLACK : Color.WHITE;
     }
 }

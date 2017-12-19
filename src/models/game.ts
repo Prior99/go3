@@ -6,7 +6,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { is, scope, DataType, oneOf, specify, required, length } from "hyrest";
+import { is, scope, DataType, oneOf, specify, required, length, uuid } from "hyrest";
 import { computed, observable } from "mobx";
 import { bind } from "bind-decorator";
 
@@ -18,7 +18,7 @@ import { Participant, Board } from ".";
 @Entity()
 export class Game {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world, turn) @is()
+    @scope(world, turn) @is().validate(uuid)
     public readonly id?: string;
 
     @CreateDateColumn()
@@ -135,11 +135,20 @@ export class Game {
             this.currentBoard.equals(other.currentBoard);
     }
 
-    public newRating(userId: string) {
-        const participant = this.participants.find(({ user }) => user.id === userId);
+    public getParticipantForUser(userId: string) {
+        return this.participants.find(({ user }) => user.id === userId);
+    }
+
+    public getResultFor(userId: string) {
+        const participant = this.getParticipantForUser(userId);
         const other = this.participants.find(current => current !== participant);
-        const gameResult = participant.winner ? GameResult.WIN :
+        return participant.winner ? GameResult.WIN :
             other.winner ? GameResult.LOSS : GameResult.TIE;
-        return newRating(participant.rating, other.rating, gameResult);
+    }
+
+    public newRating(userId: string) {
+        const participant = this.getParticipantForUser(userId);
+        const other = this.participants.find(current => current !== participant);
+        return newRating(participant.rating, other.rating, this.getResultFor(userId));
     }
 }

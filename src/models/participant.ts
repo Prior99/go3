@@ -7,7 +7,7 @@ import {
     UpdateDateColumn,
     ManyToOne,
 } from "typeorm";
-import { is, scope, DataType, oneOf, specify, required } from "hyrest";
+import { is, scope, DataType, oneOf, specify, required, uuid } from "hyrest";
 
 import { Color, colors } from "../utils";
 import { world, gameCreate } from "../scopes";
@@ -18,7 +18,7 @@ import { User, Game } from ".";
 export class Participant {
     @PrimaryGeneratedColumn("uuid")
     @scope(world)
-    @is()
+    @is().validate(uuid)
     public readonly id?: string;
 
     @CreateDateColumn()

@@ -115,15 +115,9 @@ export class Games {
             .orderBy("board.turn", "ASC")
             .getOne();
 
-        if (!game) {
-            return notFound<Board>(`Could not find game with id ${id}.`);
-        }
-        if (game.over) {
-            return unprocessableEntity<Board>("The game is over.");
-        }
-        if ((await ctx.currentUser()).id !== game.currentUser.id) {
-            return unauthorized<Board>();
-        }
+        if (!game) { return notFound<Board>(`Could not find game with id ${id}.`); }
+        if (game.over) { return unprocessableEntity<Board>("The game is over."); }
+        if ((await ctx.currentUser()).id !== game.currentUser.id) { return unauthorized<Board>(); }
 
         const message = game.turnValid(index);
         if (message) {
@@ -149,40 +143,21 @@ export class Games {
             .orderBy("board.turn", "ASC")
             .getOne();
 
-        if (!game) {
-            return notFound<Board>(`Could not find game with id ${id}.`);
-        }
-        if (game.over) {
-            return unprocessableEntity<Board>("The game is over.");
-        }
-        if ((await ctx.currentUser()).id !== game.currentUser.id) {
-            return unauthorized<Board>();
-        }
+        if (!game) { return notFound<Board>(`Could not find game with id ${id}.`); }
+        if (game.over) { return unprocessableEntity<Board>("The game is over."); }
+        if ((await ctx.currentUser()).id !== game.currentUser.id) { return unauthorized<Board>(); }
 
         const newBoard = game.currentBoard.pass();
-
         const finalBoard = await this.db.transaction(async transaction => {
             await transaction.getRepository(Board).save(newBoard);
 
             if (game.consecutivePasses >= 1) {
-                const scoreBlack = newBoard.getScore(Color.BLACK);
-                const scoreWhite = newBoard.getScore(Color.WHITE);
-                const winningColor = scoreBlack === scoreWhite ? Color.EMPTY :
-                    scoreBlack > scoreWhite ?  Color.BLACK : Color.WHITE;
-                if (scoreBlack === scoreWhite) {
-                    game.participants.forEach(participant => participant.winner = false);
-                    const participant1 = game.participants[0];
-                    const participant2 = game.participants[1];
-                    participant1.user.rating = newRating(participant1.rating, participant2.rating, GameResult.TIE);
-                    participant2.user.rating = newRating(participant2.rating, participant1.rating, GameResult.TIE);
-                } else {
-                    const winner = game.participants.find(({ color }) => color === winningColor);
-                    const loser = game.participants.find(({ color }) => color !== winningColor);
-                    winner.winner = true;
-                    loser.winner = false;
-                    winner.user.rating = newRating(winner.rating, loser.rating, GameResult.WIN);
-                    loser.user.rating = newRating(loser.rating, winner.rating, GameResult.LOSS);
-                }
+                const { winningColor } = newBoard;
+                game.participants.forEach(participant => participant.winner = participant.color === winningColor);
+                game.participants.forEach(participant => {
+                    participant.rating = participant.user.rating;
+                    participant.user.rating = game.newRating(participant.user.id);
+                });
                 await transaction.getRepository(Participant).save(game.participants);
                 await transaction.getRepository(User).save(game.participants.map(participant => participant.user));
             }

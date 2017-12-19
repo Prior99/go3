@@ -8,7 +8,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
+import { is, DataType, email, required, length, scope, specify, only, transform, uuid } from "hyrest";
 
 import { login, signup, owner } from "../scopes";
 import { hash } from "../utils";
@@ -19,6 +19,7 @@ import { User, Participant } from ".";
 export class Token {
     @PrimaryGeneratedColumn("uuid")
     @scope(owner)
+    @is().validate(uuid)
     public id?: string;
 
     @ManyToOne(() => User, user => user.tokens)

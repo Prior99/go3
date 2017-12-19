@@ -5,7 +5,7 @@ import {
     UpdateDateColumn,
     ManyToOne,
 } from "typeorm";
-import { is, scope, specify, required } from "hyrest";
+import { is, scope, specify, required, uuid } from "hyrest";
 
 import { world, followershipCreate } from "../scopes";
 
@@ -15,7 +15,7 @@ import { User } from ".";
 export class Followership {
     @PrimaryGeneratedColumn("uuid")
     @scope(world)
-    @is()
+    @is().validate(uuid)
     public readonly id?: string;
 
     @CreateDateColumn()

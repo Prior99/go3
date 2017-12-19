@@ -6,7 +6,7 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { is, DataType, email, required, length, scope, specify, only, transform } from "hyrest";
+import { is, DataType, email, required, length, scope, specify, only, transform, uuid } from "hyrest";
 
 import { login, signup, world, owner, gameCreate, followershipCreate } from "../scopes";
 import { hash } from "../utils";
@@ -16,7 +16,7 @@ import { Participant, Token, Followership } from ".";
 @Entity()
 export class User {
     @PrimaryGeneratedColumn("uuid")
-    @scope(world, gameCreate, followershipCreate) @is(required)
+    @scope(world, gameCreate, followershipCreate) @is().validate(required, uuid)
     public id?: string;
 
     @is()
