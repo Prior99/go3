@@ -15,7 +15,7 @@ export class Tokens {
         if (!user) {
             return unauthorized();
         }
-        const newToken = await this.db.getRepository(Token).save({ user });
+        const newToken = await this.db.getRepository(Token).save(populate(owner, Token, { user }));
         return created(newToken);
     }
 }

@@ -1,0 +1,27 @@
+---
+
+- name: create directory
+  file: path=/home/prior/applications/go3 state=directory
+
+- name: copy files
+  synchronize:
+    src: "{{ item }}"
+    dest: /home/prior/applications/go3
+  with_items:
+    - ../server
+    - ../package.json
+    - ../yarn.lock
+    - ../server.sh
+    - ../README.md
+    - ../Dockerfile
+    - ../docker-compose.yml
+    - ../tsconfig.json
+
+- name: setup docker
+  docker_service:
+    project_src: /home/prior/applications/go3
+    files:
+      - docker-compose.yml
+    pull: yes
+    build: yes
+    state: present

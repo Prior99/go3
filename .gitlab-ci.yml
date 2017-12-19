@@ -1,8 +1,9 @@
 stages:
   - test
+  - deploy
 
 build:
-  image: "node:7"
+  image: "node:8"
   script:
     - make release
   stage: test
@@ -17,7 +18,7 @@ build:
       - index.html
 
 test:
-  image: "node:7"
+  image: "node:8"
   script:
     - make test
   stage: test
@@ -27,7 +28,7 @@ test:
       - node_modules/
 
 lint:
-  image: "node:7"
+  image: "node:8"
   script:
     - make lint
   stage: test
@@ -35,3 +36,21 @@ lint:
     key: "$CI_PROJECT_ID"
     paths:
       - node_modules/
+
+deploy:
+  image: "alpine:3.5"
+  before_script:
+    - apk --update add ansible git openssh python py2-pip
+    - mkdir ~/.ssh
+    - echo "$SSH_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
+  script:
+    - cd deploy
+    - ansible-playbook go3.yml
+  dependencies:
+    - build
+  stage: deploy
+  when: manual
+  only:
+    - master

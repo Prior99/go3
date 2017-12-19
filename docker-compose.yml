@@ -1,0 +1,32 @@
+version: '2'
+services:
+  postgres:
+    image: postgres:10
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: go3
+      POSTGRES_PASSWORD: go3
+    logging:
+      driver: "none"
+    volumes:
+      - go3_pgdata:/var/lib/postgresql/data
+  go3:
+    build: .
+    entrypoint:
+      - /app/server.sh
+    restart: unless-stopped
+    links:
+      - "postgres"
+    ports:
+      - "4001:4001"
+    depends_on:
+      - "postgres"
+    environment:
+      GO3_DB_DATABASE: go3
+      GO3_DB_USER: go3
+      GO3_DB_PASSWORD: go3
+      GO3_DB_HOST: postgres
+      GO3_DB_LOGGING: "false"
+
+volumes:
+  go3_pgdata:

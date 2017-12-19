@@ -1,0 +1,15 @@
+[Unit]
+Description=Go 3
+After=network.target
+
+[Service]
+TimeoutStartSec=5
+#User=prior
+WorkingDirectory=/home/prior/applications/go3/
+ExecStart=/home/prior/applications/go3/node-v8.9.3-linux-x64/bin/node server/server
+TimeoutStopSec=10
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi.target

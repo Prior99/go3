@@ -1,0 +1,17 @@
+---
+
+- name: create directory
+  file: path=/storage/prior/applications/go3-frontend state=directory
+
+- name: copy files
+  synchronize:
+    src: "{{ item }}"
+    dest: /storage/prior/applications/go3-frontend/
+  with_items:
+    - ../index.html
+    - ../dist
+
+- name: configure
+  template:
+    src: config.js.j2
+    dest: '/storage/prior/applications/go3-frontend/config.js'

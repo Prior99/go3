@@ -9,6 +9,11 @@ debug: node_modules
 	yarn run build:frontend
 	yarn run build:server
 
+.PHONY: release
+release: node_modules
+	yarn run build:frontend:release
+	yarn run build:server
+
 .PHONY: node_modules
 node_modules:
 	yarn install

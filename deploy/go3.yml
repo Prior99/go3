@@ -1,0 +1,8 @@
+---
+
+- name: Go3
+  hosts: 92k.de
+  remote_user: prior
+  roles:
+    - go3
+    - go3-frontend

@@ -24,7 +24,7 @@ async function serve() {
     process.on("SIGINT", exit);
     process.on("SIGHUP", exit);
 
-    const port = 3001;
+    const port = process.env.GO3_PORT || 4001;
     const http = Express();
     let server: Server;
 
