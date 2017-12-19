@@ -135,7 +135,7 @@ export class Users {
             .leftJoinAndSelect("game.participants", "participant")
             .leftJoinAndSelect("participant.user", "participatingUser");
         if (onlyActive) {
-            dbQuery.where("participant.winner IS NULL");
+            dbQuery.andWhere("participant.winner IS NULL");
         }
         const user = await dbQuery.getOne();
         if (!user) { return notFound<Game[]>(`Could not find user with id '${id}'`); }
