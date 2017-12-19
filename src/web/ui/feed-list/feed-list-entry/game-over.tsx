@@ -91,4 +91,3 @@ export class FeedListEntryGameOver extends React.Component<FeedListEntryGameOver
         );
     }
 }
-
