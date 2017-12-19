@@ -7,10 +7,6 @@ build:
   script:
     - make release
   stage: test
-  cache:
-    key: "$CI_PROJECT_ID"
-    paths:
-      - node_modules/
   artifacts:
     paths:
       - dist/
@@ -22,20 +18,12 @@ test:
   script:
     - make test
   stage: test
-  cache:
-    key: "$CI_PROJECT_ID"
-    paths:
-      - node_modules/
 
 lint:
   image: "node:8"
   script:
     - make lint
   stage: test
-  cache:
-    key: "$CI_PROJECT_ID"
-    paths:
-      - node_modules/
 
 deploy:
   image: "alpine:3.5"

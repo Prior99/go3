@@ -128,6 +128,8 @@ export class Users {
         @param("id") @is() id: string,
         @query("onlyActive") @is() onlyActive?: boolean,
     ): Promise<Game[]> {
+        const user = await this.db.getRepository(User).findOneById(id);
+        if (!user) { return notFound<Game[]>(`Could not find user with id '${id}'`); }
         let dbQuery = this.db.getRepository(User).createQueryBuilder("user")
             .where("user.id=:id", { id })
             .leftJoinAndSelect("user.participations", "participation")
@@ -137,8 +139,10 @@ export class Users {
         if (onlyActive) {
             dbQuery.andWhere("participant.winner IS NULL");
         }
-        const user = await dbQuery.getOne();
-        if (!user) { return notFound<Game[]>(`Could not find user with id '${id}'`); }
-        return ok(user.participations.map(({ game }) => game));
+        const result = await dbQuery.getOne();
+        if (!result) {
+            return ok([]);
+        }
+        return ok(result.participations.map(({ game }) => game));
     }
 }
