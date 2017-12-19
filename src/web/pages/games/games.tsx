@@ -17,7 +17,6 @@ export class PageGames extends React.Component {
     public render() {
         return (
             <Content>
-                <h1>Games</h1>
                 {
                     this.ownUser.userStats && (
                         <Statistic.Group>

@@ -18,3 +18,5 @@ export * from "./user-card-list";
 export * from "./feed-list";
 export * from "./user-table";
 export * from "./user-charts";
+export * from "./own-user-card";
+export * from "./infos";

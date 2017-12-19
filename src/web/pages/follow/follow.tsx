@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, action, computed } from "mobx";
-import { Form, Button, Card } from "semantic-ui-react";
+import { Form, Button, Card, Menu } from "semantic-ui-react";
 import { bind } from "bind-decorator";
 
 import { requireLogin } from "../../utils";
@@ -9,16 +9,29 @@ import { Content, UserCardList, UserSelect } from "../../ui";
 import { inject, external } from "tsdi";
 import { OwnUserStore } from "../../store";
 
+enum PageFollowTab {
+    FOLLOWERS = "followers",
+    FOLLOWING = "following",
+}
+
 @requireLogin @external @observer
 export class PageFollow extends React.Component {
     @inject private ownUser: OwnUserStore;
 
     @observable private userId: string;
+    @observable private tab = PageFollowTab.FOLLOWING;
 
     @bind @action private handleUserId(userId: string) { this.userId = userId; }
+
     @bind private async handleAddFollowing(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         await this.ownUser.addFollowing(this.userId);
+    }
+
+    @bind private handleTab(_, { name }) {
+        this.tab = name === "Following" ? PageFollowTab.FOLLOWING :
+            name === "Followers" ? PageFollowTab.FOLLOWERS :
+            undefined;
     }
 
     @computed private get followingUsers() {
@@ -45,22 +58,37 @@ export class PageFollow extends React.Component {
         const { followerUsers, followingUsers } = this;
         return (
             <Content>
-                <h1>Following</h1>
-                <UserCardList users={followingUsers}>
-                    <Card>
-                        <Card.Content>
-                            <Card.Header>Follow</Card.Header>
-                            <Form onSubmit={this.handleAddFollowing}>
-                                <Form.Field>
-                                    <UserSelect onChange={this.handleUserId} userId={this.userId} />
-                                </Form.Field>
-                                <Button type="submit" fluid color="green">Follow</Button>
-                            </Form>
-                        </Card.Content>
-                    </Card>
-                </UserCardList>
-                <h1>Followers</h1>
-                <UserCardList users={followerUsers} />
+                <Menu tabular>
+                    <Menu.Item
+                        name="Following"
+                        active={this.tab === PageFollowTab.FOLLOWING}
+                        onClick={this.handleTab}
+                    />
+                    <Menu.Item
+                        name="Followers"
+                        active={this.tab === PageFollowTab.FOLLOWERS}
+                        onClick={this.handleTab}
+                    />
+                </Menu>
+                {
+                    this.tab === PageFollowTab.FOLLOWING ? (
+                        <UserCardList users={followingUsers}>
+                            <Card>
+                                <Card.Content>
+                                    <Card.Header>Follow</Card.Header>
+                                    <Form onSubmit={this.handleAddFollowing}>
+                                        <Form.Field>
+                                            <UserSelect onChange={this.handleUserId} userId={this.userId} />
+                                        </Form.Field>
+                                        <Button type="submit" fluid color="green">Follow</Button>
+                                    </Form>
+                                </Card.Content>
+                            </Card>
+                        </UserCardList>
+                    ) : this.tab === PageFollowTab.FOLLOWERS ? (
+                        <UserCardList users={followerUsers} />
+                    ) : null
+                }
             </Content>
         );
     }

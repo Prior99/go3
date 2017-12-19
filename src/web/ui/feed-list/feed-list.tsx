@@ -5,6 +5,7 @@ import { Feed } from "semantic-ui-react";
 
 import { FeedStore } from "../../store";
 import { FeedListEntry } from "./feed-list-entry";
+import * as css from "./feed-list.scss";
 
 @external @observer
 export class FeedList extends React.Component {
@@ -12,7 +13,7 @@ export class FeedList extends React.Component {
 
     public render() {
         return (
-            <Feed>
+            <Feed className={css.feed}>
                 {this.feed.all.map((item, index) => <FeedListEntry item={item} key={index} />)}
             </Feed>
         );

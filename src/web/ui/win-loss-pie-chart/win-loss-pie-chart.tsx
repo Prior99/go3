@@ -9,7 +9,7 @@ import { UsersStore } from "../../store";
 import { ActiveShape } from "./active-shape";
 
 export interface WinLossPieChartProps {
-    readonly userId?: string;
+    readonly userId: string;
 }
 
 @external @observer

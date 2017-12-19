@@ -31,9 +31,12 @@ export class PageUser extends React.Component<PageUserProps> {
         return (
             <Content>
                 <h1>{name}</h1>
+                <br />
                 <UserStats userId={id} />
-                <UserCharts userId={id} />
+                <br />
                 <UserTable user={user} />
+                <br />
+                <UserCharts userId={id} />
             </Content>
         );
     }

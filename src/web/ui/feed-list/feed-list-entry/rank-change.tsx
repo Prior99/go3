@@ -8,7 +8,7 @@ import { bind } from "bind-decorator";
 
 import { FeedItem, FeedEvent } from "../../../../models";
 import { routeUser } from "../../../routing";
-import { UsersStore, OwnUserStore } from "../../../store";
+import { UsersStore, LoginStore } from "../../../store";
 import { Rank } from "../../../../utils";
 
 export interface FeedListEntryRankChangeProps {
@@ -18,7 +18,7 @@ export interface FeedListEntryRankChangeProps {
 @observer @external
 export class FeedListEntryRankChange extends React.Component<FeedListEntryRankChangeProps> {
     @inject private users: UsersStore;
-    @inject private ownUser: OwnUserStore;
+    @inject private login: LoginStore;
     @inject private browserHistory: History;
 
     @bind
@@ -34,7 +34,7 @@ export class FeedListEntryRankChange extends React.Component<FeedListEntryRankCh
         const oldRank = new Rank(participant.rating);
         const newRank = new Rank(game.newRating(user.id));
         const gained = newRank.greaterThan(oldRank);
-        const name = user.id === this.ownUser.user.id ? "You" : user.name;
+        const name = user.id === this.login.userId ? "You" : user.name;
         return (
             <Feed.Event>
                 <Feed.Label>

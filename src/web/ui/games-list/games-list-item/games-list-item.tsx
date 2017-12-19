@@ -10,12 +10,13 @@ import { formatDistance } from "date-fns";
 import { Color, formatBoardSize, oppositeColor, formatRank } from "../../../../utils";
 import { Game } from "../../../../models";
 import { routeGame } from "../../../routing";
-import { PreviewBoard } from "../..";
+import { PreviewBoard, Infos, InfoName, InfoValue } from "../..";
 import * as css from "./games-list-item.scss";
 import { GamesStore, LoginStore } from "../../../store";
 
 export interface GamesListItemProps {
     readonly game: Game;
+    readonly mini?: boolean;
 }
 
 @observer @external
@@ -28,7 +29,7 @@ export class GamesListItem extends React.Component<GamesListItemProps> {
     }
 
     public render() {
-        const { game } = this.props;
+        const { game, mini } = this.props;
         if (!game) {
             return null;
         }
@@ -45,16 +46,22 @@ export class GamesListItem extends React.Component<GamesListItemProps> {
                     )
                 }
                 <div className={css.flexContainer}>
-                    <div className={css.boardContainer}>
-                        <PreviewBoard board={board} />
-                    </div>
+                    {
+                        !mini && (
+                            <div className={css.boardContainer}>
+                                <PreviewBoard board={board} />
+                            </div>
+                        )
+                    }
                     <div className={css.info}>
-                        <div className={css.name}>Turn</div>
-                        <div className={css.value}>{board.turn}</div>
-                        <div className={css.name}>Last turn</div>
-                        <div className={css.value}>{formatDistance(board.created, new Date())} ago</div>
-                        <div className={css.name}>Opponent</div>
-                        <div className={css.value}>{otherUser.name} ({formatRank(otherUser.rating)})</div>
+                        <Infos>
+                            <InfoName>Turn</InfoName>
+                            <InfoValue>{board.turn}</InfoValue>
+                            <InfoName>Last turn</InfoName>
+                            <InfoValue>{formatDistance(board.created, new Date())} ago</InfoValue>
+                            <InfoName>Opponent</InfoName>
+                            <InfoValue>{otherUser.name} ({formatRank(otherUser.rating)})</InfoValue>
+                        </Infos>
                     </div>
                 </div>
             </Segment>

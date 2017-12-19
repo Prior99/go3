@@ -17,7 +17,6 @@ import {
     PageGame,
     PageGames,
     PageFollow,
-    PageFeed,
     PageUser,
 } from "./pages";
 import { AppContainer } from "./ui";
@@ -56,10 +55,6 @@ export const pages = [
     {
         route: routes.routeFollow,
         component: PageFollow,
-    },
-    {
-        route: routes.routeFeed,
-        component: PageFeed,
     },
     {
         route: routes.routeUser,

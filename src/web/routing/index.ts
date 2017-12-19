@@ -74,14 +74,6 @@ export const routeFollow: Route = {
     icon: "group",
 };
 
-export const routeFeed: Route = {
-    path: () => "/feed",
-    pattern: "/feed",
-    navbar: true,
-    title: "Feed",
-    icon: "bell",
-};
-
 export const routeUser: Route = {
     path: (id: string) => `/user/${id}`,
     pattern: "/user/:id",
@@ -95,7 +87,6 @@ export const routes: Route[] = [
     routeGame,
     routeGames,
     routeFollow,
-    routeFeed,
     routeUser,
 ];
 
