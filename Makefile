@@ -18,6 +18,10 @@ lint: node_modules
 	yarn run lint:src
 	yarn run lint:style
 
+.PHONY: test
+test: node_modules
+	yarn run test
+
 .PHONY: run-frontend
 run-frontend: node_modules
 	yarn start:frontend
@@ -31,7 +35,7 @@ clean-db:
 	dropdb go3 || true
 
 .PHONY: clean
-clean: clean-db
+clean:
 	rm -Rf dist/
 	rm -Rf node_modules/
 	rm -Rf server/
