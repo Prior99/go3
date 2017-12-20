@@ -27,6 +27,7 @@ services:
       GO3_DB_PASSWORD: go3
       GO3_DB_HOST: postgres
       GO3_DB_LOGGING: "false"
+      GO3_DB_DRIVER: postgres
 
 volumes:
   go3_pgdata:

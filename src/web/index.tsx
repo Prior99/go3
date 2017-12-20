@@ -62,11 +62,20 @@ export const pages = [
     },
 ];
 
-export function App() {
+const tsdi: TSDI = new TSDI();
+tsdi.enableComponentScanner();
+
+function App() {
     return (
         <AppContainer>
             <Switch>
-                <Redirect exact from="/" to="/login" />
+                {
+                    tsdi.get(LoginStore).loggedIn ? (
+                        <Redirect exact from="/" to={routes.routeLogin.path()} />
+                    ) : (
+                        <Redirect exact from="/" to={routes.routeDashboard.path()} />
+                    )
+                }
                 {
                     pages
                         .map((page, index) => (
@@ -82,42 +91,32 @@ export function App() {
     );
 }
 
-function main() {
-    const controllerOptions: ControllerOptions = {
-        baseUrl,
-        errorHandler: (err) => errors.errors.push({
-            message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
-        }),
-        authorizationProvider: (headers: Headers) => {
-            const loginStore = tsdi.get(LoginStore);
-            if (loginStore.loggedIn) {
-                headers.append("authorization", `Bearer ${loginStore.authToken}`);
-            }
-        },
-    };
+const errors = tsdi.get(ErrorStore);
+const controllerOptions: ControllerOptions = {
+    baseUrl,
+    errorHandler: (err) => errors.errors.push({
+        message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
+    }),
+    authorizationProvider: (headers: Headers) => {
+        const loginStore = tsdi.get(LoginStore);
+        if (loginStore.loggedIn) {
+            headers.append("authorization", `Bearer ${loginStore.authToken}`);
+        }
+    },
+};
 
-    configureController([
-        Users,
-        Tokens,
-        Games,
-        Followerships,
-        Feed,
-    ], controllerOptions);
+configureController([
+    Users,
+    Tokens,
+    Games,
+    Followerships,
+    Feed,
+], controllerOptions);
 
-    const tsdi: TSDI = new TSDI();
-    tsdi.enableComponentScanner();
-
-    ReactDOM.render(
-        <div>
-            <Router history={tsdi.get("history")}>
-                <App />
-            </Router>
-            {!isProductionEnvironment() && <DevTools position={{ bottom: 0 }} />}
-        </div>,
-        document.getElementById("root"),
-    );
-
-    const errors = tsdi.get(ErrorStore);
-}
-
-main();
+ReactDOM.render(
+    <div>
+        <Router history={tsdi.get("history")}><App /></Router>
+        {!isProductionEnvironment() && <DevTools position={{ bottom: 0 }} />}
+    </div>,
+    document.getElementById("root"),
+);

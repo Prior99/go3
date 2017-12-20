@@ -6,12 +6,14 @@ import { component, inject } from "tsdi";
 import { Users } from "../../controllers";
 import { User } from "../../models";
 import { LoginStore, OwnUserStore } from ".";
+import { routeDashboard } from "../routing";
 
 @component
 export class SignupStore {
     @inject private login: LoginStore;
     @inject private users: Users;
     @inject private ownUser: OwnUserStore;
+    @inject private browserHistory: History;
 
     @observable public signupResult: Boolean;
 
@@ -22,6 +24,7 @@ export class SignupStore {
         if (response) {
             await this.login.login(email, password);
             await this.ownUser.loadUser();
+            this.browserHistory.replace(routeDashboard.path());
         }
         return response;
     }
