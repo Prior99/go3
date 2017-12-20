@@ -4,7 +4,7 @@ import { info } from "winston";
 import * as Yaml from "yamljs";
 import { existsSync } from "fs";
 
-import { User, Token, Game, Board, Participant, Followership } from "../models";
+import { User, Token, Game, Board, Participant, Followership } from "../common";
 
 function envConfig() {
     const result: any = {};

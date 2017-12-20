@@ -9,12 +9,9 @@ import { Connection } from "typeorm";
 import { Server } from "net";
 import * as morgan from "morgan";
 
-import { Users, Tokens, Validation, Games, Followerships, Feed } from "../controllers";
-import { Token } from "../models";
-import { getAuthTokenId } from "./utils";
+import { Context, getAuthTokenId, Users, Tokens, Validation, Games, Followerships, Feed, Token } from "../common";
 
 import { cors, catchError } from "./middlewares";
-import { Context } from "./context";
 import { Database } from "./database";
 
 async function serve() {

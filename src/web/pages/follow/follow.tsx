@@ -4,10 +4,9 @@ import { observable, action, computed } from "mobx";
 import { Form, Button, Card, Menu } from "semantic-ui-react";
 import { bind } from "bind-decorator";
 
-import { requireLogin } from "../../utils";
-import { Content, UserCardList, UserSelect } from "../../ui";
+import { requireLogin, OwnUserStore  } from "../../../common-ui";
+import { Content, UserCardList, UserSelect } from "../../components";
 import { inject, external } from "tsdi";
-import { OwnUserStore } from "../../store";
 
 enum PageFollowTab {
     FOLLOWERS = "followers",

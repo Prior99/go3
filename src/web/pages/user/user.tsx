@@ -5,8 +5,8 @@ import { inject, external } from "tsdi";
 import { bind } from "bind-decorator";
 import { Icon } from "semantic-ui-react";
 
-import { Content, UserStats, UserCharts, UserTable } from "../../ui";
-import { UsersStore, OwnUserStore, LoginStore } from "../../store";
+import { Content, UserStats, UserCharts, UserTable } from "../../components";
+import { UsersStore, OwnUserStore, LoginStore } from "../../../common-ui";
 import * as css from "./user.scss";
 
 export interface PageUserProps {

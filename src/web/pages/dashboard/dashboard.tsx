@@ -5,9 +5,8 @@ import { observable } from "mobx";
 import { bind } from "bind-decorator";
 import { Menu } from "semantic-ui-react";
 
-import { requireLogin } from "../../utils";
-import { Content, GamesList, FeedList, OwnUserCard } from "../../ui";
-import { GamesStore, LoginStore } from "../../store";
+import { requireLogin, GamesStore, LoginStore } from "../../../common-ui";
+import { Content, GamesList, FeedList, OwnUserCard } from "../../components";
 import * as css from "./dashboard.scss";
 
 enum PageDashboardTab {

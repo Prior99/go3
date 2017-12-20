@@ -7,8 +7,7 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import { Router } from "react-router";
 import { configureController, ControllerOptions } from "hyrest";
 
-import { Users, Tokens, Games, Followerships, Feed } from "../controllers";
-import { isProductionEnvironment } from "../utils";
+import { isProductionEnvironment, Users, Tokens, Games, Followerships, Feed } from "../common";
 import {
     PageLogin,
     PageDashboard,
@@ -19,11 +18,10 @@ import {
     PageFollow,
     PageUser,
 } from "./pages";
-import { AppContainer } from "./ui";
-import * as routes from "./routing";
+import { AppContainer } from "./components";
+import * as routes from "../common-ui/routing";
 import "./global.scss";
-import "./factories";
-import { LoginStore, ErrorStore } from "./store";
+import { LoginStore, ErrorStore } from "../common-ui";
 
 declare var baseUrl: string;
 

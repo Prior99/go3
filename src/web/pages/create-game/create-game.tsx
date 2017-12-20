@@ -6,10 +6,8 @@ import { Button, Form } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { History } from "history";
 
-import { requireLogin } from "../../utils";
-import { Content, UserSelect, BoardSizeSelect } from "../../ui";
-import { GamesStore } from "../../store";
-import { routeGame } from "../../routing";
+import { routeGame, requireLogin, GamesStore } from "../../../common-ui";
+import { Content, UserSelect, BoardSizeSelect } from "../../components";
 
 @requireLogin @observer @external
 export class PageCreateGame extends React.Component {

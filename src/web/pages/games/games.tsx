@@ -3,11 +3,9 @@ import { observer } from "mobx-react";
 import { Statistic, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
-import { requireLogin } from "../../utils";
-import { Content, GamesList } from "../../ui";
+import { routeCreateGame, requireLogin, GamesStore, OwnUserStore } from "../../../common-ui";
+import { Content, GamesList } from "../../components";
 import { inject, external } from "tsdi";
-import { GamesStore, OwnUserStore } from "../../store";
-import { routeCreateGame } from "../../routing";
 
 @requireLogin @external @observer
 export class PageGames extends React.Component {

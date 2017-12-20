@@ -5,9 +5,8 @@ import { inject, external } from "tsdi";
 import { bind } from "bind-decorator";
 import { Segment } from "semantic-ui-react";
 
-import { requireLogin } from "../../utils";
-import { Content, Board, GameHistory, GameStatus } from "../../ui";
-import { GamesStore } from "../../store";
+import { requireLogin, GamesStore  } from "../../../common-ui";
+import { Content, Board, GameHistory, GameStatus } from "../../components";
 import * as css from "./game.scss";
 
 export interface PageGameProps {

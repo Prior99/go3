@@ -6,9 +6,8 @@ import { inject, external } from "tsdi";
 import bind from "bind-decorator";
 import { Input, Button, Form } from "semantic-ui-react";
 
-import { LoginStore, SignupStore } from "../../store";
-import { Content } from "../../ui";
-import { routeLogin } from "../../routing";
+import { routeLogin, LoginStore, SignupStore } from "../../../common-ui";
+import { Content } from "../../components";
 import * as css from "./signup.scss";
 
 @external @observer
