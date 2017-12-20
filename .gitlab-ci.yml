@@ -12,6 +12,7 @@ build:
       - dist/
       - locales/
       - index.html
+      - server/
 
 test:
   image: "node:8"
