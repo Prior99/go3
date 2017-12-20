@@ -68,10 +68,12 @@ function App() {
         <AppContainer>
             <Switch>
                 {
-                    tsdi.get(LoginStore).loggedIn ? (
+                    tsdi.get(LoginStore).loggedIn ? [
+                        <Redirect exact from="/" to={routes.routeDashboard.path()} key="root" />,
+                        <Redirect exact from="/login" to={routes.routeDashboard.path()} key="login" />,
+                        <Redirect exact from="/signup" to={routes.routeDashboard.path()} key="signup" />,
+                    ] : (
                         <Redirect exact from="/" to={routes.routeLogin.path()} />
-                    ) : (
-                        <Redirect exact from="/" to={routes.routeDashboard.path()} />
                     )
                 }
                 {

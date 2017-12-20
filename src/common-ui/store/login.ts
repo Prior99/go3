@@ -4,10 +4,9 @@ import * as isomorphicFetch from "isomorphic-fetch";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
 
-import { Users, Tokens } from "../../common";
-
+import { Users, Tokens, User } from "../../common";
+import { routeDashboard } from "../../common-ui";
 import { GamesStore, OwnUserStore  } from ".";
-import { User } from "../../common";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";
@@ -29,6 +28,7 @@ export class LoginStore {
     @inject private tokens: Tokens;
     @inject("OwnUserStore") private ownUser: OwnUserStore;
     @inject("GamesStore") private games: GamesStore;
+    @inject private browserHistory: History;
 
     @observable public authToken: string;
     @observable public userId: string;
@@ -54,6 +54,7 @@ export class LoginStore {
             this.save();
             await this.ownUser.loadUser();
             await this.games.loadGames();
+            this.browserHistory.replace(routeDashboard.path());
         }
         return response;
     }
