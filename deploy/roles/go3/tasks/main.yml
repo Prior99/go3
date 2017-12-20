@@ -8,7 +8,6 @@
     src: "{{ item }}"
     dest: /home/prior/applications/go3
   with_items:
-    - ../server
     - ../package.json
     - ../yarn.lock
     - ../server.sh
@@ -16,6 +15,8 @@
     - ../Dockerfile
     - ../docker-compose.yml
     - ../tsconfig.json
+    - ../typings
+    - ../src
 
 - name: setup docker
   docker_service:
