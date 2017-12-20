@@ -81,7 +81,7 @@ export class Users {
         const active = participations.reduce((count, current) => current.winner === null ? count + 1 : count , 0);
         const wins = participations.reduce((count, current) => current.winner ? count + 1 : count , 0);
         const ties = participations.reduce((count, current) => current.game.tie ? count + 1 : count , 0);
-        const losses = participations.length - wins - ties;
+        const losses = participations.length - wins - ties - active;
         const following = user.following.length;
         const followers = user.followers.length;
         const uniqueOpponents = participations.reduce((opponents, current) => {
