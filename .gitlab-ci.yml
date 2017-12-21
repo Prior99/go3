@@ -27,16 +27,16 @@ lint:
   stage: test
 
 deploy:
-  image: "alpine:3.5"
+  image: "base/archlinux:latest"
   before_script:
-    - apk --update add ansible git openssh python py2-pip rsync
+    - pacman -Sy --noconfirm ansible git openssh python3 rsync
     - mkdir ~/.ssh
     - echo "$SSH_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - cd deploy
-    - ansible-playbook go3.yml
+    - ansible-playbook -vvv go3.yml
   dependencies:
     - build
   stage: deploy
