@@ -12,6 +12,7 @@
         "slug": "go3",
         "android": {
             "package": "de.92k.go"
-        }
+        },
+        "icon": "./icon.png"
     }
 }
