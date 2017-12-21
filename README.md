@@ -19,10 +19,11 @@ make run-server
 
 If the server is not autoreloading on change, type `rs` and hit enter.
 
-### Frontend
+### Web Frontend
 
-To run the frontend execute, while a server is reachable:
+To run the web frontend execute, while a server is reachable:
 
 ```
-make run-frontend
+make run-web
 ```
+

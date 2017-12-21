@@ -6,12 +6,12 @@ all: default lint db
 
 .PHONY: debug
 debug: node_modules
-	yarn run build:frontend
+	yarn run build:web
 	yarn run build:server
 
 .PHONY: release
 release: node_modules
-	yarn run build:frontend:release
+	yarn run build:web:release
 	yarn run build:server
 
 .PHONY: node_modules
@@ -27,9 +27,13 @@ lint: node_modules
 test: node_modules
 	yarn run test
 
-.PHONY: run-frontend
-run-frontend: node_modules
-	yarn start:frontend
+.PHONY: run-android
+run-android: node_modules
+	yarn start:android
+
+.PHONY: run-web
+run-web: node_modules
+	yarn start:web
 
 .PHONY: run-server
 run-server: node_modules db

@@ -8,3 +8,4 @@ swagger-codegen-cli.jar
 server/
 !src/server/
 database.yml
+.expo
