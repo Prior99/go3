@@ -7,6 +7,11 @@
         "packagerOpts": {
             "sourceExts": ["ts", "tsx"],
             "transformer": "node_modules/react-native-typescript-transformer/index.js"
+        },
+        "version": "1.0.0",
+        "slug": "go3",
+        "android": {
+            "package": "de.92k.go"
         }
     }
 }
