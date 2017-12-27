@@ -52,3 +52,7 @@ clean:
 .PHONY: db
 db:
 	createdb go3 || true
+
+.PHONY: deploy
+deploy: release
+	cd deploy && ansible-playbook go3.yml

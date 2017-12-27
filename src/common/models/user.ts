@@ -26,7 +26,7 @@ export class User {
     @scope(owner, login)
     public email?: string;
 
-    @Column("varchar", { length: 200 })
+    @Column("varchar", { length: 200, nullable: true })
     @is()
         .validate(length(8, 255), required)
     @scope(login)
@@ -71,4 +71,12 @@ export class User {
     @OneToMany(() => Followership, followership => followership.followed)
     @is() @specify(() => Followership)
     public followers?: Followership[];
+
+    @Column("varchar", { length: 8, nullable: true })
+    @scope(world)
+    public ai?: string;
+
+    @Column("int", { nullable: true })
+    @scope(world)
+    public aiLevel?: string;
 }
