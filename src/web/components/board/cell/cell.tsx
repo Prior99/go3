@@ -20,7 +20,21 @@ export interface CellProps {
 export class Cell extends React.Component<CellProps> {
     @inject private login: LoginStore;
 
+    @observable private locked = false;
+
     @bind private handleClick() {
+        if (this.locked === true) {
+            this.handleConfirm();
+        } else {
+            this.locked = true;
+        }
+    }
+    @bind private handleCancel() {
+        this.locked = false;
+    }
+
+    @bind private handleConfirm() {
+        this.locked = false;
         const { onClick } = this.props;
         if (!onClick) {
             return;
@@ -46,10 +60,12 @@ export class Cell extends React.Component<CellProps> {
             [css.black]: color === Color.BLACK,
             [css.white]: color === Color.WHITE,
         });
-        const previewColorClass = classNames(css.preview, {
+        const previewColorClass = classNames({
             [css.black]: ownColor === Color.BLACK,
             [css.white]: ownColor === Color.WHITE,
             [css.invalid]: !this.valid,
+            [css.preview]: !this.locked,
+            [css.locked]: this.locked,
         });
         const cellClass = classNames(css.cell, !minimal ? {
             [css.cellTop]: index < boardSize,
@@ -62,7 +78,7 @@ export class Cell extends React.Component<CellProps> {
             [css.cellBottomLeft]: index === boardSize * (boardSize - 1),
         } : undefined);
         return (
-            <div className={cellClass} onClick={this.handleClick}>
+            <div className={cellClass} onClick={this.handleClick} onMouseLeave={this.handleCancel}>
                 { color !== Color.EMPTY && <div className={tokenColorClass} /> }
                 { color === Color.EMPTY && <div className={previewColorClass} /> }
             </div>

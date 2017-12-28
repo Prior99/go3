@@ -4,6 +4,20 @@
     position: relative;
 }
 
+@keyframes pulse {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
 @mixin cellBorder {
     background-image: url("./grid-background-border.png");
 }
@@ -85,4 +99,11 @@
     &:hover {
         opacity: 0.5;
     }
+}
+
+.locked {
+    animation-name: pulse;
+    animation-duration: 1000ms;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease;
 }
