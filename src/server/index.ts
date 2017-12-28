@@ -9,7 +9,19 @@ import { Connection } from "typeorm";
 import { Server } from "net";
 import * as morgan from "morgan";
 
-import { Context, getAuthTokenId, Users, Tokens, Validation, Games, Followerships, Feed, Token, User, gnuGoInstalled } from "../common";
+import {
+    Context,
+    getAuthTokenId,
+    Users,
+    Tokens,
+    Validation,
+    Games,
+    Followerships,
+    Feed,
+    Token,
+    User,
+    gnuGoInstalled,
+} from "../common";
 
 import { cors, catchError } from "./middlewares";
 import { Database } from "./database";

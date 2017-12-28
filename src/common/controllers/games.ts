@@ -30,10 +30,14 @@ export class Games {
     @inject private db: Connection;
 
     private async invokeAI(id: string) {
-        const game = await this.db.getRepository(Game).findOne({
-            where: { id },
-            relations: ["participants", "boards", "participants.user", "boards.game"],
-        });
+        const game = await this.db.getRepository(Game).createQueryBuilder("game")
+            .leftJoinAndSelect("game.boards", "board")
+            .leftJoinAndSelect("game.participants", "participant")
+            .leftJoinAndSelect("participant.user", "user")
+            .leftJoinAndSelect("board.game", "boardGame")
+            .where("game.id=:id", { id })
+            .orderBy("board.turn", "ASC")
+            .getOne();
         const aiResult = await invokeAI(game);
         if (aiResult) {
             switch (aiResult.action) {
@@ -113,6 +117,7 @@ export class Games {
         const game = await this.db.getRepository(Game).createQueryBuilder("game")
             .leftJoinAndSelect("game.boards", "board", "board.turn > :sinceTurn", { sinceTurn })
             .where("game.id=:id", { id })
+            .orderBy("board.turn", "DESC")
             .getOne();
         if (!game) { return notFound(undefined, `Could not find user with id '${id}'`); }
         return ok(game.boards.sort((a, b) => a.turn - b.turn));
@@ -190,6 +195,9 @@ export class Games {
             }
             return newBoard;
         });
+
+        await this.invokeAI(game.id);
+
         return ok(finalBoard);
     }
 

@@ -22,7 +22,9 @@ export async function invokeGtpAI(
 ): Promise<Move> {
     const client = new Gtp(input, output, game.boardSize);
     await client.replayGame(game);
-    return await client.genMove(game.currentBoard.currentColor);
+    const move = await client.genMove(game.currentBoard.currentColor);
+    await client.close();
+    return move;
 }
 
 export class Gtp {
@@ -93,7 +95,6 @@ export class Gtp {
     }
 
     @bind private async execute(command: string, ...args: any[]) {
-        console.log(command, ...args)
         this.write(command, ...args);
     }
 
@@ -122,12 +123,11 @@ export class Gtp {
     @bind public async genMove(color: Color) {
         await this.execute("genmove", color);
         const move = await this.readMove();
-        console.log(move)
         return move;
     }
 
     @bind public close(): Promise<undefined> {
-        this.write("quit");
+        this.execute("quit");
         this.input.end();
         return new Promise((resolve, reject) => {
             this.output.once("close", () => resolve());

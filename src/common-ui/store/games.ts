@@ -6,7 +6,7 @@ import * as pathToRegexp from "path-to-regexp";
 import { formatDistance } from "date-fns";
 
 import { routeGame, routeGames } from "../routing/index";
-import { Games, Users, Game, Color, formatBoardSize } from "../../common";
+import { Games, Board, Users, Game, Color, formatBoardSize } from "../../common";
 
 import { LoginStore, UsersStore } from ".";
 
@@ -61,7 +61,7 @@ export class GamesStore {
     private async refreshBoards() {
         if (this.currentGame) {
             const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
-            this.currentGame.boards.push(...newBoards);
+            newBoards.forEach(board => this.addBoard(this.currentGame, board));
             if (this.currentGame.consecutivePasses >= 2 || this.currentGame.currentBoard.resigned) {
                 await this.loadGame(this.currentGameId);
                 await this.loadBoards(this.currentGameId);
@@ -75,6 +75,14 @@ export class GamesStore {
     }
 
     @bind
+    private addBoard(game: Game, board: Board) {
+        if (game.boards.find(other => other.id === board.id)) {
+            return;
+        }
+        game.boards.push(board);
+    }
+
+    @bind
     private async storeGame(game: Game) {
         const old = this.byId(game.id);
         if (old && old.equals(game)) {
@@ -83,7 +91,7 @@ export class GamesStore {
         const latestBoard = await this.gamesController.latestBoard(game.id);
         game.boards = old ? old.boards : [];
         if (!game.boards.find(board => latestBoard.id === board.id)) {
-            game.boards.push(latestBoard);
+            this.addBoard(game, latestBoard);
         }
         this.games.set(game.id, game);
         await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
@@ -149,13 +157,13 @@ export class GamesStore {
     @bind @action
     public async turn(game: Game, index: number) {
         const board = await this.gamesController.turn(game.id, index);
-        game.boards.push(board);
+        this.addBoard(game, board);
     }
 
     @bind @action
     public async pass(game: Game) {
         const board = await this.gamesController.pass(game.id);
-        game.boards.push(board);
+        this.addBoard(game, board);
         if (game.consecutivePasses >= 1) {
             await this.loadGame(game.id);
             await this.loadBoards(game.id);
@@ -186,7 +194,7 @@ export class GamesStore {
 
     @computed
     public get possibleTurns() {
-        return this.all.filter(game => game.currentUser.id === this.login.userId);
+        return this.all.filter(game => game.currentUser.id === this.login.userId && !game.over);
     }
 
     public format(game: Game) {
