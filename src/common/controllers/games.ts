@@ -21,12 +21,40 @@ import { Connection } from "typeorm";
 
 import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
-import { Context } from "..//context";
-import { Color, newRating, GameResult } from "../utils";
+import { Context } from "../context";
+import { Color, newRating, GameResult, oppositeColor  } from "../utils";
+import { invokeAI, Action } from "../ai";
 
 @controller @component
 export class Games {
     @inject private db: Connection;
+
+    private async invokeAI(id: string) {
+        const game = await this.db.getRepository(Game).findOne({
+            where: { id },
+            relations: ["participants", "boards", "participants.user", "boards.game"],
+        });
+        const aiResult = await invokeAI(game);
+        if (aiResult) {
+            switch (aiResult.action) {
+                case Action.PASS: {
+                    await this.db.getRepository(Board).save(game.currentBoard.pass());
+                    return;
+                }
+                case Action.PLACE: {
+                    await this.db.getRepository(Board).save(
+                        game.currentBoard.place(game.currentBoard.toIndex(aiResult.position)),
+                    );
+                    return;
+                }
+                case Action.RESIGN: {
+                    await this.setWinner(game, oppositeColor(game.getColorForUser(game.currentUser.id)));
+                    await this.db.getRepository(Board).save(game.currentBoard.resign());
+                }
+                default: return;
+            }
+        }
+    }
 
     @route("POST", "/game").dump(Game, world)
     public async createGame(@body(gameCreate) game: Game, @context ctx?: Context): Promise<Game> {
@@ -47,7 +75,7 @@ export class Games {
         participant1.rating = participant1.user.rating;
         participant2.rating = participant2.user.rating;
 
-        const finalGame = this.db.transaction(async transaction => {
+        const finalGame = await this.db.transaction(async transaction => {
             await transaction.getRepository(Participant).save(game.participants);
             await transaction.getRepository(Game).save(game);
             await transaction.getRepository(Board).save(populate(turn, Board, {
@@ -57,8 +85,10 @@ export class Games {
                 state: Array.from({ length: Math.pow(game.boardSize, 2)}).map(() => Color.EMPTY),
                 turn: 0,
             }));
+
             return game;
         });
+        await this.invokeAI(finalGame.id);
 
         return created(finalGame);
     }
@@ -126,6 +156,9 @@ export class Games {
 
         const newBoard = game.currentBoard.place(index);
         await this.db.getRepository(Board).save(newBoard);
+
+        await this.invokeAI(game.id);
+
         return ok(newBoard);
     }
 
@@ -153,16 +186,45 @@ export class Games {
 
             if (game.consecutivePasses >= 1) {
                 const { winningColor } = newBoard;
-                game.participants.forEach(participant => participant.winner = participant.color === winningColor);
-                game.participants.forEach(participant => {
-                    participant.rating = participant.user.rating;
-                    participant.user.rating = game.newRating(participant.user.id);
-                });
-                await transaction.getRepository(Participant).save(game.participants);
-                await transaction.getRepository(User).save(game.participants.map(participant => participant.user));
+                await this.setWinner(game, winningColor);
             }
             return newBoard;
         });
         return ok(finalBoard);
+    }
+
+    private async setWinner(game: Game, winningColor: Color) {
+        game.participants.forEach(participant => participant.winner = participant.color === winningColor);
+        game.participants.forEach(participant => {
+            participant.rating = participant.user.rating;
+            participant.user.rating = game.newRating(participant.user.id);
+        });
+        await this.db.transaction(async transaction => {
+            await transaction.getRepository(Participant).save(game.participants);
+            await transaction.getRepository(User).save(game.participants.map(participant => participant.user));
+        });
+    }
+
+    @route("POST", "/game/:id/resign").dump(Board, world)
+    public async resign(
+        @param("id") @is() id: string,
+        @context ctx?: Context,
+    ): Promise<undefined> {
+        const game = await this.db.getRepository(Game).createQueryBuilder("game")
+            .leftJoinAndSelect("game.participants", "participant")
+            .leftJoinAndSelect("participant.user", "user")
+            .where("game.id=:id", { id })
+            .orderBy("board.turn", "ASC")
+            .getOne();
+
+        if (!game) { return notFound<undefined>(`Could not find game with id ${id}.`); }
+        if (game.over) { return unprocessableEntity<undefined>("The game is over."); }
+        if ((await ctx.currentUser()).id !== game.currentUser.id) { return unauthorized<undefined>(); }
+
+        const winningColor = oppositeColor(game.getColorForUser(game.currentUser.id));
+        await this.db.getRepository(Board).save(game.currentBoard.resign());
+        await this.setWinner(game, winningColor);
+
+        return ok();
     }
 }

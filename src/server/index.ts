@@ -1,7 +1,7 @@
 import * as Express from "express";
 import * as BodyParser from "body-parser";
 import * as HTTP from "http-status-codes";
-import { info, error } from "winston";
+import { info, error, warning } from "winston";
 import { hyrest } from "hyrest/middleware";
 import { AuthorizationMode } from "hyrest";
 import { TSDI } from "tsdi";
@@ -9,7 +9,7 @@ import { Connection } from "typeorm";
 import { Server } from "net";
 import * as morgan from "morgan";
 
-import { Context, getAuthTokenId, Users, Tokens, Validation, Games, Followerships, Feed, Token } from "../common";
+import { Context, getAuthTokenId, Users, Tokens, Validation, Games, Followerships, Feed, Token, User, gnuGoInstalled } from "../common";
 
 import { cors, catchError } from "./middlewares";
 import { Database } from "./database";
@@ -31,7 +31,7 @@ async function serve() {
 
     // Make sure the database is initialized.
     const database  = tsdi.get(Database);
-    database.connect();
+    await database.connect();
 
     http.use(catchError);
     http.use(BodyParser.json({ strict: false }));
@@ -60,11 +60,35 @@ async function serve() {
         }),
     );
 
+    const availableAIs: { ai: string, aiLevel: number}[] = [];
+    if (await gnuGoInstalled()) {
+        info("GNU Go found.");
+        availableAIs.push(...[
+            { ai: "gnugo", aiLevel: 1 },
+            { ai: "gnugo", aiLevel: 5 },
+            { ai: "gnugo", aiLevel: 8 },
+            { ai: "gnugo", aiLevel: 10 },
+        ]);
+    } else {
+        warning("GNU Go not installed.");
+    }
+
+    await Promise.all(availableAIs.map(async ({ ai, aiLevel }) => {
+        const existingUser = await database.conn.getRepository(User).findOne({ where: { ai, aiLevel } });
+        if (existingUser) { return; }
+        const name = `GNU Go (Level ${aiLevel})`;
+        info(`Missing AI "${name}". Adding new AI player.`);
+        const email = "info@92k.de";
+        await database.conn.getRepository(User).save({ name, ai, aiLevel, email });
+    }));
+
     server = http.listen(port);
 
     async function exit() {
         info("Exiting...");
-        server.close();
+        if (server) {
+            server.close();
+        }
         try {
             if (database && database.conn && database.conn.isConnected) {
                 await database.conn.close();

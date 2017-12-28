@@ -13,7 +13,7 @@ import { bind } from "bind-decorator";
 import { world, gameCreate, turn } from "../scopes";
 import { boardSizes, formatBoardSize, Color, oppositeColor, newRating, GameResult } from "../utils";
 
-import { Participant, Board } from ".";
+import { Participant, Board, User } from ".";
 
 @Entity()
 export class Game {
@@ -44,7 +44,7 @@ export class Game {
     @observable
     public boards: Board[];
 
-    public getUserByColor(color: Color) {
+    public getUserByColor(color: Color): User {
         return this.participants.find(participant => participant.color === color).user;
     }
 

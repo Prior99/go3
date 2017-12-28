@@ -14,14 +14,10 @@ import { bind } from "bind-decorator";
 import { computed } from "mobx";
 
 import { Color, oppositeColor } from "../utils";
+import { Position } from "../position";
 import { turn, world } from "../scopes";
 
 import { User, Game } from ".";
-
-export interface Position {
-    col: number;
-    row: number;
-}
 
 @Entity()
 export class Board {
@@ -98,6 +94,10 @@ export class Board {
     @Column("integer")
     @is(DataType.int).validate(required) @scope(turn, world)
     public turn?: number;
+
+    @Column("boolean", { nullable: true })
+    @scope(turn, world)
+    public resigned?: boolean;
 
     public get size() { return Math.sqrt(this.state.length); }
 
@@ -177,6 +177,13 @@ export class Board {
     public pass(): Board {
         const nextBoard = new Board(this);
         nextBoard.turn++;
+        return nextBoard;
+    }
+
+    public resign(): Board {
+        const nextBoard = new Board(this);
+        nextBoard.turn++;
+        nextBoard.resigned = true;
         return nextBoard;
     }
 

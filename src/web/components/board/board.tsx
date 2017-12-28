@@ -26,10 +26,10 @@ export class Board extends React.Component<BoardProps> {
         const board = game.currentBoard;
         const scoreWhite = board.getScore(Color.WHITE);
         const scoreBlack = board.getScore(Color.BLACK);
-        if (scoreWhite === scoreBlack) {
+        if (game.tie) {
             return "Tie";
         }
-        if (scoreWhite > scoreBlack) {
+        if (game.currentBoard.winningColor === Color.WHITE) {
             return `White (${game.whiteUser.name}) wins`;
         }
         return `Black (${game.blackUser.name}) wins`;

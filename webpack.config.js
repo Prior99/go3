@@ -103,7 +103,9 @@ module.exports = {
         new ProgressBarPlugin()
     ],
     node: {
+        child_process: "empty",
         fs: "empty",
         net: "empty",
+        readline: "empty",
     },
 };

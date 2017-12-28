@@ -49,7 +49,7 @@ export class GamesStore {
                 await this.loadGame(this.currentGameId);
             }
             await this.loadBoards(this.currentGameId);
-            this.refreshBoardsInterval = setInterval(this.refreshBoards, 1000);
+            this.refreshBoardsInterval = setInterval(this.refreshBoards, 3000);
         }
     }
 
@@ -62,7 +62,7 @@ export class GamesStore {
         if (this.currentGame) {
             const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
             this.currentGame.boards.push(...newBoards);
-            if (this.currentGame.consecutivePasses >= 2) {
+            if (this.currentGame.consecutivePasses >= 2 || this.currentGame.currentBoard.resigned) {
                 await this.loadGame(this.currentGameId);
                 await this.loadBoards(this.currentGameId);
             }

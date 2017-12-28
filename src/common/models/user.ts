@@ -78,5 +78,5 @@ export class User {
 
     @Column("int", { nullable: true })
     @scope(world)
-    public aiLevel?: string;
+    public aiLevel?: number;
 }
