@@ -1,8 +1,8 @@
 import * as React from "react";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
-import { computed } from "mobx";
-import { Menu, Label } from "semantic-ui-react";
+import { computed, observable } from "mobx";
+import { Menu, Label, Modal, Header, Icon, Button } from "semantic-ui-react";
 import { bind } from "bind-decorator";
 
 import { GamesStore, LoginStore } from "../../../common-ui";
@@ -12,12 +12,16 @@ export class GameStatus extends React.Component {
     @inject private games: GamesStore;
     @inject private login: LoginStore;
 
+    @observable private passRequested = false;
+
     @computed private get yourTurn() {
         return this.login.userId === this.games.currentGame.currentUser.id;
     }
 
-    @bind
-    private async handlePass() {
+    @bind private async handlePass() { this.passRequested = true; }
+    @bind private async cancelPass() { this.passRequested = false; }
+    @bind private async confirmPass() {
+        this.passRequested = false;
         await this.games.pass(this.games.currentGame);
     }
 
@@ -32,6 +36,24 @@ export class GameStatus extends React.Component {
         }
         return (
             <Menu fluid stackable>
+                {
+                    this.passRequested && (
+                        <Modal onClose={this.cancelPass} open size="small">
+                            <Header icon="question" content="Pass" />
+                            <Modal.Content>
+                                Are you sure you want to pass?
+                            </Modal.Content>
+                            <Modal.Actions>
+                                <Button basic color="red" invert onClick={this.cancelPass}>
+                                    <Icon name="remove" /> No
+                                </Button>
+                                <Button basic color="green" invert onClick={this.confirmPass}>
+                                    <Icon name="check" /> Yes
+                                </Button>
+                            </Modal.Actions>
+                        </Modal>
+                    )
+                }
                 <Menu.Item disabled>
                     Black
                     <Label>{board.prisonersBlack}</Label>
