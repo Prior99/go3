@@ -42,7 +42,11 @@ export class Games {
         if (aiResult) {
             switch (aiResult.action) {
                 case Action.PASS: {
-                    await this.db.getRepository(Board).save(game.currentBoard.pass());
+                    const newBoard = game.currentBoard.pass();
+                    await this.db.getRepository(Board).save(newBoard);
+                    if (game.consecutivePasses >= 1) {
+                        await this.setWinner(game, newBoard.winningColor);
+                    }
                     return;
                 }
                 case Action.PLACE: {
@@ -188,10 +192,8 @@ export class Games {
         const newBoard = game.currentBoard.pass();
         const finalBoard = await this.db.transaction(async transaction => {
             await transaction.getRepository(Board).save(newBoard);
-
             if (game.consecutivePasses >= 1) {
-                const { winningColor } = newBoard;
-                await this.setWinner(game, winningColor);
+                await this.setWinner(game, newBoard.winningColor);
             }
             return newBoard;
         });

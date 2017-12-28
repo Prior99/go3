@@ -11,6 +11,14 @@ export class ErrorStore {
     @observable public errors: ApiError[] = [];
 
     @bind @action
+    public report(error: ApiError) {
+        if (this.errors.find(other => other.message === error.message)) {
+            return;
+        }
+        this.errors.push(error);
+    }
+
+    @bind @action
     public dismiss() {
         this.errors.pop();
     }

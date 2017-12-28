@@ -94,7 +94,7 @@ function App() {
 const errors = tsdi.get(ErrorStore);
 const controllerOptions: ControllerOptions = {
     baseUrl,
-    errorHandler: (err) => errors.errors.push({
+    errorHandler: (err) => errors.report({
         message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
     }),
     authorizationProvider: (headers: Headers) => {
