@@ -1,7 +1,7 @@
 import * as Express from "express";
 import * as BodyParser from "body-parser";
 import * as HTTP from "http-status-codes";
-import { info, error, warning } from "winston";
+import { info, error, warn } from "winston";
 import { hyrest } from "hyrest/middleware";
 import { AuthorizationMode } from "hyrest";
 import { TSDI } from "tsdi";
@@ -82,7 +82,7 @@ async function serve() {
             { ai: "gnugo", aiLevel: 10 },
         ]);
     } else {
-        warning("GNU Go not installed.");
+        warn("GNU Go not installed.");
     }
 
     await Promise.all(availableAIs.map(async ({ ai, aiLevel }) => {

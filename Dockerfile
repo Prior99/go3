@@ -1,4 +1,6 @@
-FROM node:8-alpine
+FROM node:8-stretch
+
+RUN apt-get update && apt-get install -yy gnugo
 
 WORKDIR /app
 

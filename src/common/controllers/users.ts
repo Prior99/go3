@@ -135,7 +135,7 @@ export class Users {
             .leftJoinAndSelect("user.participations", "participation")
             .leftJoinAndSelect("participation.game", "game")
             .leftJoinAndSelect("game.participants", "participant")
-            .leftJoinAndSelect("participant.user", "participatingUser")
+            .leftJoinAndSelect("participant.user", "participatingUser");
         if (onlyActive) {
             dbQuery.andWhere("participant.winner IS NULL");
         }

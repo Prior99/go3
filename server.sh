@@ -1,2 +1,2 @@
 #!/bin/sh
-node server/server
+PATH=$PATH:/usr/games node server/server
