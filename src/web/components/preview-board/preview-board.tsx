@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { bind } from "bind-decorator";
 
 import { Board, Color } from "../../../common";
-import { GamesStore } from "../../../common-ui";
+import { GamesStore, drawBoard } from "../../../common-ui";
 import * as css from "./preview-board.scss";
 
 export interface PreviewBoardProps {
@@ -33,33 +33,7 @@ export class PreviewBoard extends React.Component<PreviewBoardProps> {
         }
         this.canvas.width = this.canvas.clientWidth;
         this.canvas.height = this.canvas.clientHeight;
-        const ctx = this.canvas.getContext("2d");
-        const { width, height } = this.canvas;
-        const minDimension = Math.min(width, height);
-        const { board } = this.props;
-        const { size, state } = board;
-        const cellSize = minDimension / size;
-        ctx.fillStyle =  "rgb(208, 184, 146)";
-        ctx.fillRect(0, 0, minDimension, minDimension);
-        state.forEach((color, index) => {
-            if (color === Color.EMPTY) {
-                return;
-            }
-            const { col, row } = board.toPos(index);
-            const x = col * cellSize;
-            const y = row * cellSize;
-            ctx.beginPath();
-            ctx.arc(x + cellSize / 2, y + cellSize / 2, cellSize / 2, 0, Math.PI * 2);
-            ctx.fillStyle = color === Color.BLACK ?
-                "rgb(0, 0, 0)" :
-                "rgb(255, 255, 255)";
-            ctx.fill();
-            if (index === board.placedAt) {
-                ctx.strokeStyle = "rgb(255, 60, 60)";
-                ctx.lineWidth = 2;
-                ctx.stroke();
-            }
-        });
+        drawBoard(this.canvas, this.props.board);
     }
 
     public render() {
