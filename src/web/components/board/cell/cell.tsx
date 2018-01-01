@@ -56,6 +56,7 @@ export class Cell extends React.Component<CellProps> {
         const { boardSize } = game;
         const color = game.currentBoard.at(index);
         const ownColor = game.getColorForUser(this.login.userId);
+        const isLastTurn = game.currentBoard.placedAt === index;
         const tokenColorClass = classNames({
             [css.black]: color === Color.BLACK,
             [css.white]: color === Color.WHITE,
@@ -81,6 +82,7 @@ export class Cell extends React.Component<CellProps> {
             <div className={cellClass} onClick={this.handleClick} onMouseLeave={this.handleCancel}>
                 { color !== Color.EMPTY && <div className={tokenColorClass} /> }
                 { color === Color.EMPTY && <div className={previewColorClass} /> }
+                { isLastTurn && <div className={css.lastTurn} />}
             </div>
         );
     }
