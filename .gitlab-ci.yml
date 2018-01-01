@@ -36,7 +36,7 @@ deploy:
     - echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
   script:
     - cd deploy
-    - ansible-playbook -vvv go3.yml
+    - ansible-playbook go3.yml
   dependencies:
     - build
   stage: deploy
