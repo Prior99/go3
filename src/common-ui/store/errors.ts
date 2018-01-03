@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { component, inject, initialize } from "tsdi";
 
 interface ApiError {

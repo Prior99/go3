@@ -1,6 +1,6 @@
 import { ReadLine, createInterface } from "readline";
 import { Board, formatPosition, parsePosition, Position, Game, Color } from "..";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { Action, Move } from "./ai";
 import { oppositeColor } from "..";

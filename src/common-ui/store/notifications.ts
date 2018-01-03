@@ -1,6 +1,6 @@
 import { observable, action, autorun } from "mobx";
 import { component, inject, initialize } from "tsdi";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { Game, formatPosition } from "../../common";
 import { drawBoard } from "..";

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import * as classNames from "classnames";
 import { inject, external } from "tsdi";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { GamesStore, LoginStore } from "../../../../common-ui";
 import { Game, Color } from "../../../../common";

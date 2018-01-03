@@ -4,7 +4,7 @@ import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
 import { History } from "history";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { FeedItem, FeedEvent, Rank } from "../../../../common";
 import { routeUser, UsersStore, LoginStore } from "../../../../common-ui";
@@ -26,7 +26,7 @@ export class FeedListEntryRankChange extends React.Component<FeedListEntryRankCh
 
     public render() {
         const { event, user, game, date } = this.props.item;
-        const avatar = this.users.avatarById(user.id);
+        const { avatarUrl } = user;
         const ago = formatDistance(date, new Date());
         const participant = game.participants.find(current => current.user.id === user.id);
         const oldRank = new Rank(participant.rating);
@@ -36,7 +36,7 @@ export class FeedListEntryRankChange extends React.Component<FeedListEntryRankCh
         return (
             <Feed.Event>
                 <Feed.Label>
-                    <Image circular src={avatar} />
+                    <Image circular src={avatarUrl} />
                 </Feed.Label>
                 <Feed.Content>
                     {

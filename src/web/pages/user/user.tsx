@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, action } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { Icon } from "semantic-ui-react";
 
 import { Content, UserStats, UserCharts, UserTable } from "../../components";

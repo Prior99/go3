@@ -4,7 +4,7 @@ import { observable, computed } from "mobx";
 import { inject, external } from "tsdi";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { UsersStore } from "../../../common-ui";
 

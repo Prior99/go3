@@ -31,7 +31,7 @@ export class AppBar extends React.Component {
     @inject private users: UsersStore;
 
     @computed private get sidebarButtonVisible() { return !this.sidebar.alwaysOpen && this.login.loggedIn; }
-    @computed private get avatar() { return this.users.avatarById(this.login.userId); }
+    @computed private get avatar() { return this.ownUser.user && this.ownUser.user.avatarUrl; }
 
     public render() {
         const { userStats, user } = this.ownUser;

@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
 import { PieChart, Pie, Sector, RechartsFunction } from "recharts";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { UsersStore } from "../../../common-ui";
 import { ActiveShape } from "./active-shape";

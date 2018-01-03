@@ -4,7 +4,7 @@ import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
 import { History } from "history";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { computed } from "mobx";
 
 import { FeedItem, FeedEvent } from "../../../../common";
@@ -50,12 +50,13 @@ export class FeedListEntryGameOver extends React.Component<FeedListEntryGameOver
                 <Feed.Label className={css.multiAvatarGroup}>
                     {
                         game.participants.map(participant => {
+                            const { avatarUrl, id } = participant.user;
                             return (
                                 <Image
                                     className={css.multiAvatar}
                                     circular
-                                    src={this.users.avatarById(participant.user.id)}
-                                    key={participant.user.id}
+                                    src={avatarUrl}
+                                    key={id}
                                 />
                             );
                         })

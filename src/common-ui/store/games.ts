@@ -1,5 +1,5 @@
 import { observable, computed, action, extendObservable } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
 import * as pathToRegexp from "path-to-regexp";

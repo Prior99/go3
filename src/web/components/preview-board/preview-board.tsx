@@ -1,7 +1,7 @@
 import * as React from "react";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { Board, Color } from "../../../common";
 import { GamesStore, drawBoard } from "../../../common-ui";

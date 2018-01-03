@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { User } from "../../../common";
 import { UsersStore } from "../../../common-ui";

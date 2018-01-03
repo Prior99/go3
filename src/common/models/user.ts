@@ -6,7 +6,8 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { is, DataType, email, required, length, scope, specify, only, transform, uuid } from "hyrest";
+import { is, DataType, email, required, length, scope, specify, only, transform, uuid, precompute } from "hyrest";
+import * as gravatar from "gravatar-url";
 
 import { login, signup, world, owner, gameCreate, followershipCreate } from "../scopes";
 import { hash } from "../utils";
@@ -79,4 +80,10 @@ export class User {
     @Column("int", { nullable: true })
     @scope(world)
     public aiLevel?: number;
+
+    @precompute @scope(world)
+    public get avatarUrl() {
+        console.log(`${this.email} => ${gravatar(this.email, { size: 200, default: "identicon" })}`);
+        return gravatar(this.email, { size: 200, default: "identicon" });
+    }
 }

@@ -3,7 +3,7 @@ import { Card, Image } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, observable } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { History } from "history";
 
 import { User, formatRank } from "../../../common";
@@ -18,7 +18,7 @@ export class OwnUserCard extends React.Component {
     @inject private users: UsersStore;
     @inject private login: LoginStore;
 
-    @computed private get avatar() { return this.users.avatarById(this.login.userId); }
+    @computed private get avatar() { return this.ownUser.user && this.ownUser.user.avatarUrl; }
 
     @bind private toUser() { this.browserHistory.push(routeUser.path(this.login.userId)); }
 

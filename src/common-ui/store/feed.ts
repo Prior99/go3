@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { component, initialize, inject } from "tsdi";
 
 import { FeedItem, Feed } from "../../common";

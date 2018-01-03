@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { component, initialize, inject } from "tsdi";
 
 import { User, UserStats, Followership, Users, Followerships } from "../../common";
@@ -71,8 +71,8 @@ export class OwnUserStore {
     @bind @action
     public async addFollowing(userId: string) {
         const followership = await this.followerships.createFollowership({
-            follower: { id: this.user.id },
-            followed: { id: userId },
+            follower: { id: this.user.id } as User,
+            followed: { id: userId } as User,
         });
         this.storeFollowing(followership);
     }

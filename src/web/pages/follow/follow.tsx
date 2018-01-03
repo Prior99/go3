@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, action, computed } from "mobx";
 import { Form, Button, Card, Menu } from "semantic-ui-react";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { requireLogin, OwnUserStore  } from "../../../common-ui";
 import { Content, UserCardList, UserSelect } from "../../components";

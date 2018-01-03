@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { is, scope, DataType, oneOf, specify, required, length, uuid } from "hyrest";
 import { computed, observable } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { world, gameCreate, turn } from "../scopes";
 import { boardSizes, formatBoardSize, Color, oppositeColor, newRating, GameResult } from "../utils";

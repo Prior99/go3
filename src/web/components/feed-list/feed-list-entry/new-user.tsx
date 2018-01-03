@@ -4,7 +4,7 @@ import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
 import { History } from "history";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 
 import { FeedItem, FeedEvent } from "../../../../common";
 import { routeUser, UsersStore, LoginStore } from "../../../../common-ui";
@@ -26,13 +26,13 @@ export class FeedListEntryNewUser extends React.Component<FeedListEntryNewUserPr
 
     public render() {
         const { event, user, game, date } = this.props.item;
-        const avatar = this.users.avatarById(user.id);
+        const { avatarUrl } = user;
         const ago = formatDistance(date, new Date());
         const name = user.id === this.login.userId ? "You" : user.name;
         return (
             <Feed.Event>
                 <Feed.Label>
-                    <Image circular src={avatar} />
+                    <Image circular src={avatarUrl} />
                 </Feed.Label>
                 <Feed.Content>
                     <Feed.Summary>

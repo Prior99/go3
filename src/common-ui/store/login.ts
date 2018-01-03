@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import * as isomorphicFetch from "isomorphic-fetch";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
@@ -46,7 +46,7 @@ export class LoginStore {
     @bind @action
     public async login(email: string, password: string) {
         const body = { email, password };
-        const response = await this.tokens.createToken({ email, password });
+        const response = await this.tokens.createToken({ email, password } as User);
         if (response) {
             const { id, user } = response;
             this.authToken = id;

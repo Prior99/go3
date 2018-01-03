@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { History } from "history";
 import { component, inject } from "tsdi";
 
@@ -19,7 +19,7 @@ export class SignupStore {
     @bind @action
     public async signup(email: string, password: string, name: string) {
         const body = { email, password };
-        const response = await this.users.createUser({ email, password, name });
+        const response = await this.users.createUser({ email, password, name } as User);
         if (response) {
             await this.login.login(email, password);
             await this.ownUser.loadUser();

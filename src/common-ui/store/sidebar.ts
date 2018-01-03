@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "bind-decorator";
+import { bind } from "decko";
 import { component, initialize } from "tsdi";
 
 import { breakpointL } from "../breakpoints";
