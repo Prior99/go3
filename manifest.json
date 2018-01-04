@@ -1,0 +1,15 @@
+{
+  "short_name": "Go",
+  "name": "Go",
+  "icons": [
+    {
+      "src": "icon.png",
+      "type": "image/png",
+      "sizes": "320x320"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#21ba45"
+}

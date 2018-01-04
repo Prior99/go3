@@ -19,6 +19,7 @@ import {
     PageUser,
 } from "./pages";
 import { AppContainer } from "./components";
+import "./service-worker-manager";
 import * as routes from "../common-ui/routing";
 import "./global.scss";
 import { LoginStore, ErrorStore } from "../common-ui";

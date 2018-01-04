@@ -8,10 +8,13 @@ const extractCSS = new ExtractTextPlugin('[name].css');
 const gitRevision = new GitRevisionPlugin({ lightweightTags: true });
 
 module.exports = {
-    entry: path.resolve(__dirname, "src/web"),
+    entry: {
+        bundle: path.resolve(__dirname, "src/web"),
+        "service-worker": path.resolve(__dirname, "src/web/service-worker"),
+    },
     output: {
         path: __dirname + "/dist/",
-        filename: "bundle.js",
+        filename: "[name].js",
         publicPath: "/dist/"
     },
     resolve: {
