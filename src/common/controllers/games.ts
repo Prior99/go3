@@ -23,11 +23,13 @@ import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
 import { Context } from "../context";
 import { Color, newRating, GameResult, oppositeColor  } from "../utils";
+import { PushNotifications } from "../../server/push-notifications";
 import { invokeAI, Action } from "../ai";
 
 @controller @component
 export class Games {
     @inject private db: Connection;
+    @inject private pushNotifications: PushNotifications;
 
     private async invokeAI(id: string) {
         const game = await this.db.getRepository(Game).createQueryBuilder("game")
@@ -167,6 +169,8 @@ export class Games {
         await this.db.getRepository(Board).save(newBoard);
 
         await this.invokeAI(game.id);
+
+        this.pushNotifications.notifyUser(game.currentUser.id);
 
         return ok(newBoard);
     }

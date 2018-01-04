@@ -9,10 +9,12 @@ import { Input, Button, Form } from "semantic-ui-react";
 import { routeSignup, LoginStore } from "../../../common-ui";
 import { Content } from "../../components";
 import * as css from "./login.scss";
+import { ServiceWorkerManager } from "../../service-worker-manager";
 
 @external @observer
 export class PageLogin extends React.Component {
     @inject private login: LoginStore;
+    @inject private serviceWorkerManager: ServiceWorkerManager;
 
     @observable private email = "";
     @observable private password = "";
@@ -22,6 +24,7 @@ export class PageLogin extends React.Component {
     @bind private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         await this.login.login(this.email, this.password);
+        await this.serviceWorkerManager.updateSubscription();
     }
 
     @computed private get passwordValid() { return this.password.length >= 8; }

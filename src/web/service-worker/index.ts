@@ -45,3 +45,7 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
         }));
     })());
 });
+
+self.addEventListener("push", (event: PushEvent) => {
+    console.log(event);
+});

@@ -34,4 +34,7 @@ export class Token {
 
     @Column("timestamp with time zone", { nullable: true })
     public deleted?: Date;
+
+    @Column("varchar", { nullable: true })
+    public pushEndpoint?: string;
 }
