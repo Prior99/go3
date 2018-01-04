@@ -83,7 +83,6 @@ export class User {
 
     @precompute @scope(world)
     public get avatarUrl() {
-        console.log(`${this.email} => ${gravatar(this.email, { size: 200, default: "identicon" })}`);
         return gravatar(this.email, { size: 200, default: "identicon" });
     }
 }
