@@ -10,7 +10,7 @@ const gitRevision = new GitRevisionPlugin({ lightweightTags: true });
 module.exports = {
     entry: {
         bundle: path.resolve(__dirname, "src/web"),
-        "service-worker": path.resolve(__dirname, "src/web/service-worker"),
+        "service-worker": path.resolve(__dirname, "src/service-worker"),
     },
     output: {
         path: __dirname + "/dist/",

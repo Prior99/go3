@@ -1,7 +1,7 @@
 import { component, initialize, inject } from "tsdi";
 
 import { publicKey, urlB64ToUint8Array } from "../vapid-keys";
-import { LoginStore } from "../common-ui";
+import { LoginStore } from ".";
 import { Tokens } from "../common";
 
 @component({ eager: true })
@@ -25,11 +25,23 @@ export class ServiceWorkerManager {
         if (!navigator || !navigator.serviceWorker) {
             return;
         }
-        const registration = await navigator.serviceWorker.register("/dist/service-worker.js");
-        this.pushSubscription = await registration.pushManager.subscribe({
-            userVisibleOnly: true,
-            applicationServerKey: urlB64ToUint8Array(publicKey),
-        });
-        this.updateSubscription();
+        let registration: ServiceWorkerRegistration;
+        try {
+            registration = await navigator.serviceWorker.register("/dist/service-worker.js");
+        }
+        catch (err) {
+            console.error("Unable to register service worker.", err);
+            return;
+        }
+        try {
+            this.pushSubscription = await registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlB64ToUint8Array(publicKey),
+            });
+            this.updateSubscription();
+        } catch (err) {
+            console.error("Unable to subscribe to push service.", err);
+            return;
+        }
     }
 }

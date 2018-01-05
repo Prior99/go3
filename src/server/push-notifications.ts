@@ -1,15 +1,18 @@
 import { setVapidDetails, sendNotification } from "web-push";
-import { inject, component } from "tsdi";
+import { initialize, inject, component } from "tsdi";
 import { Connection } from "typeorm";
 
 import { publicKey, privateKey } from "../vapid-keys";
-import { Token } from "../common";
-
-setVapidDetails("https://github.com/Prior99/go3", publicKey, privateKey);
+import { Token, isBrowser } from "../common";
 
 @component
 export class PushNotifications {
     @inject public db: Connection;
+
+    @initialize
+    private init() {
+        setVapidDetails("https://github.com/Prior99/go3", publicKey, privateKey);
+    }
 
     public async notifyUser(userId: string) {
         const tokens = await this.db.getRepository(Token).createQueryBuilder("token")
