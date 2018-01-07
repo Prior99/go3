@@ -1,67 +1,27 @@
-import { autobind } from "decko";
-import { initialize, component, inject } from "tsdi";
+import { TSDI } from "tsdi";
+import { Go3ServiceWorker } from "./service-worker";
 
-import { routes } from "../../common-ui/routing";
+const tsdi: TSDI = new TSDI();
 
-const CACHE_NAME = "go3-v2";
+tsdi.enableComponentScanner();
 
-const urlsToCache = [
-    "/",
-    "//cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.12/semantic.min.css",
-    "/dist/main.css",
-    "/dist/bundle.js",
-    "/dist/service-worker.js",
-    "/config.js",
-    ...(routes.map(route => route.path())),
-];
+const go3Worker = tsdi.get(Go3ServiceWorker);
 
-@component({ eager: true }) @autobind
-class ServiceWorker {
-    private serviceWorker: ServiceWorkerGlobalScope = self;
+self.addEventListener("install", (event: ExtendableEvent) => {
+    event.waitUntil(go3Worker.onInstall(event));
+});
 
-    private async onInstall(event: ExtensableEvent) {
-        const cache = await caches.open(CACHE_NAME);
-        cache.addAll(urlsToCache);
-    }
+self.addEventListener("fetch", (event: FetchEvent) => {
+    event.respondWith(go3Worker.onFetch(event));
+});
 
-    private async onActivate(event: ExtendableEvent) {
-        this.serviceWorker.clients.claim();
-        const cacheKeys = await caches.keys();
-        await Promise.all(cacheKeys.map(key => {
-            if (key !== CACHE_NAME) {
-                return caches.delete(key);
-            }
-        }));
-    }
+self.addEventListener("activate", (event: ExtendableEvent) => {
+    event.waitUntil(go3Worker.onActivate(event));
+});
 
-    private async onPush(event: PushEvent) {
-    
-    }
-
-    private async onFetch(event: FetchEvent) {
-        const cacheEntry = await caches.match(event.request);
-        if (cacheEntry) {
-            return cacheEntry;
-        }
-        return fetch(event.request);
-    }
-
-    @initialize
-    private init() {
-        this.serviceWorker.addEventListener("install", (event: ExtendableEvent) => {
-            event.waitUntil(this.onInstall(event));
-        });
-
-        this.serviceWorker.addEventListener("fetch", (event: FetchEvent) => {
-            event.respondWith(this.onFetch(event));
-        });
-
-        this.serviceWorker.addEventListener("activate", (event: ExtendableEvent) => {
-            event.waitUntil(this.onActivate(event));
-        });
-
-        this.serviceWorker.addEventListener("push", (event: PushEvent) => {
-            this.onPush(event);
-        });
-    }
-}
+self.addEventListener("push", (event: PushEvent) => {
+    go3Worker.onPush(event);
+});
+self.addEventListener("message", (event: MessageEvent) => {
+    go3Worker.onMessage(event);
+});

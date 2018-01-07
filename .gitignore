@@ -1,5 +1,4 @@
 node_modules
-dist/
 v*.*.*-*-*.tar.gz
 *.log
 coverage/

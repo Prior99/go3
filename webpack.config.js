@@ -12,10 +12,11 @@ module.exports = {
         bundle: path.resolve(__dirname, "src/web"),
         "service-worker": path.resolve(__dirname, "src/service-worker"),
     },
+    context: __dirname + "/dist/",
     output: {
         path: __dirname + "/dist/",
         filename: "[name].js",
-        publicPath: "/dist/"
+        publicPath: "/"
     },
     resolve: {
         extensions: [".js", ".jsx", ".ts", ".tsx", ".json"]
@@ -87,11 +88,8 @@ module.exports = {
     devtool: "source-map",
     devServer: {
         port: 3000,
-        historyApiFallback: {
-            rewrites: [
-                { from: /./, to: '/' }
-            ]
-        }
+        historyApiFallback: true,
+        contentBase: __dirname + "/dist/"
     },
     plugins: [
         new Webpack.NormalModuleReplacementPlugin(/typeorm$/, result => {

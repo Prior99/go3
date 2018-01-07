@@ -32,6 +32,7 @@ export class GamesStore {
 
     private refreshBoardsInterval: any;
     private refreshGamesInterval: any;
+    private autoRefreshDisabled = false;
 
     @initialize
     private async initialize() {
@@ -42,6 +43,17 @@ export class GamesStore {
     }
 
     @bind
+    public disableAutoRefresh() {
+        if (this.refreshBoardsInterval) {
+            clearInterval(this.refreshBoardsInterval);
+        }
+        if (this.refreshGamesInterval) {
+            clearInterval(this.refreshGamesInterval);
+        }
+        this.autoRefreshDisabled = true;
+    }
+
+    @bind
     private async refreshGameId() {
         this.currentGameId = parseGameId(this.browserHistory.location.pathname);
         if (this.currentGameId) {
@@ -49,12 +61,19 @@ export class GamesStore {
                 await this.loadGame(this.currentGameId);
             }
             await this.loadBoards(this.currentGameId);
-            this.refreshBoardsInterval = setInterval(this.refreshBoards, 3000);
+            if (!this.autoRefreshDisabled) {
+                this.refreshBoardsInterval = setInterval(this.refreshBoards, 3000);
+            }
         }
     }
 
     @bind private async refreshGames() {
         await this.loadGames();
+    }
+
+    @bind public async refreshAll() {
+        await this.refreshGames();
+        await this.refreshBoards();
     }
 
     @bind
@@ -66,12 +85,14 @@ export class GamesStore {
                 await this.loadGame(this.currentGameId);
                 await this.loadBoards(this.currentGameId);
             }
-            if (this.currentGame.over) {
+            if (this.currentGame.over && this.refreshBoardsInterval) {
                 clearInterval(this.refreshBoardsInterval);
             }
             return;
         }
-        clearInterval(this.refreshBoardsInterval);
+        if (this.refreshBoardsInterval) {
+            clearInterval(this.refreshBoardsInterval);
+        }
     }
 
     @bind

@@ -45,7 +45,6 @@ clean-db:
 
 .PHONY: clean
 clean:
-	rm -Rf dist/
 	rm -Rf node_modules/
 	rm -Rf server/
 
