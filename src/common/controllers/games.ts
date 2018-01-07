@@ -170,7 +170,7 @@ export class Games {
 
         await this.invokeAI(game.id);
 
-        this.pushNotifications.notifyUser(game.currentUser.id);
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
 
         return ok(newBoard);
     }

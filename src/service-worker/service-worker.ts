@@ -18,19 +18,16 @@ const urlsToCache = [
 @component({ eager: true })
 export class Go3ServiceWorker {
     private serviceWorker: ServiceWorkerGlobalScope = self as any;
-    private ports: MessagePort[] = [];
 
     @bind
     public async onInstall(event: ExtendableEvent) {
         this.serviceWorker.skipWaiting();
-        console.log("install")
         const cache = await caches.open(CACHE_NAME);
         cache.addAll(urlsToCache);
     }
 
     @bind
     public async onActivate(event: ExtendableEvent) {
-        console.log("activate")
         this.serviceWorker.clients.claim();
         const cacheKeys = await caches.keys();
         await Promise.all(cacheKeys.map(key => {
@@ -43,10 +40,11 @@ export class Go3ServiceWorker {
     @bind
     public async onPush(event: PushEvent) {
         const clients = await this.serviceWorker.clients.matchAll();
-        this.ports.forEach(port => port.postMessage("push"));
-        (await this.serviceWorker.clients.matchAll()).forEach(client => {
-            client.postMessage("push");
-        });
+        if (clients.length === 0) {
+            return;
+        }
+        clients.forEach((client, index) => index !== 0 && client.postMessage("push"));
+        clients[0].postMessage("notify");
         return;
     }
 
@@ -57,12 +55,5 @@ export class Go3ServiceWorker {
             return cacheEntry;
         }
         return fetch(event.request);
-    }
-
-    @bind
-    public async onMessage(event: MessageEvent) {
-        console.log("message on sw", event);
-        this.ports.push(...event.ports);
-        console.log(this.ports);
     }
 }

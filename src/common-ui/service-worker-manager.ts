@@ -2,19 +2,18 @@ import { component, initialize, inject } from "tsdi";
 import { bind } from "decko";
 
 import { publicKey, urlB64ToUint8Array } from "../vapid-keys";
-import { LoginStore } from ".";
+import { GamesStore, NotificationsStore, LoginStore } from ".";
 import { Tokens } from "../common";
-import { GamesStore } from "./";
 
 @component({ name: "ServiceWorkerManager", eager: true })
 export class ServiceWorkerManager {
     @inject("LoginStore") private loginStore: LoginStore;
     @inject private tokens: Tokens;
     @inject private games: GamesStore;
+    @inject("NotificationsStore") private notifications: NotificationsStore;
 
-    private channel = new MessageChannel();
     private pushSubscription: PushSubscription;
-    private registration: ServiceWorkerRegistration;
+    public registration: ServiceWorkerRegistration;
 
     public get hasSubscription() { return Boolean(this.pushSubscription); }
 
@@ -23,19 +22,22 @@ export class ServiceWorkerManager {
             return;
         }
         await this.tokens.updatePushEndpoint(this.loginStore.authToken, this.pushSubscription.endpoint);
-        // await this.games.disableAutoRefresh();
+        await this.games.disableAutoRefresh();
+        this.notifications.useServiceWorkerApi();
     }
 
     @bind
     private async onPush(event: MessageEvent) {
-        this.registration.showNotification("Test");
-        console.log("Received message", event)
+        await this.games.refreshAll();
+    }
+
+    @bind
+    private async onNotify(event: MessageEvent) {
+        await this.notifications.checkNotifications();
     }
 
     @initialize
     private async register() {
-        this.channel.port1.addEventListener("message", this.onPush);
-        this.channel.port2.addEventListener("message", this.onPush);
         if (!window.navigator || !window.navigator.serviceWorker) {
             return;
         }
@@ -64,9 +66,20 @@ export class ServiceWorkerManager {
             return;
         }
         await serviceWorker.ready;
-        serviceWorker.addEventListener("message", this.onPush);
-        // this.registration.active.addEventListener("push", event => console.log("add event push", event));
-        // this.registration.active.addEventListener("message", event => console.log("add event message", event));
-        // this.registration.active.postMessage("hello", [this.channel.port1]);
+        serviceWorker.addEventListener("message", async (event: MessageEvent) => {
+            switch (event.data as string) {
+                case "push": {
+                    this.onPush(event);
+                    break;
+                }
+                case "notify": {
+                    await this.onPush(event);
+                    await this.onNotify(event);
+                    break;
+                }
+                default: break;
+            }
+        });
+        this.notifications.useServiceWorkerApi();
     }
 }

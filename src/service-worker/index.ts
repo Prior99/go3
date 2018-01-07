@@ -22,6 +22,3 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
 self.addEventListener("push", (event: PushEvent) => {
     go3Worker.onPush(event);
 });
-self.addEventListener("message", (event: MessageEvent) => {
-    go3Worker.onMessage(event);
-});
