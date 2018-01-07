@@ -43,8 +43,10 @@ export class Go3ServiceWorker {
     @bind
     public async onPush(event: PushEvent) {
         const clients = await this.serviceWorker.clients.matchAll();
-        console.log("Received push", event, this.ports)
         this.ports.forEach(port => port.postMessage("push"));
+        (await this.serviceWorker.clients.matchAll()).forEach(client => {
+            client.postMessage("push");
+        });
         return;
     }
 

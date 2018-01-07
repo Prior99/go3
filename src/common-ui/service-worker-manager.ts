@@ -39,8 +39,9 @@ export class ServiceWorkerManager {
         if (!window.navigator || !window.navigator.serviceWorker) {
             return;
         }
+        const { serviceWorker } = window.navigator;
         try {
-            this.registration = await window.navigator.serviceWorker.register("/service-worker.js", {
+            this.registration = await serviceWorker.register("/service-worker.js", {
                 scope: "/",
             });
         }
@@ -62,10 +63,10 @@ export class ServiceWorkerManager {
             console.error("Unable to subscribe to push service.", err);
             return;
         }
-        // window.navigator.serviceWorker.addEventListener("message", this.onPush);
-        console.log("hello")
-        this.registration.active.addEventListener("push", event => console.log("add event push", event));
-        this.registration.active.addEventListener("message", event => console.log("add event message", event));
-        this.registration.active.postMessage("hello", [this.channel.port1]);
+        await serviceWorker.ready;
+        serviceWorker.addEventListener("message", this.onPush);
+        // this.registration.active.addEventListener("push", event => console.log("add event push", event));
+        // this.registration.active.addEventListener("message", event => console.log("add event message", event));
+        // this.registration.active.postMessage("hello", [this.channel.port1]);
     }
 }
