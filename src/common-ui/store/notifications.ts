@@ -54,6 +54,8 @@ export class NotificationsStore {
                 vibrate: [100, 100, 250],
                 sound: "/notify.mp3",
                 timestamp: game.currentBoard.created.getTime(),
+                tag: game.id,
+                data: game.id,
             } as any);
         } else if (!this.forbidden) {
             new Notification(title, options); // tslint:disable-line

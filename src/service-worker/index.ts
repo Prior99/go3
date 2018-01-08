@@ -22,3 +22,7 @@ self.addEventListener("activate", (event: ExtendableEvent) => {
 self.addEventListener("push", (event: PushEvent) => {
     go3Worker.onPush(event);
 });
+
+self.addEventListener("notificationclick", event => {
+    event.waitUntil(go3Worker.onNotificationClick(event));
+});

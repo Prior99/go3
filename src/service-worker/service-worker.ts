@@ -1,7 +1,7 @@
 import { bind } from "decko";
 import { initialize, component, inject } from "tsdi";
 
-import { routes } from "../common-ui/routing";
+import { routes, routeGame, routeGames } from "../common-ui/routing";
 
 @component({ eager: true })
 export class Go3ServiceWorker {
@@ -31,5 +31,25 @@ export class Go3ServiceWorker {
     @bind
     public async onFetch(event: FetchEvent) {
         return fetch(event.request);
+    }
+
+    @bind
+    public async onNotificationClick(event: any) {
+        const gameId = event.notification.data || event.notification.tag;
+        event.notification.close();
+        if (gameId) {
+            const url = routeGame.path(gameId);
+            const clients = await this.serviceWorker.clients.matchAll();
+            const clientOnUrl: any = clients.find(client =>
+                client.url.substr(client.url.length - url.length, client.url.length) === url,
+            );
+            if (clientOnUrl && typeof clientOnUrl.focus === "function") {
+                clientOnUrl.focus();
+            } else {
+                await this.serviceWorker.clients.openWindow(url);
+            }
+        } else {
+            await this.serviceWorker.clients.openWindow(routeGames.path());
+        }
     }
 }
