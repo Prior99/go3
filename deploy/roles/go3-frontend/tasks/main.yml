@@ -8,9 +8,7 @@
     src: "{{ item }}"
     dest: /storage/prior/applications/go3-frontend/
   with_items:
-    - ../index.html
-    - ../icon.png
-    - ../dist
+    - ../dist/*
 
 - name: configure
   template:

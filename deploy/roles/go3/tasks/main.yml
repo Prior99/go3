@@ -26,3 +26,5 @@
     pull: yes
     build: yes
     state: present
+  environment:
+    GO3_PUSH_KEY: '{{ push_key }}'
