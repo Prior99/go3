@@ -9,7 +9,7 @@
         "noLib": false,
         "jsx": "react",
         "outDir": "dist",
-        "lib": ["es2016", "dom"],
+        "lib": ["es2016", "webworker", "dom"],
         "emitDecoratorMetadata": true,
         "allowSyntheticDefaultImports": true,
         "skipLibCheck": true

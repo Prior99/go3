@@ -7,6 +7,7 @@ import { component, inject, initialize } from "tsdi";
 import { Users, Tokens, User } from "../../common";
 import { routeDashboard } from "../../common-ui";
 import { GamesStore, OwnUserStore  } from ".";
+import { ServiceWorkerManager } from "..";
 
 const softwareVersion = 2;
 const localStorageIdentifier = "software-login";
@@ -29,6 +30,7 @@ export class LoginStore {
     @inject("OwnUserStore") private ownUser: OwnUserStore;
     @inject("GamesStore") private games: GamesStore;
     @inject private browserHistory: History;
+    @inject("ServiceWorkerManager") private serviceWorkerManager: ServiceWorkerManager;
 
     @observable public authToken: string;
     @observable public userId: string;
@@ -55,6 +57,7 @@ export class LoginStore {
             await this.ownUser.loadUser();
             await this.games.loadGames();
             this.browserHistory.replace(routeDashboard.path());
+            await this.serviceWorkerManager.updateSubscription();
         }
         return response;
     }
@@ -64,7 +67,7 @@ export class LoginStore {
         this.clearStorage();
         this.authToken = undefined;
         this.userId = undefined;
-        location.reload();
+        window.location.reload();
     }
 
     @bind

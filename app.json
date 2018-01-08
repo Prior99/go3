@@ -1,18 +1,4 @@
 {
     "name": "Go3",
-    "displayName": "Go",
-    "expo": {
-        "entryPoint": "./App.js",
-        "sdkVersion": "24.0.0",
-        "packagerOpts": {
-            "sourceExts": ["ts", "tsx"],
-            "transformer": "node_modules/react-native-typescript-transformer/index.js"
-        },
-        "version": "1.0.0",
-        "slug": "go3",
-        "android": {
-            "package": "de.92k.go"
-        },
-        "icon": "./icon.png"
-    }
+    "displayName": "Go"
 }

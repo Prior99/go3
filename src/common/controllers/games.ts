@@ -23,11 +23,13 @@ import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
 import { Context } from "../context";
 import { Color, newRating, GameResult, oppositeColor  } from "../utils";
+import { PushNotifications } from "../../server/push-notifications";
 import { invokeAI, Action } from "../ai";
 
 @controller @component
 export class Games {
     @inject private db: Connection;
+    @inject private pushNotifications: PushNotifications;
 
     private async invokeAI(id: string) {
         const game = await this.db.getRepository(Game).createQueryBuilder("game")
@@ -97,6 +99,8 @@ export class Games {
             return game;
         });
         await this.invokeAI(finalGame.id);
+
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
 
         return created(finalGame);
     }
@@ -168,6 +172,8 @@ export class Games {
 
         await this.invokeAI(game.id);
 
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
+
         return ok(newBoard);
     }
 
@@ -199,6 +205,8 @@ export class Games {
         });
 
         await this.invokeAI(game.id);
+
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
 
         return ok(finalBoard);
     }
