@@ -48,7 +48,13 @@ export class NotificationsStore {
             icon: canvas.toDataURL(),
         };
         if (this.useServiceWorkerApi) {
-            this.serviceWorkerManager.registration.showNotification(title, options);
+            this.serviceWorkerManager.registration.showNotification(title, {
+                ...options,
+                badge: "/badge.png",
+                vibrate: [100, 100, 250],
+                sound: "/notify.mp3",
+                timestamp: game.currentBoard.created.getTime(),
+            } as any);
         } else if (!this.forbidden) {
             new Notification(title, options); // tslint:disable-line
         }

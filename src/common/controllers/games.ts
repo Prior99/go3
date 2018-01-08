@@ -100,6 +100,8 @@ export class Games {
         });
         await this.invokeAI(finalGame.id);
 
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
+
         return created(finalGame);
     }
 
@@ -203,6 +205,8 @@ export class Games {
         });
 
         await this.invokeAI(game.id);
+
+        game.participants.forEach(participant => this.pushNotifications.notifyUser(participant.user.id));
 
         return ok(finalBoard);
     }
