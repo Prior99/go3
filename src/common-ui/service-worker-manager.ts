@@ -22,7 +22,7 @@ export class ServiceWorkerManager {
             return;
         }
         await this.tokens.updatePushEndpoint(this.loginStore.authToken, this.pushSubscription.endpoint);
-        await this.games.disableAutoRefresh();
+        this.games.disableAutoRefresh();
         this.notifications.useServiceWorkerApi();
     }
 
@@ -33,7 +33,7 @@ export class ServiceWorkerManager {
 
     @bind
     private async onNotify(event: MessageEvent) {
-        await this.notifications.checkNotifications();
+        this.notifications.checkNotifications();
     }
 
     @initialize
