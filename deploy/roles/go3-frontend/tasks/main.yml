@@ -7,8 +7,7 @@
   synchronize:
     src: "{{ item }}"
     dest: /storage/prior/applications/go3-frontend/
-  with_items:
-    - ../dist/*
+  with_lines: "find ../dist"
 
 - name: configure
   template:
