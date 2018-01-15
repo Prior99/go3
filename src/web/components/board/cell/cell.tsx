@@ -11,6 +11,8 @@ import * as css from "./cell.scss";
 import { Assets } from "../../../utils";
 import * as tokenBlack from "./token-black.png";
 import * as tokenWhite from "./token-white.png";
+import * as tokenInvalid from "./token-invalid.png";
+import * as tokenLast from "./token-last.png";
 
 export interface CellProps {
     readonly game: Game;
@@ -31,10 +33,22 @@ export class Cell extends React.Component<CellProps> {
 
     private canvas: HTMLCanvasElement;
 
+    @computed private get color() { return this.props.game.currentBoard.at(this.props.index); }
+    @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
+    @computed private get isLastTurn() { return this.props.game.currentBoard.placedAt === this.props.index; }
+
+    @computed private get valid() {
+        const { game, index } = this.props;
+        const errorMessage = game.turnValid(index);
+        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
+    }
+
     @initialize
     private async loadImages() {
         await this.assets.loadImage(tokenBlack);
         await this.assets.loadImage(tokenWhite);
+        await this.assets.loadImage(tokenInvalid);
+        await this.assets.loadImage(tokenLast);
     }
 
     @bind private handleCanvasRef(element: HTMLCanvasElement) {
@@ -44,6 +58,9 @@ export class Cell extends React.Component<CellProps> {
     }
 
     @bind private handleClick() {
+        if (this.color !== Color.EMPTY) {
+            return;
+        }
         if (this.locked === true) {
             this.handleConfirm();
         } else {
@@ -88,45 +105,41 @@ export class Cell extends React.Component<CellProps> {
         const { width, height } = this.canvas;
         const ctx = this.canvas.getContext("2d");
 
-        const { hovered, locked } = this;
+        const { hovered, locked, valid, color, ownColor, isLastTurn } = this;
         const { game, index } = this.props;
-        const color = game.currentBoard.at(index);
-        const ownColor = game.getColorForUser(this.login.userId);
-        const isLastTurn = game.currentBoard.placedAt === index;
 
         ctx.clearRect(0, 0, width, height);
         switch (color) {
             case Color.BLACK:
-                ctx.drawImage(this.assets.get(tokenBlack), 0, 0, width, height);
+                ctx.drawImage(this.assets.get(tokenBlack), 0, 0, 200, 200, 0, 0, width, height);
                 break;
             case Color.WHITE:
-                ctx.drawImage(this.assets.get(tokenWhite), 0, 0, width, height);
+                ctx.drawImage(this.assets.get(tokenWhite), 0, 0, 200, 200, 0, 0, width, height);
                 break;
             default:
                 if (!hovered && !locked) { break; }
-                if (ownColor === Color.BLACK) {
-                    ctx.drawImage(this.assets.get(tokenBlack), 0, 0, width, height);
+                if (!valid) {
+                    ctx.drawImage(this.assets.get(tokenInvalid), 0, 0, 200, 200, 0, 0, width, height);
                 }
-                if (ownColor === Color.WHITE) {
-                    ctx.drawImage(this.assets.get(tokenWhite), 0, 0, width, height);
+                else if (ownColor === Color.BLACK) {
+                    ctx.drawImage(this.assets.get(tokenBlack), 0, 0, 200, 200, 0, 0, width, height);
+                }
+                else if (ownColor === Color.WHITE) {
+                    ctx.drawImage(this.assets.get(tokenWhite), 0, 0, 200, 200, 0, 0, width, height);
                 }
                 break;
         }
-    }
-
-    @computed private get valid() {
-        const { game, index } = this.props;
-        const errorMessage = game.turnValid(index);
-        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
+        if (isLastTurn) {
+            ctx.drawImage(this.assets.get(tokenLast), 0, 0, 200, 200, 0, 0, width, height);
+        }
     }
 
     public render() {
-        const { hovered, locked } = this;
+        const { hovered, locked, color } = this;
         const classes = classNames({
-            [css.preview]: hovered && !locked,
+            [css.preview]: color === Color.EMPTY && hovered && !locked,
             [css.locked]: locked,
         });
-        this.renderCanvas();
         return (
             <div
                 className={classes}
