@@ -9,10 +9,8 @@
 .board {
     @include fill;
     display: grid;
-    background-image: url("board-wood.png");
-    background-size: contain;
-    background-repeat: repeat;
     height: 100%;
+    z-index: 5;
 }
 
 .container {
@@ -37,4 +35,10 @@
 
 .winningColor {
     color: rgb(255, 255, 255);
+}
+
+.canvas {
+    height: 100%;
+    width: 100%;
+    z-index: 2;
 }

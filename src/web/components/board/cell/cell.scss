@@ -1,5 +1,4 @@
 .cell {
-    background-image: url("./grid-background.png");
     background-size: contain;
     position: relative;
 }
@@ -18,54 +17,6 @@
     }
 }
 
-@mixin cellBorder {
-    background-image: url("./grid-background-border.png");
-}
-
-@mixin cellCorner {
-    background-image: url("./grid-background-corner.png");
-}
-
-.cellTop {
-    @include cellBorder;
-    transform: rotate(0deg);
-}
-
-.cellRight {
-    @include cellBorder;
-    transform: rotate(90deg);
-}
-
-.cellBottom {
-    @include cellBorder;
-    transform: rotate(180deg);
-}
-
-.cellLeft {
-    @include cellBorder;
-    transform: rotate(-90deg);
-}
-
-.cellTopLeft {
-    @include cellCorner;
-    transform: rotate(0deg);
-}
-
-.cellTopRight {
-    @include cellCorner;
-    transform: rotate(90deg);
-}
-
-.cellBottomRight {
-    @include cellCorner;
-    transform: rotate(180deg);
-}
-
-.cellBottomLeft {
-    @include cellCorner;
-    transform: rotate(-90deg);
-}
-
 @mixin token {
     left: 0;
     right: 0;
@@ -76,16 +27,6 @@
     background-repeat: no-repeat;
     box-model: border-box;
     margin: 1px;
-}
-
-.black {
-    @include token;
-    background-image: url("./token-black.png");
-}
-
-.white {
-    @include token;
-    background-image: url("./token-white.png");
 }
 
 .invalid {
@@ -113,4 +54,9 @@
     animation-duration: 1000ms;
     animation-iteration-count: infinite;
     animation-timing-function: ease;
+}
+
+.canvas {
+    width: 100%;
+    height: 100%;
 }
