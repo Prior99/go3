@@ -15,11 +15,19 @@ export const strategies = new Map<RenderingStrategy, (DrawInstructions) => void>
 
 strategies.set(RenderingStrategy.CLASSIC, (drawInstructions: DrawInstructions) => {
     const { asset, ctx, width, height } = drawInstructions;
+
+    const assetWidth = width;
+    const assetHeight = height;
+
     ctx.drawImage(asset, 0, 0, assetWidth, assetHeight, 0, 0, width, height);
 });
 
 strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) => {
     const { asset, ctx, width, height, closedTop, closedBottom, closedLeft, closedRight } = drawInstructions;
+
+    const assetWidth = width;
+    const assetHeight = height;
+
     let topLeftRound = true;
     let topRightRound = true;
     let bottomLeftRound = true;
@@ -109,9 +117,6 @@ strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) =>
         );
     }
 });
-
-const assetWidth = 200;
-const assetHeight = 200;
 
 export function drawToken(strategy: RenderingStrategy, instructions: DrawInstructions) {
     if (!strategies.has(strategy)) {

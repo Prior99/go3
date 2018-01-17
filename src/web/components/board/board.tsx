@@ -65,6 +65,7 @@ export class Board extends React.Component<BoardProps> {
 
         ctx.drawImage(this.assets.get(boardWood), 0, 0, width, height);
         ctx.textAlign = "center";
+        ctx.strokeStyle = "rgb(60, 60, 40)";
         for (let col = 0; col < boardSize; ++col) {
             const x = cellWidth * col + cellWidth / 2;
             ctx.beginPath();
