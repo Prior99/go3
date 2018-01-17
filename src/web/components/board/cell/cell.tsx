@@ -145,6 +145,8 @@ export class Cell extends React.Component<CellProps> {
         const { width, height } = this.canvas;
         const ctx = this.canvas.getContext("2d");
 
+        (ctx as any).imageSmoothingEnabled = "high";
+
         const { color, ownColor, valid, isLastTurn, asset, hovered, locked } = this;
         const { game, index } = this.props;
 

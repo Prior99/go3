@@ -13,11 +13,12 @@ import { DataType, scope, required, is, specify, uuid } from "hyrest";
 import { bind } from "decko";
 import { computed } from "mobx";
 
-import { Color, oppositeColor } from "../utils";
-import { Position } from "../position";
-import { turn, world } from "../scopes";
+import { Color, oppositeColor } from "../../utils";
+import { Position } from "../../position";
+import { turn, world } from "../../scopes";
 
-import { User, Game } from ".";
+import { User, Game } from "..";
+import { Group } from "./group";
 
 @Entity()
 export class Board {
@@ -34,7 +35,7 @@ export class Board {
                 this.state[index] = parent.currentColor;
                 this.turn++;
                 const enemyNeighbours = this.neighboursOfColor(index, oppositeColor(parent.currentColor));
-                const enemyGroups = enemyNeighbours.map(neighbour => Array.from(this.groupAt(neighbour)));
+                const enemyGroups = enemyNeighbours.map(neighbour => this.groupAt(neighbour));
                 const killedGroups = enemyGroups.filter(group => this.freedoms(group) === 0);
                 const killCount = killedGroups.reduce((result, group) => result + group.length, 0);
                 if (parent.currentColor === Color.WHITE) {
@@ -119,7 +120,7 @@ export class Board {
         return this.state.every((value, index) => other.state[index] === value);
     }
 
-    public *groupAt(index: number): IterableIterator<number> {
+    @bind public groupAt(index: number): Group {
         const visited = [];
         const queue = [index];
         while (queue.length > 0) {
@@ -127,18 +128,16 @@ export class Board {
             if (visited.includes(current)) {
                 continue;
             }
-            yield current;
             visited.push(current);
             const unvisitedneighbours = this.neighboursOfSameColor(current)
                 .filter(neighbour => !visited.includes(neighbour));
             queue.push(...unvisitedneighbours);
         }
+        return new Group(visited, this);
     }
 
-    public freedoms(group: number[]): number {
-        return group.reduce((freedoms, index) => {
-            return freedoms + this.neighboursOfColor(index, Color.EMPTY).length;
-        }, 0);
+    public getEyeGroups(group: number[]) {
+        
     }
 
     public toPos(index: number): Position {
@@ -204,7 +203,7 @@ export class Board {
             if (visited.includes(index) || color !== Color.EMPTY) {
                 return;
             }
-            const group = Array.from(this.groupAt(index));
+            const group = this.groupAt(index);
             visited.push(...group);
             const belongsToColor = group.every(groupIndex => {
                 const neighbours = this.neighbours(groupIndex);

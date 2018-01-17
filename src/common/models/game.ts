@@ -92,13 +92,13 @@ export class Game {
         if (nextBoard.equals(this.boards[this.boards.length - 2])) {
             return "Can not repeat a Ko.";
         }
-        const group = Array.from(tempBoard.groupAt(index));
+        const group = tempBoard.groupAt(index);
         if (tempBoard.freedoms(group) > 0) {
             return;
         }
         const enemyNeighbours = tempBoard.neighboursOfColor(index, oppositeColor(this.currentBoard.currentColor));
         const killedNeighbours =
-            !enemyNeighbours.some(neighbour => tempBoard.freedoms(Array.from(tempBoard.groupAt(neighbour))) === 0);
+            !enemyNeighbours.some(neighbour => tempBoard.freedoms(tempBoard.groupAt(neighbour)) === 0);
         if (killedNeighbours) {
             return "Cannot commit suicide.";
         }
