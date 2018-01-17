@@ -64,19 +64,33 @@ export class Board extends React.Component<BoardProps> {
         const cellHeight = height / boardSize;
 
         ctx.drawImage(this.assets.get(boardWood), 0, 0, width, height);
+        ctx.textAlign = "center";
         for (let col = 0; col < boardSize; ++col) {
             const x = cellWidth * col + cellWidth / 2;
             ctx.beginPath();
             ctx.moveTo(x, cellHeight / 2);
             ctx.lineTo(x, height - cellHeight / 2);
             ctx.stroke();
+            if (width > 450) {
+                ctx.textBaseline = "top";
+                ctx.fillText(`${boardSize - col}`, x, 5);
+                ctx.textBaseline = "bottom";
+                ctx.fillText(`${boardSize - col}`, x, height - 5);
+            }
         }
+        ctx.textBaseline = "middle";
         for (let row = 0; row < boardSize; ++row) {
             const y = cellHeight * row + cellHeight / 2;
             ctx.beginPath();
             ctx.moveTo(cellWidth / 2, y);
             ctx.lineTo(width - cellWidth / 2, y);
             ctx.stroke();
+            if (width > 450) {
+                ctx.textAlign = "left";
+                ctx.fillText(String.fromCharCode("A".charCodeAt(0) + row), 5, y);
+                ctx.textAlign = "right";
+                ctx.fillText(String.fromCharCode("A".charCodeAt(0) + row), width - 5, y);
+            }
         }
     }
 
