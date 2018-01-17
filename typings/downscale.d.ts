@@ -13,5 +13,5 @@ declare module "downscale" {
         width: number,
         height: number,
         options?: Options,
-    ): string;
+    ): Promise<string>;
 }

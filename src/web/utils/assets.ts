@@ -1,30 +1,58 @@
 import { component } from "tsdi";
+import downscale from "downscale";
 import { bind } from "decko";
+
+function getKey(url: string, width?: number, height?: number) {
+    if (typeof width !== "undefined" && typeof height !== "undefined") {
+        return `${width}__${height}__${url}`;
+    }
+    return url;
+}
 
 @component
 export class Assets {
     private images = new Map<string, HTMLImageElement>();
     private loading = new Map<string, ((HTMLImageElement) => void)[]>();
+    private scaling = new Map<string, ((HTMLImageElement) => void)[]>();
 
     public get loaded() { return this.loading.size === 0; }
 
-    @bind public loadImage(url: string) {
+    @bind public loadImage(url: string, width?: number, height?: number) {
+        return new Promise<HTMLImageElement>(async resolve => {
+            const key = getKey(url, width, height);
+            if (!this.scaling.has(key)) {
+                this.scaling.set(key, []);
+                const original = await this.downloadImage(url);
+                const scaled = await downscale(original, width, height);
+                const scaledImg = new Image();
+                scaledImg.addEventListener("load", () => {
+                    this.images.set(key, scaledImg);
+                    this.scaling.get(key).forEach(callback => callback(scaledImg));
+                    this.scaling.delete(key);
+                });
+                scaledImg.src = scaled;
+            }
+            this.scaling.get(key).push(resolve);
+        });
+    }
+
+    @bind private downloadImage(url: string) {
         return new Promise<HTMLImageElement>(resolve => {
             if (!this.loading.has(url)) {
                 this.loading.set(url, []);
                 const img = new Image();
-                img.src = url;
                 img.addEventListener("load", () => {
                     this.images.set(url, img);
                     this.loading.get(url).forEach(callback => callback(img));
                     this.loading.delete(url);
                 });
+                img.src = url;
             }
             this.loading.get(url).push(resolve);
         });
     }
 
-    @bind public get(url: string) {
-        return this.images.get(url);
+    @bind public get(url: string, width?: number, height?: number) {
+        return this.images.get(getKey(url, width, height));
     }
 }

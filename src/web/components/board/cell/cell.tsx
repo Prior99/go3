@@ -35,6 +35,11 @@ export class Cell extends React.Component<CellProps> {
 
     private canvas: HTMLCanvasElement;
 
+    constructor(props: CellProps) {
+        super(props);
+        window.addEventListener("resize", this.initCanvas);
+    }
+
     @computed private get color() { return this.props.game.currentBoard.at(this.props.index); }
     @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
     @computed private get isLastTurn() { return this.props.game.currentBoard.placedAt === this.props.index; }
@@ -75,26 +80,34 @@ export class Cell extends React.Component<CellProps> {
 
     @computed private get asset() {
         const { color, hovered, locked, ownColor } = this;
-        if (color === Color.BLACK) { return this.assets.get(tokenBlack); }
-        if (color === Color.WHITE) { return this.assets.get(tokenWhite); }
+        const { width, height } = this.canvas;
+        if (color === Color.BLACK) { return this.assets.get(tokenBlack, width, height); }
+        if (color === Color.WHITE) { return this.assets.get(tokenWhite, width, height); }
         if (hovered || locked) {
-            if (ownColor === Color.BLACK) { return this.assets.get(tokenBlack); }
-            if (ownColor === Color.WHITE) { return this.assets.get(tokenWhite); }
+            if (ownColor === Color.BLACK) { return this.assets.get(tokenBlack, width, height); }
+            if (ownColor === Color.WHITE) { return this.assets.get(tokenWhite, width, height); }
         }
     }
 
-    @initialize
-    private async loadImages() {
-        await this.assets.loadImage(tokenBlack);
-        await this.assets.loadImage(tokenWhite);
-        await this.assets.loadImage(tokenInvalid);
-        await this.assets.loadImage(tokenLast);
+    @bind private async initCanvas() {
+        if (!this.canvas) {
+            return;
+        }
+        this.canvas.width = this.canvas.clientWidth;
+        this.canvas.height = this.canvas.clientHeight;
+        const { width, height } = this.canvas;
+
+        await this.assets.loadImage(tokenBlack, width, height);
+        await this.assets.loadImage(tokenWhite, width, height);
+        await this.assets.loadImage(tokenInvalid, width, height);
+        await this.assets.loadImage(tokenLast, width, height);
+
+        this.renderCanvas();
     }
 
     @bind private handleCanvasRef(element: HTMLCanvasElement) {
         this.canvas = element;
-        this.renderCanvas();
-        window.addEventListener("resize", () => this.renderCanvas());
+        this.initCanvas();
     }
 
     @bind private handleClick() {
@@ -140,8 +153,6 @@ export class Cell extends React.Component<CellProps> {
         if (!this.assets.loaded) { return; }
         if (!this.canvas) { return; }
 
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
         const { width, height } = this.canvas;
         const ctx = this.canvas.getContext("2d");
 
@@ -152,7 +163,7 @@ export class Cell extends React.Component<CellProps> {
 
         ctx.clearRect(0, 0, width, height);
         if (color === Color.EMPTY && !valid && (hovered || locked)) {
-            ctx.drawImage(this.assets.get(tokenInvalid), 0, 0, 200, 200, 0, 0, width, height);
+            ctx.drawImage(this.assets.get(tokenInvalid, width, height), 0, 0, 200, 200, 0, 0, width, height);
             return;
         }
         if (!asset) { return; }
