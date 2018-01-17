@@ -1,10 +1,16 @@
 import { RenderingStrategy } from "../../common";
 
+export enum Asset {
+    BLACK = "black",
+    WHITE = "white",
+    LAST = "last",
+}
+
 interface DrawInstructions {
     width: number;
     height: number;
     ctx: CanvasRenderingContext2D;
-    asset: HTMLImageElement;
+    asset: Asset;
     closedTop: boolean;
     closedBottom: boolean;
     closedLeft: boolean;
@@ -16,10 +22,28 @@ export const strategies = new Map<RenderingStrategy, (DrawInstructions) => void>
 strategies.set(RenderingStrategy.CLASSIC, (drawInstructions: DrawInstructions) => {
     const { asset, ctx, width, height } = drawInstructions;
 
-    const assetWidth = width;
-    const assetHeight = height;
-
-    ctx.drawImage(asset, 0, 0, assetWidth, assetHeight, 0, 0, width, height);
+    switch (asset) {
+        case Asset.WHITE:
+            ctx.fillStyle = "rgb(20, 20, 20)";
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+        case Asset.BLACK:
+            ctx.fillStyle = "rgb(220, 220, 220)";
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+        case Asset.LAST:
+            ctx.strokeStyle = "rgb(255, 80, 0)";
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, width / 2 - 2, 0, Math.PI * 2);
+            ctx.stroke();
+            break;
+        default: break;
+    }
 });
 
 strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) => {
@@ -48,73 +72,75 @@ strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) =>
         topRightRound = false;
         bottomRightRound = false;
     }
+    const border = asset === Asset.LAST ? 2 : 0;
+    const radius = width / 2 - border;
+    const stroke = asset === Asset.LAST;
+
+    ctx.beginPath();
+    ctx.moveTo(border, height / 2);
     if (topLeftRound) {
-        ctx.drawImage(
-            asset,
-            0, 0,
-            assetWidth / 2, assetHeight / 2,
-            0, 0,
-            width / 2, height / 2,
-        );
+        if (!stroke) { ctx.moveTo(width / 2, height / 2); }
+        ctx.arc(width / 2, height / 2, radius, Math.PI, Math.PI * 1.5);
     } else {
-        ctx.drawImage(
-            asset,
-            assetWidth, 0,
-            assetWidth / 2, assetHeight / 2,
-            0, 0,
-            width / 2, height / 2,
-        );
+        if (stroke) {
+            ctx.lineTo(border, border);
+            ctx.lineTo(width / 2, border);
+        } else {
+            ctx.rect(0, 0, width / 2, height / 2);
+        }
     }
+    ctx.moveTo(width / 2, border);
     if (topRightRound) {
-        ctx.drawImage(
-            asset,
-            assetWidth / 2, 0,
-            assetWidth / 2, assetHeight / 2,
-            width / 2, 0,
-            width / 2, height / 2,
-        );
+        if (!stroke) { ctx.moveTo(width / 2, height / 2); }
+        ctx.arc(width / 2, height / 2, radius, Math.PI * 1.5, Math.PI * 2);
     } else {
-        ctx.drawImage(
-            asset,
-            assetWidth + assetWidth / 2, 0,
-            assetWidth / 2, assetHeight / 2,
-            width / 2, 0,
-            width / 2, height / 2,
-        );
+        if (stroke) {
+            ctx.lineTo(width - border, border);
+            ctx.lineTo(width - border, height / 2);
+        } else {
+            ctx.rect(width / 2, 0, width / 2, height / 2);
+        }
     }
-    if (bottomLeftRound) {
-        ctx.drawImage(
-            asset,
-            0, assetHeight / 2,
-            assetWidth / 2, assetHeight / 2,
-            0, height / 2,
-            width / 2, height / 2,
-        );
-    } else {
-        ctx.drawImage(
-            asset,
-            assetWidth, assetHeight / 2,
-            assetWidth / 2, assetHeight / 2,
-            0, height / 2,
-            width / 2, height / 2,
-        );
-    }
+    ctx.moveTo(width - border, height / 2);
     if (bottomRightRound) {
-        ctx.drawImage(
-            asset,
-            assetWidth / 2, assetHeight / 2,
-            assetWidth / 2, assetHeight / 2,
-            width / 2, height / 2,
-            width / 2, height / 2,
-        );
+        if (!stroke) { ctx.moveTo(width / 2, height / 2); }
+        ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 0.5);
     } else {
-        ctx.drawImage(
-            asset,
-            assetWidth + assetWidth / 2, assetHeight / 2,
-            assetWidth / 2, assetHeight / 2,
-            width / 2, height / 2,
-            width / 2, height / 2,
-        );
+        if (stroke) {
+            ctx.lineTo(width - border, height - border);
+            ctx.lineTo(width / 2, height - border);
+        } else {
+            ctx.rect(width / 2, height / 2, width / 2, height / 2);
+        }
+    }
+    ctx.moveTo(width / 2, height - border);
+    if (bottomLeftRound) {
+        if (!stroke) { ctx.moveTo(width / 2, height / 2); }
+        ctx.arc(width / 2, height / 2, radius, Math.PI * 0.5, Math.PI);
+    } else {
+        if (stroke) {
+            ctx.lineTo(border, height - border);
+            ctx.lineTo(border, height / 2);
+        } else {
+            ctx.rect(0, height / 2, width / 2, height / 2);
+        }
+    }
+
+    switch (asset) {
+        case Asset.WHITE:
+            ctx.fillStyle = "rgb(20, 20, 20)";
+            ctx.fill();
+            break;
+        case Asset.BLACK:
+            ctx.fillStyle = "rgb(220, 220, 220)";
+            ctx.fill();
+            break;
+        case Asset.LAST:
+            ctx.strokeStyle = "rgb(255, 80, 0)";
+            ctx.lineWidth = 4;
+            ctx.stroke();
+            break;
+        default: break;
     }
 });
 

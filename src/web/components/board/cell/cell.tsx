@@ -8,12 +8,9 @@ import { bind } from "decko";
 import { GamesStore, LoginStore, OwnUserStore } from "../../../../common-ui";
 import { Game, Color } from "../../../../common";
 import * as css from "./cell.scss";
-import { Assets, drawToken } from "../../../utils";
+import { Assets, drawToken, Asset } from "../../../utils";
 
-import * as tokenBlack from "./token-black.png";
-import * as tokenWhite from "./token-white.png";
 import * as tokenInvalid from "./token-invalid.png";
-import * as tokenLast from "./token-last.png";
 
 export interface CellProps {
     readonly game: Game;
@@ -80,12 +77,11 @@ export class Cell extends React.Component<CellProps> {
 
     @computed private get asset() {
         const { color, hovered, locked, ownColor } = this;
-        const { width, height } = this.canvas;
-        if (color === Color.BLACK) { return this.assets.get(tokenBlack, width * 2, height); }
-        if (color === Color.WHITE) { return this.assets.get(tokenWhite, width * 2, height); }
+        if (color === Color.BLACK) { return Asset.BLACK; }
+        if (color === Color.WHITE) { return Asset.WHITE; }
         if (hovered || locked) {
-            if (ownColor === Color.BLACK) { return this.assets.get(tokenBlack, width * 2, height); }
-            if (ownColor === Color.WHITE) { return this.assets.get(tokenWhite, width * 2, height); }
+            if (ownColor === Color.BLACK) { return Asset.BLACK; }
+            if (ownColor === Color.WHITE) { return Asset.WHITE; }
         }
     }
 
@@ -93,12 +89,12 @@ export class Cell extends React.Component<CellProps> {
         if (!this.canvas) {
             return;
         }
-        const { clientWidth: width, clientHeight: height } = this.canvas;
+        const ratio = window.devicePixelRatio || 1;
+        const { clientWidth, clientHeight } = this.canvas;
+        const width = clientWidth * ratio;
+        const height = clientHeight * ratio;
 
-        await this.assets.loadImage(tokenBlack, width * 2, height);
-        await this.assets.loadImage(tokenWhite, width * 2, height);
         await this.assets.loadImage(tokenInvalid, width, height);
-        await this.assets.loadImage(tokenLast, width * 2, height);
 
         this.canvas.width = width;
         this.canvas.height = height;
@@ -186,10 +182,7 @@ export class Cell extends React.Component<CellProps> {
         drawToken(this.ownUser.user.renderingStrategy, instructions);
 
         if (isLastTurn) {
-            drawToken(this.ownUser.user.renderingStrategy, {
-                ...instructions,
-                asset: this.assets.get(tokenLast, width * 2, height),
-            });
+            drawToken(this.ownUser.user.renderingStrategy, { ...instructions, asset: Asset.LAST });
         }
     }
 
