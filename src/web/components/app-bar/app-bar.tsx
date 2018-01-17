@@ -11,6 +11,7 @@ import {
     routeDashboard,
     routeFollow,
     routeUser,
+    routeSettings,
     SidebarStore,
     OwnUserStore,
     LoginStore,
@@ -110,6 +111,10 @@ export class AppBar extends React.Component {
                             >
                                 <Dropdown.Menu>
                                     <Dropdown.Header>Logged in in as {this.ownUser.user.name}</Dropdown.Header>
+                                    <Dropdown.Item
+                                        content="Settings"
+                                        onClick={() => this.browserHistory.push(routeSettings.path())}
+                                    />
                                     <Dropdown.Item
                                         content="Dashboard"
                                         onClick={() => this.browserHistory.push(routeDashboard.path())}

@@ -17,6 +17,7 @@ import {
     PageGames,
     PageFollow,
     PageUser,
+    PageSettings,
 } from "./pages";
 import { AppContainer } from "./components";
 import * as routes from "../common-ui/routing";
@@ -57,6 +58,10 @@ export const pages = [
     {
         route: routes.routeUser,
         component: PageUser,
+    },
+    {
+        route: routes.routeSettings,
+        component: PageSettings,
     },
 ];
 

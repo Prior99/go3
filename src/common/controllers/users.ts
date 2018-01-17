@@ -13,13 +13,14 @@ import {
     context,
     unauthorized,
     dump,
+    forbidden,
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
 import { startOfDay, compareAsc } from "date-fns";
 
 import { User, Game, Participant, Token, UserStats  } from "../models";
-import { signup, owner, world } from "../scopes";
+import { signup, owner, world, userUpdate } from "../scopes";
 import { Context } from "../context";
 import { WinLossChartDataPoint } from "../models";
 
@@ -31,6 +32,16 @@ export class Users {
     public async createUser(@body(signup) user: User) {
         await this.db.getRepository(User).save(user);
         return ok(user);
+    }
+
+    @route("POST", "/user/:id").dump(User, owner)
+    public async updateUser(@param("id") @is() id: string, @body(userUpdate) update: User, @context ctx?: Context) {
+        if ((await ctx.currentUser()).id !== id) {
+            return forbidden<User>();
+        }
+        update.id = id;
+        await this.db.getRepository(User).save(update);
+        return ok(await this.db.getRepository(User).findOneById(id));
     }
 
     @route("GET", "/user/:id").dump(User, world) @noauth

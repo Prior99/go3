@@ -76,4 +76,11 @@ export class OwnUserStore {
         });
         this.storeFollowing(followership);
     }
+
+    @bind @action
+    public async updateUser(password: string, renderingStrategy: string) {
+        this.user = await this.users.updateUser(this.user.id, {
+            password, renderingStrategy,
+        } as User);
+    }
 }

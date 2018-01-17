@@ -17,6 +17,7 @@ export class PreviewBoard extends React.Component<PreviewBoardProps> {
 
     @bind private handleCanvasRef(element: HTMLCanvasElement) {
         this.canvas = element;
+        window.addEventListener("resize", () => this.renderBoard());
     }
 
     public componentDidMount() {

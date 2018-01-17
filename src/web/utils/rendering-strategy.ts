@@ -1,3 +1,5 @@
+import { RenderingStrategy } from "../../common";
+
 interface DrawInstructions {
     width: number;
     height: number;
@@ -9,18 +11,14 @@ interface DrawInstructions {
     closedRight: boolean;
 }
 
-const assetWidth = 200;
-const assetHeight = 200;
+export const strategies = new Map<RenderingStrategy, (DrawInstructions) => void>();
 
-export const strategies = new Map<string, (DrawInstructions) => void>();
-
-strategies.set("classic", (drawInstructions: DrawInstructions) => {
+strategies.set(RenderingStrategy.CLASSIC, (drawInstructions: DrawInstructions) => {
     const { asset, ctx, width, height } = drawInstructions;
     ctx.drawImage(asset, 0, 0, assetWidth, assetHeight, 0, 0, width, height);
 });
 
-strategies.set("modern", (drawInstructions: DrawInstructions) => {
-    console.log(drawInstructions)
+strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) => {
     const { asset, ctx, width, height, closedTop, closedBottom, closedLeft, closedRight } = drawInstructions;
     let topLeftRound = true;
     let topRightRound = true;
@@ -112,7 +110,10 @@ strategies.set("modern", (drawInstructions: DrawInstructions) => {
     }
 });
 
-export function drawToken(strategy: string, instructions: DrawInstructions) {
+const assetWidth = 200;
+const assetHeight = 200;
+
+export function drawToken(strategy: RenderingStrategy, instructions: DrawInstructions) {
     if (!strategies.has(strategy)) {
         return;
     }

@@ -3,16 +3,35 @@ import {
     PrimaryGeneratedColumn,
     Entity,
     OneToMany,
+    OneToOne,
     CreateDateColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { is, DataType, email, required, length, scope, specify, only, transform, uuid, precompute } from "hyrest";
+import {
+    is,
+    DataType,
+    email,
+    required,
+    length,
+    scope,
+    specify,
+    only,
+    transform,
+    uuid,
+    precompute,
+    oneOf,
+} from "hyrest";
 import * as gravatar from "gravatar-url";
 
-import { login, signup, world, owner, gameCreate, followershipCreate } from "../scopes";
+import { login, signup, world, owner, gameCreate, followershipCreate, userUpdate } from "../scopes";
 import { hash } from "../utils";
 
 import { Participant, Token, Followership } from ".";
+
+export enum RenderingStrategy {
+    MODERN = "modern",
+    CLASSIC = "classic",
+}
 
 @Entity()
 export class User {
@@ -29,8 +48,8 @@ export class User {
 
     @Column("varchar", { length: 200, nullable: true })
     @is()
-        .validate(length(8, 255), required)
-    @scope(login)
+        .validate(length(8, 255), only(login, required), only(signup, required))
+    @scope(login, userUpdate)
     @transform(hash)
     public password?: string;
 
@@ -88,4 +107,8 @@ export class User {
         }
         return gravatar(this.email, { size: 200, default: "identicon" });
     }
+
+    @Column("varchar", { length: 16, default: "classic" })
+    @scope(owner, userUpdate) @is().validate(oneOf("modern", "classic"))
+    public renderingStrategy?: RenderingStrategy;
 }

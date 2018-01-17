@@ -79,6 +79,14 @@ export const routeUser: Route = {
     pattern: "/user/:id",
 };
 
+export const routeSettings: Route = {
+    path: () => "/settings",
+    pattern: "/settings",
+    navbar: true,
+    title: "Settings",
+    icon: "setting",
+};
+
 export const routes: Route[] = [
     routeLogin,
     routeSignup,
@@ -88,6 +96,7 @@ export const routes: Route[] = [
     routeGames,
     routeFollow,
     routeUser,
+    routeSettings,
 ];
 
 export function getRoute(url: string) {

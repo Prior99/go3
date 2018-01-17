@@ -5,12 +5,11 @@ import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
 import { bind } from "decko";
 
-import { GamesStore, LoginStore } from "../../../../common-ui";
+import { GamesStore, LoginStore, OwnUserStore } from "../../../../common-ui";
 import { Game, Color } from "../../../../common";
 import * as css from "./cell.scss";
-import { Assets } from "../../../utils";
+import { Assets, drawToken } from "../../../utils";
 
-import { drawToken } from "./draw-token";
 import * as tokenBlack from "./token-black.png";
 import * as tokenWhite from "./token-white.png";
 import * as tokenInvalid from "./token-invalid.png";
@@ -27,6 +26,7 @@ export interface CellProps {
 export class Cell extends React.Component<CellProps> {
     @inject private login: LoginStore;
     @inject private assets: Assets;
+    @inject private ownUser: OwnUserStore;
 
     @observable private locked = false;
     @observable private tokenBlack: HTMLImageElement;
@@ -169,10 +169,10 @@ export class Cell extends React.Component<CellProps> {
             asset,
             ...colors,
         };
-        drawToken("modern", instructions);
+        drawToken(this.ownUser.user.renderingStrategy, instructions);
 
         if (isLastTurn) {
-            drawToken("modern", { ... instructions, asset: this.assets.get(tokenLast) });
+            drawToken(this.ownUser.user.renderingStrategy, { ... instructions, asset: this.assets.get(tokenLast) });
         }
     }
 

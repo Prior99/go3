@@ -6,3 +6,4 @@ export { PageGame } from "./game";
 export { PageGames } from "./games";
 export { PageFollow } from "./follow";
 export { PageUser } from "./user";
+export { PageSettings } from "./settings";
