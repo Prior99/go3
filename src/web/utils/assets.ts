@@ -1,6 +1,6 @@
 import { component } from "tsdi";
-import downscale from "downscale";
 import { bind } from "decko";
+import * as downscale from "downscale";
 
 function getKey(url: string, width?: number, height?: number) {
     if (typeof width !== "undefined" && typeof height !== "undefined") {
@@ -18,12 +18,18 @@ export class Assets {
     public get loaded() { return this.loading.size === 0; }
 
     @bind public loadImage(url: string, width?: number, height?: number) {
+        if (typeof width === "undefined" || typeof height === "undefined") {
+            return this.downloadImage(url);
+        }
         return new Promise<HTMLImageElement>(async resolve => {
             const key = getKey(url, width, height);
+            if (this.images.has(key)) {
+                return resolve(this.images.get(key));
+            }
             if (!this.scaling.has(key)) {
                 this.scaling.set(key, []);
                 const original = await this.downloadImage(url);
-                const scaled = await downscale(original, width, height);
+                const scaled = await downscale(original, width, height, { imageType: "png" });
                 const scaledImg = new Image();
                 scaledImg.addEventListener("load", () => {
                     this.images.set(key, scaledImg);
@@ -38,6 +44,9 @@ export class Assets {
 
     @bind private downloadImage(url: string) {
         return new Promise<HTMLImageElement>(resolve => {
+            if (this.images.has(url)) {
+                return resolve(this.images.get(url));
+            }
             if (!this.loading.has(url)) {
                 this.loading.set(url, []);
                 const img = new Image();

@@ -1,0 +1,532 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`constructing a board from an old one 1`] = `
+Board {
+  "game": undefined,
+  "parent": Board {
+    "created": 2017-11-15T11:00:00.000Z,
+    "id": "some-id",
+    "prisonersBlack": 10,
+    "prisonersWhite": 10,
+    "state": Array [
+      "white",
+      "white",
+      "white",
+      "black",
+      "empty",
+      "white",
+      "empty",
+      "white",
+      "black",
+      "empty",
+      "white",
+      "white",
+      "white",
+      "black",
+      "empty",
+      "black",
+      "black",
+      "black",
+      "black",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+    ],
+    "turn": 6,
+    "updated": 2017-11-15T11:00:00.000Z,
+  },
+  "placedAt": 6,
+  "prisonersBlack": 18,
+  "prisonersWhite": 10,
+  "state": Array [
+    "empty",
+    "empty",
+    "empty",
+    "black",
+    "empty",
+    "empty",
+    "black",
+    "empty",
+    "black",
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+    "black",
+    "empty",
+    "black",
+    "black",
+    "black",
+    "black",
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+  ],
+  "turn": 7,
+}
+`;
+
+exports[`detects the groups correctly 1`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 1,
+  },
+  Object {
+    "col": 0,
+    "row": 1,
+  },
+  Object {
+    "col": 0,
+    "row": 0,
+  },
+  Object {
+    "col": 0,
+    "row": 2,
+  },
+  Object {
+    "col": 0,
+    "row": 3,
+  },
+]
+`;
+
+exports[`detects the groups correctly 2`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 0,
+  },
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+  Object {
+    "col": 2,
+    "row": 2,
+  },
+  Object {
+    "col": 2,
+    "row": 3,
+  },
+  Object {
+    "col": 3,
+    "row": 1,
+  },
+]
+`;
+
+exports[`detects the groups correctly 3`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 2,
+  },
+]
+`;
+
+exports[`detects the groups correctly 4`] = `
+Array [
+  Object {
+    "col": 0,
+    "row": 0,
+  },
+  Object {
+    "col": 0,
+    "row": 1,
+  },
+  Object {
+    "col": 0,
+    "row": 2,
+  },
+  Object {
+    "col": 0,
+    "row": 3,
+  },
+  Object {
+    "col": 1,
+    "row": 3,
+  },
+  Object {
+    "col": 2,
+    "row": 3,
+  },
+  Object {
+    "col": 3,
+    "row": 3,
+  },
+  Object {
+    "col": 3,
+    "row": 2,
+  },
+  Object {
+    "col": 3,
+    "row": 1,
+  },
+  Object {
+    "col": 3,
+    "row": 0,
+  },
+  Object {
+    "col": 2,
+    "row": 0,
+  },
+  Object {
+    "col": 1,
+    "row": 0,
+  },
+]
+`;
+
+exports[`getting the neighbours of position 1`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+  Object {
+    "col": 1,
+    "row": 2,
+  },
+  Object {
+    "col": 0,
+    "row": 1,
+  },
+  Object {
+    "col": 1,
+    "row": 0,
+  },
+]
+`;
+
+exports[`getting the neighbours of position 2`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 0,
+  },
+  Object {
+    "col": 0,
+    "row": 1,
+  },
+]
+`;
+
+exports[`getting the neighbours of position 3`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 0,
+  },
+  Object {
+    "col": 1,
+    "row": 1,
+  },
+  Object {
+    "col": 0,
+    "row": 0,
+  },
+]
+`;
+
+exports[`getting the neighbours of position 4`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 2,
+  },
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+]
+`;
+
+exports[`getting the neighbours of position 5`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 2,
+  },
+  Object {
+    "col": 0,
+    "row": 2,
+  },
+  Object {
+    "col": 1,
+    "row": 1,
+  },
+]
+`;
+
+exports[`getting the neighbours of position with specified color 1`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 2,
+  },
+  Object {
+    "col": 1,
+    "row": 0,
+  },
+]
+`;
+
+exports[`getting the neighbours of position with specified color 2`] = `
+Array [
+  Object {
+    "col": 1,
+    "row": 0,
+  },
+]
+`;
+
+exports[`getting the neighbours of position with specified color 3`] = `Array []`;
+
+exports[`getting the neighbours of position with specified color 4`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+]
+`;
+
+exports[`getting the neighbours of position with specified color 5`] = `Array []`;
+
+exports[`getting the neighbours of position with the same color 1`] = `
+Array [
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+  Object {
+    "col": 0,
+    "row": 1,
+  },
+]
+`;
+
+exports[`passing 1`] = `
+Board {
+  "game": undefined,
+  "parent": Board {
+    "created": 2017-11-15T11:00:00.000Z,
+    "id": "some-id",
+    "state": Array [
+      "black",
+      "white",
+      "empty",
+      "black",
+      "white",
+      "white",
+      "empty",
+      "white",
+      "empty",
+    ],
+    "turn": 5,
+    "updated": 2017-11-15T11:00:00.000Z,
+  },
+  "prisonersBlack": undefined,
+  "prisonersWhite": undefined,
+  "state": Array [
+    "black",
+    "white",
+    "empty",
+    "black",
+    "white",
+    "white",
+    "empty",
+    "white",
+    "empty",
+  ],
+  "turn": 6,
+}
+`;
+
+exports[`placing a token 1`] = `
+Board {
+  "game": undefined,
+  "parent": Board {
+    "created": 2017-11-15T11:00:00.000Z,
+    "id": "some-id",
+    "prisonersBlack": 0,
+    "prisonersWhite": 0,
+    "state": Array [
+      "black",
+      "white",
+      "empty",
+      "empty",
+      "empty",
+      "black",
+      "white",
+      "white",
+      "white",
+      "empty",
+      "black",
+      "white",
+      "empty",
+      "white",
+      "empty",
+      "black",
+      "white",
+      "white",
+      "white",
+      "empty",
+      "black",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+    ],
+    "turn": 5,
+    "updated": 2017-11-15T11:00:00.000Z,
+  },
+  "placedAt": 21,
+  "prisonersBlack": 0,
+  "prisonersWhite": 5,
+  "state": Array [
+    "empty",
+    "white",
+    "empty",
+    "empty",
+    "empty",
+    "empty",
+    "white",
+    "white",
+    "white",
+    "empty",
+    "empty",
+    "white",
+    "empty",
+    "white",
+    "empty",
+    "empty",
+    "white",
+    "white",
+    "white",
+    "empty",
+    "empty",
+    "white",
+    "empty",
+    "empty",
+    "empty",
+  ],
+  "turn": 6,
+}
+`;
+
+exports[`placing a token without triggering game logics 1`] = `
+Board {
+  "game": undefined,
+  "parent": Board {
+    "created": 2017-11-15T11:00:00.000Z,
+    "id": "some-id",
+    "prisonersBlack": 0,
+    "prisonersWhite": 0,
+    "state": Array [
+      "black",
+      "white",
+      "empty",
+      "empty",
+      "empty",
+      "black",
+      "white",
+      "white",
+      "white",
+      "empty",
+      "black",
+      "white",
+      "empty",
+      "white",
+      "empty",
+      "black",
+      "white",
+      "white",
+      "white",
+      "empty",
+      "black",
+      "empty",
+      "empty",
+      "empty",
+      "empty",
+    ],
+    "turn": 5,
+    "updated": 2017-11-15T11:00:00.000Z,
+  },
+  "prisonersBlack": 0,
+  "prisonersWhite": 0,
+  "state": Array [
+    "black",
+    "white",
+    "empty",
+    "empty",
+    "empty",
+    "black",
+    "white",
+    "white",
+    "white",
+    "empty",
+    "black",
+    "white",
+    "empty",
+    "white",
+    "empty",
+    "black",
+    "white",
+    "white",
+    "white",
+    "empty",
+    "black",
+    "white",
+    "empty",
+    "empty",
+    "empty",
+  ],
+  "turn": 6,
+}
+`;
+
+exports[`resigning 1`] = `
+Board {
+  "game": undefined,
+  "parent": Board {
+    "created": 2017-11-15T11:00:00.000Z,
+    "id": "some-id",
+    "state": Array [
+      "empty",
+      "white",
+      "empty",
+      "white",
+      "white",
+      "white",
+      "empty",
+      "white",
+      "empty",
+    ],
+    "turn": 5,
+    "updated": 2017-11-15T11:00:00.000Z,
+  },
+  "prisonersBlack": undefined,
+  "prisonersWhite": undefined,
+  "resigned": true,
+  "state": Array [
+    "empty",
+    "white",
+    "empty",
+    "white",
+    "white",
+    "white",
+    "empty",
+    "white",
+    "empty",
+  ],
+  "turn": 6,
+}
+`;

@@ -8,7 +8,7 @@ export enum GroupStatus {
 }
 
 export class Group {
-    private indices: number[];
+    public indices: number[];
     private board: Board;
 
     constructor(indices: number[], board: Board) {

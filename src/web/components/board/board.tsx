@@ -56,15 +56,20 @@ export class Board extends React.Component<BoardProps> {
         const { game } = this.props;
         const { boardSize } = game;
 
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
-        const { width, height } = this.canvas;
+        const { clientWidth, clientHeight } = this.canvas;
+        const ratio = window.devicePixelRatio || 1;
+        const width = clientWidth * ratio;
+        const height = clientHeight * ratio;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
         const ctx = this.canvas.getContext("2d");
         const cellWidth = width / boardSize;
         const cellHeight = height / boardSize;
 
         ctx.drawImage(this.assets.get(boardWood), 0, 0, width, height);
         ctx.textAlign = "center";
+        ctx.strokeStyle = "rgb(60, 60, 40)";
         for (let col = 0; col < boardSize; ++col) {
             const x = cellWidth * col + cellWidth / 2;
             ctx.beginPath();

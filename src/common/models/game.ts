@@ -93,12 +93,12 @@ export class Game {
             return "Can not repeat a Ko.";
         }
         const group = tempBoard.groupAt(index);
-        if (tempBoard.freedoms(group) > 0) {
+        if (group.freedoms > 0) {
             return;
         }
         const enemyNeighbours = tempBoard.neighboursOfColor(index, oppositeColor(this.currentBoard.currentColor));
         const killedNeighbours =
-            !enemyNeighbours.some(neighbour => tempBoard.freedoms(tempBoard.groupAt(neighbour)) === 0);
+            !enemyNeighbours.some(neighbour => tempBoard.groupAt(neighbour).freedoms === 0);
         if (killedNeighbours) {
             return "Cannot commit suicide.";
         }
