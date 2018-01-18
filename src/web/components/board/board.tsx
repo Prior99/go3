@@ -56,9 +56,13 @@ export class Board extends React.Component<BoardProps> {
         const { game } = this.props;
         const { boardSize } = game;
 
-        this.canvas.width = this.canvas.clientWidth;
-        this.canvas.height = this.canvas.clientHeight;
-        const { width, height } = this.canvas;
+        const { clientWidth, clientHeight } = this.canvas;
+        const ratio = window.devicePixelRatio || 1;
+        const width = clientWidth * ratio;
+        const height = clientHeight * ratio;
+        this.canvas.width = width;
+        this.canvas.height = height;
+
         const ctx = this.canvas.getContext("2d");
         const cellWidth = width / boardSize;
         const cellHeight = height / boardSize;
