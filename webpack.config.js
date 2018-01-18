@@ -99,7 +99,8 @@ module.exports = {
         new Webpack.DefinePlugin({
             // Taken and adapted from the official README.
             // See: https://www.npmjs.com/package/git-revision-webpack-plugin
-            "SOFTWARE_VERSION": JSON.stringify(gitRevision.version())
+            "SOFTWARE_VERSION": JSON.stringify(gitRevision.version()),
+            "GO3_PUSH_PUBLIC_KEY": JSON.stringify(process.env["GO3_PUSH_PUBLIC_KEY"])
         }),
         new ProgressBarPlugin()
     ],

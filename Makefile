@@ -1,5 +1,9 @@
 SHELL:=/bin/bash
 
+# These are test variables used for local testing.
+PUSH_PUBLIC_KEY=BOvA8EMZRyIYJme_TcJiYgUIYHt5GT0nU_tRhD4f_3b5_6g0Elq6Ov3k7dbcPX4uRs3DZ3T811oWs7EfXt9Gy3E
+PUSH_PRIVATE_KEY=gknuPQ6bfyIkY0rSo_hL6E025Dej0XnE_qAU0TAoaM0
+
 default: debug
 
 all: default lint db
@@ -33,10 +37,12 @@ run-android: node_modules
 
 .PHONY: run-web
 run-web: node_modules
-	yarn start:web
+	GO3_PUSH_PUBLIC_KEY=$(PUSH_PUBLIC_KEY) yarn start:web
 
 .PHONY: run-server
 run-server: node_modules db
+	GO3_PUSH_PUBLIC_KEY="$(PUSH_PUBLIC_KEY)" \
+	GO3_PUSH_KEY="$(PUSH_PRIVATE_KEY)" \
 	yarn start:server
 
 .PHONY: clean-db

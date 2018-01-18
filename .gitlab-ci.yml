@@ -1,3 +1,6 @@
+variables:
+  GO3_PUSH_PUBLIC_KEY: "BPFYs2UAvISg3gPmcRHnZMSxOMvwjm6fPl_wgD2hnpYvaJEO54M-4ymsE5mA9zGrVxT0wcpD-M2S-xj04UQUe3I"
+
 stages:
   - test
   - deploy
