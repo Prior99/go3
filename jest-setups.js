@@ -1,5 +1,7 @@
 const TSDI = require("tsdi").TSDI;
 
+GO3_PUSH_PUBLIC_KEY = process.env["GO3_PUSH_PUBLIC_KEY"];
+
 class LocalStorageMock {
     constructor() {
         this.clear();

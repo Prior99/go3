@@ -55,7 +55,7 @@ make test
 or watch them by running
 
 ```
-yarn test --watch
+make test-watch
 ```
 
 ## Linting

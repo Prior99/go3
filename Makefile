@@ -29,7 +29,15 @@ lint: node_modules
 
 .PHONY: test
 test: node_modules
+	GO3_PUSH_PUBLIC_KEY="$(PUSH_PUBLIC_KEY)" \
+	GO3_PUSH_KEY="$(PUSH_PRIVATE_KEY)" \
 	yarn run test
+
+.PHONY: test-watch
+test-watch: node_modules
+	GO3_PUSH_PUBLIC_KEY="$(PUSH_PUBLIC_KEY)" \
+	GO3_PUSH_KEY="$(PUSH_PRIVATE_KEY)" \
+	yarn run test --watch
 
 .PHONY: run-android
 run-android: node_modules

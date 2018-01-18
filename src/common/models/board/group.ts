@@ -55,7 +55,7 @@ export class Group {
 
     }
 
-    public get size() {
+    public get size(): number {
         return this.indices.length;
     }
 

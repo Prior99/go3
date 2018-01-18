@@ -43,7 +43,7 @@ export class Board {
                     return result;
                 }, []);
                 const killedGroups = enemyGroups.filter(group => group.freedoms === 0);
-                const killCount = killedGroups.reduce((result, group) => result + group.size, 0);
+                const killCount = killedGroups.reduce((result: number, group: Group) => group.size + result, 0);
                 if (parent.currentColor === Color.WHITE) {
                     this.prisonersWhite += killCount;
                 } else {
