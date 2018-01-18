@@ -1,3 +1,144 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Detects a hole 1`] = `Array []`;
+exports[`calculating the neighbouring groups 1`] = `
+Array [
+  Array [
+    Object {
+      "col": 3,
+      "row": 1,
+    },
+    Object {
+      "col": 3,
+      "row": 2,
+    },
+  ],
+  Array [
+    Object {
+      "col": 1,
+      "row": 1,
+    },
+    Object {
+      "col": 1,
+      "row": 0,
+    },
+  ],
+  Array [
+    Object {
+      "col": 2,
+      "row": 0,
+    },
+    Object {
+      "col": 3,
+      "row": 0,
+    },
+  ],
+  Array [
+    Object {
+      "col": 2,
+      "row": 3,
+    },
+    Object {
+      "col": 1,
+      "row": 3,
+    },
+    Object {
+      "col": 0,
+      "row": 3,
+    },
+    Object {
+      "col": 0,
+      "row": 2,
+    },
+    Object {
+      "col": 0,
+      "row": 1,
+    },
+    Object {
+      "col": 0,
+      "row": 0,
+    },
+    Object {
+      "col": 3,
+      "row": 3,
+    },
+  ],
+]
+`;
+
+exports[`calculating the neighbours 1`] = `
+Array [
+  Object {
+    "col": 3,
+    "row": 1,
+  },
+  Object {
+    "col": 2,
+    "row": 2,
+  },
+  Object {
+    "col": 1,
+    "row": 1,
+  },
+  Object {
+    "col": 2,
+    "row": 0,
+  },
+  Object {
+    "col": 3,
+    "row": 2,
+  },
+  Object {
+    "col": 2,
+    "row": 3,
+  },
+  Object {
+    "col": 1,
+    "row": 2,
+  },
+  Object {
+    "col": 2,
+    "row": 1,
+  },
+  Object {
+    "col": 1,
+    "row": 3,
+  },
+  Object {
+    "col": 0,
+    "row": 2,
+  },
+]
+`;
+
+exports[`getting the eyes of a group 1`] = `
+Array [
+  Array [
+    Object {
+      "col": 1,
+      "row": 1,
+    },
+  ],
+  Array [
+    Object {
+      "col": 0,
+      "row": 3,
+    },
+    Object {
+      "col": 1,
+      "row": 3,
+    },
+  ],
+  Array [
+    Object {
+      "col": 3,
+      "row": 1,
+    },
+  ],
+  Array [
+    Object {
+      "col": 3,
+      "row": 3,
+    },
+  ],
+]
+`;

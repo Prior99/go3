@@ -38,7 +38,7 @@ export class Group {
         const { neighbours } = this;
         const groups = neighbours.map(this.board.groupAt);
         return groups.reduce((result, currentGroup) => {
-            if (!result.some(includedGroup => includedGroup.equals(currentGroup))) {
+            if (!result.some(includedGroup => includedGroup.equals(currentGroup)) && !currentGroup.equals(this)) {
                 result.push(currentGroup);
             }
             return result;
