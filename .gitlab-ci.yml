@@ -5,7 +5,7 @@ stages:
 build:
   image: "node:8"
   script:
-    - make release
+    - GO3_PUSH_PUBLIC_KEY=$PUSH_PUBLIC_KEY make release
   stage: test
   artifacts:
     paths:
