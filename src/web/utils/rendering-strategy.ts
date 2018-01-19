@@ -24,13 +24,13 @@ strategies.set(RenderingStrategy.CLASSIC, (drawInstructions: DrawInstructions) =
 
     switch (asset) {
         case Asset.WHITE:
-            ctx.fillStyle = "rgb(20, 20, 20)";
+            ctx.fillStyle = "rgb(220, 220, 220)";
             ctx.beginPath();
             ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
             ctx.fill();
             break;
         case Asset.BLACK:
-            ctx.fillStyle = "rgb(220, 220, 220)";
+            ctx.fillStyle = "rgb(20, 20, 20)";
             ctx.beginPath();
             ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
             ctx.fill();
@@ -128,11 +128,11 @@ strategies.set(RenderingStrategy.MODERN, (drawInstructions: DrawInstructions) =>
 
     switch (asset) {
         case Asset.WHITE:
-            ctx.fillStyle = "rgb(20, 20, 20)";
+            ctx.fillStyle = "rgb(220, 220, 220)";
             ctx.fill();
             break;
         case Asset.BLACK:
-            ctx.fillStyle = "rgb(220, 220, 220)";
+            ctx.fillStyle = "rgb(20, 20, 20)";
             ctx.fill();
             break;
         case Asset.LAST:
