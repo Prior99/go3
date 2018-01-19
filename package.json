@@ -11,7 +11,7 @@
     "start:native": "react-native start",
     "lint:src": "tslint --format stylish --type-check --project tsconfig.json --exclude generated/**/*.ts",
     "lint:style": "stylelint --allow-empty-input src/**/*.scss",
-    "test": "jest"
+    "test": "tz=UTC jest"
   },
   "main": "src/index.tsx",
   "repository": "https://github.com/Prior99/go3",
