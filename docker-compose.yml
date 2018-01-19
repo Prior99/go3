@@ -29,6 +29,7 @@ services:
       GO3_DB_LOGGING: "false"
       GO3_DB_DRIVER: postgres
       GO3_PUSH_KEY: ${GO3_PUSH_KEY}
+      GO3_PUSH_PUBLIC_KEY: ${GO3_PUSH_PUBLIC_KEY}
 
 volumes:
   go3_pgdata:
