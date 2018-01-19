@@ -6,12 +6,12 @@
     "build:server": "tsc -p . --outDir server/",
     "build:web:release": "webpack --config webpack.config-release.js",
     "start:web": "webpack-dev-server",
-    "start:server": "tz=UTC ts-node-dev src/server",
+    "start:server": "TZ=UTC ts-node-dev src/server",
     "start:android": "react-native run-android",
     "start:native": "react-native start",
     "lint:src": "tslint --format stylish --type-check --project tsconfig.json --exclude generated/**/*.ts",
     "lint:style": "stylelint --allow-empty-input src/**/*.scss",
-    "test": "tz=UTC jest"
+    "test": "TZ=UTC jest"
   },
   "main": "src/index.tsx",
   "repository": "https://github.com/Prior99/go3",

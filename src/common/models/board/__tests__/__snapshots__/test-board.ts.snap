@@ -4,7 +4,7 @@ exports[`constructing a board from an old one 1`] = `
 Board {
   "game": undefined,
   "parent": Board {
-    "created": 2017-11-15T11:00:00.000Z,
+    "created": 2017-11-15T12:00:00.000Z,
     "id": "some-id",
     "prisonersBlack": 10,
     "prisonersWhite": 10,
@@ -36,7 +36,7 @@ Board {
       "empty",
     ],
     "turn": 6,
-    "updated": 2017-11-15T11:00:00.000Z,
+    "updated": 2017-11-15T12:00:00.000Z,
   },
   "placedAt": 6,
   "prisonersBlack": 18,
@@ -317,7 +317,7 @@ exports[`passing 1`] = `
 Board {
   "game": undefined,
   "parent": Board {
-    "created": 2017-11-15T11:00:00.000Z,
+    "created": 2017-11-15T12:00:00.000Z,
     "id": "some-id",
     "state": Array [
       "black",
@@ -331,7 +331,7 @@ Board {
       "empty",
     ],
     "turn": 5,
-    "updated": 2017-11-15T11:00:00.000Z,
+    "updated": 2017-11-15T12:00:00.000Z,
   },
   "prisonersBlack": undefined,
   "prisonersWhite": undefined,
@@ -354,7 +354,7 @@ exports[`placing a token 1`] = `
 Board {
   "game": undefined,
   "parent": Board {
-    "created": 2017-11-15T11:00:00.000Z,
+    "created": 2017-11-15T12:00:00.000Z,
     "id": "some-id",
     "prisonersBlack": 0,
     "prisonersWhite": 0,
@@ -386,7 +386,7 @@ Board {
       "empty",
     ],
     "turn": 5,
-    "updated": 2017-11-15T11:00:00.000Z,
+    "updated": 2017-11-15T12:00:00.000Z,
   },
   "placedAt": 21,
   "prisonersBlack": 0,
@@ -426,7 +426,7 @@ exports[`placing a token without triggering game logics 1`] = `
 Board {
   "game": undefined,
   "parent": Board {
-    "created": 2017-11-15T11:00:00.000Z,
+    "created": 2017-11-15T12:00:00.000Z,
     "id": "some-id",
     "prisonersBlack": 0,
     "prisonersWhite": 0,
@@ -458,7 +458,7 @@ Board {
       "empty",
     ],
     "turn": 5,
-    "updated": 2017-11-15T11:00:00.000Z,
+    "updated": 2017-11-15T12:00:00.000Z,
   },
   "prisonersBlack": 0,
   "prisonersWhite": 0,
@@ -497,7 +497,7 @@ exports[`resigning 1`] = `
 Board {
   "game": undefined,
   "parent": Board {
-    "created": 2017-11-15T11:00:00.000Z,
+    "created": 2017-11-15T12:00:00.000Z,
     "id": "some-id",
     "state": Array [
       "empty",
@@ -511,7 +511,7 @@ Board {
       "empty",
     ],
     "turn": 5,
-    "updated": 2017-11-15T11:00:00.000Z,
+    "updated": 2017-11-15T12:00:00.000Z,
   },
   "prisonersBlack": undefined,
   "prisonersWhite": undefined,
