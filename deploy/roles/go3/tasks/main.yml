@@ -28,3 +28,4 @@
     state: present
   environment:
     GO3_PUSH_KEY: '{{ push_key }}'
+    GO3_PUSH_PUBLIC_KEY: '{{ push_public_key }}'
