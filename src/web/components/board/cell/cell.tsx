@@ -6,7 +6,7 @@ import { bind } from "decko";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../../common-ui";
 import { Game, Color, Group } from "../../../../common";
-import * as css from "./cell.scss";
+import { Rendering, TokenDrawInstructions } from "../../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
 
@@ -23,6 +23,7 @@ export interface CellProps {
 export class Cell {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
+    @inject private rendering: Rendering;
 
     private game: Game;
     private index: number;
@@ -45,6 +46,50 @@ export class Cell {
 
     private get color() { return this.game.currentBoard.at(this.index); }
     private get isLastTurn() { return this.game.currentBoard.placedAt === this.index; }
+
+    private get valid() {
+        const { game, index } = this;
+        const errorMessage = game.turnValid(index);
+        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
+    }
+
+    private get ownColor() { return this.game.getColorForUser(this.login.userId); }
+
+    private get renderedColor() {
+        const { color, hovered, locked, ownColor } = this;
+        if (color !== Color.EMPTY) { return color; }
+        if (hovered || locked) {
+            return ownColor;
+        }
+        return Color.EMPTY;
+    }
+
+    private get group(): Group { return this.game.currentBoard.groupAt(this.index); }
+
+    private get x() { return this.game.currentBoard.toPos(this.index).col * this.width; }
+    private get y() { return this.game.currentBoard.toPos(this.index).row * this.height; }
+
+    private get instructions(): TokenDrawInstructions {
+        const { width, height, ctx, renderedColor, isLastTurn, color, group, ownColor, locked, hovered, valid } = this;
+        return {
+            width,
+            height,
+            ctx: this.ctx,
+            color: renderedColor,
+            last: isLastTurn,
+            preview: color === Color.EMPTY && (locked || hovered),
+            status: group.status,
+            valid,
+            closedTop: color === Color.EMPTY ? this.closedTop(ownColor) : this.closedTop(color),
+            closedBottom: color === Color.EMPTY ? this.closedBottom(ownColor) : this.closedBottom(color),
+            closedLeft: color === Color.EMPTY ? this.closedLeft(ownColor) : this.closedLeft(color),
+            closedRight: color === Color.EMPTY ? this.closedRight(ownColor) : this.closedRight(color),
+            closedTopLeft: color === Color.EMPTY ? this.closedTopLeft(ownColor) : this.closedTopLeft(color),
+            closedTopRight: color === Color.EMPTY ? this.closedTopRight(ownColor) : this.closedTopRight(color),
+            closedBottomRight: color === Color.EMPTY ? this.closedBottomRight(ownColor) : this.closedBottomRight(color),
+            closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
+        };
+    }
 
     @bind private closedTopLeft(color: Color) {
         const { game, index } = this;
@@ -102,25 +147,6 @@ export class Cell {
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === color;
     }
 
-    private get valid() {
-        const { game, index } = this;
-        const errorMessage = game.turnValid(index);
-        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
-    }
-
-    private get ownColor() { return this.game.getColorForUser(this.login.userId); }
-
-    private get renderedColor() {
-        const { color, hovered, locked, ownColor } = this;
-        if (color !== Color.EMPTY) { return color; }
-        if (hovered || locked) {
-            return ownColor;
-        }
-        return Color.EMPTY;
-    }
-
-    private get group(): Group { return this.game.currentBoard.groupAt(this.index); }
-
     @bind private handleClick() {
         if (this.color !== Color.EMPTY) {
             return;
@@ -154,61 +180,8 @@ export class Cell {
     }
 
     @bind public draw() {
-        const { width, height } = this;
-
-
-        const { color, ownColor, valid, isLastTurn, renderedColor, hovered, locked, group } = this;
-        const { game, index } = this.props;
-
-        ctx.clearRect(0, 0, width, height);
-        if (color === Color.EMPTY && !valid && (hovered || locked)) {
-            ctx.drawImage(this.assets.get(tokenInvalid, width, height), 0, 0, width, height, 0, 0, width, height);
-            return;
-        }
-
-        const colors = {
-            closedTop: color === Color.EMPTY ? this.closedTop(ownColor) : this.closedTop(color),
-            closedBottom: color === Color.EMPTY ? this.closedBottom(ownColor) : this.closedBottom(color),
-            closedLeft: color === Color.EMPTY ? this.closedLeft(ownColor) : this.closedLeft(color),
-            closedRight: color === Color.EMPTY ? this.closedRight(ownColor) : this.closedRight(color),
-            closedTopLeft: color === Color.EMPTY ? this.closedTopLeft(ownColor) : this.closedTopLeft(color),
-            closedTopRight: color === Color.EMPTY ? this.closedTopRight(ownColor) : this.closedTopRight(color),
-            closedBottomRight: color === Color.EMPTY ? this.closedBottomRight(ownColor) : this.closedBottomRight(color),
-            closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
-        };
-
-        const instructions = {
-            width,
-            height,
-            ctx,
-            color: renderedColor,
-            last: false,
-            ...colors,
-            preview: color === Color.EMPTY && (locked || hovered),
-            status: group.status,
-        };
-        drawToken(this.ownUser.user.renderingStrategy, instructions);
-
-        if (isLastTurn) {
-            drawToken(this.ownUser.user.renderingStrategy, { ...instructions, last: true });
-        }
-    }
-
-    public render() {
-        const { hovered, locked, color } = this;
-        const classes = classNames({
-            [css.preview]: color === Color.EMPTY && hovered && !locked,
-            [css.locked]: locked,
-        });
-        return (
-            <div
-                className={classes}
-                onClick={this.handleClick}
-                onMouseEnter={this.handleEnter}
-                onMouseLeave={this.handleLeave}
-            >
-                <canvas className={css.canvas} ref={this.handleCanvasRef} />
-            </div>
-        );
+        const { x, y, width, height, instructions, rendering, valid, hovered, locked, ctx, color } = this;
+        ctx.clearRect(x, y, width, height);
+        rendering.drawToken(instructions);
     }
 }
