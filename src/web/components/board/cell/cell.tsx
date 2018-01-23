@@ -1,6 +1,5 @@
 import * as React from "react";
-import { observer } from "mobx-react";
-import { observable, computed } from "mobx";
+import { observable } from "mobx";
 import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
 import { bind } from "decko";
@@ -8,102 +7,110 @@ import { bind } from "decko";
 import { GamesStore, LoginStore, OwnUserStore } from "../../../../common-ui";
 import { Game, Color, Group } from "../../../../common";
 import * as css from "./cell.scss";
-import { Assets, drawToken } from "../../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
 
 export interface CellProps {
     readonly game: Game;
     readonly index: number;
-    readonly onClick?: () => void;
-    readonly minimal?: boolean;
+    readonly onConfirm: (index: number) => void;
+    readonly ctx: CanvasRenderingContext2D;
+    readonly width: number;
+    readonly height: number;
 }
 
-@external @observer
-export class Cell extends React.Component<CellProps> {
+@external
+export class Cell {
     @inject private login: LoginStore;
-    @inject private assets: Assets;
     @inject private ownUser: OwnUserStore;
 
-    @observable private locked = false;
-    @observable private tokenBlack: HTMLImageElement;
-    @observable private tokenWhite: HTMLImageElement;
-    @observable private hovered = false;
+    private game: Game;
+    private index: number;
+    private onConfirm: (index: number) => void;
+    private ctx: CanvasRenderingContext2D;
+    private width: number;
+    private height: number;
 
-    private canvas: HTMLCanvasElement;
+    private locked = false;
+    private hovered = false;
 
     constructor(props: CellProps) {
-        super(props);
-        window.addEventListener("resize", this.initCanvas);
+        this.game = props.game;
+        this.index = props.index;
+        this.onConfirm = props.onConfirm;
+        this.ctx = props.ctx;
+        this.width = props.width;
+        this.height = props.height;
     }
 
-    @computed private get color() { return this.props.game.currentBoard.at(this.props.index); }
-    @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
-    @computed private get isLastTurn() { return this.props.game.currentBoard.placedAt === this.props.index; }
+    private get color() { return this.game.currentBoard.at(this.index); }
+    private get isLastTurn() { return this.game.currentBoard.placedAt === this.index; }
 
     @bind private closedTopLeft(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === 0 || row === 0) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row - 1 })) === color;
     }
 
     @bind private closedBottomLeft(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === 0 || row === game.boardSize - 1) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row + 1 })) === color;
     }
 
     @bind private closedTopRight(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === game.boardSize - 1 || row === 0) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row - 1 })) === color;
     }
 
     @bind private closedBottomRight(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === game.boardSize - 1 || row === game.boardSize - 1) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row + 1 })) === color;
     }
 
     @bind private closedTop(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (row === 0) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row - 1 })) === color;
     }
 
     @bind private closedBottom(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (row === game.boardSize - 1) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row + 1 })) === color;
     }
 
     @bind private closedLeft(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === 0) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row })) === color;
     }
 
     @bind private closedRight(color: Color) {
-        const { game, index } = this.props;
+        const { game, index } = this;
         const { col, row } = game.currentBoard.toPos(index);
         if (col === game.boardSize - 1) { return true; }
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === color;
     }
 
-    @computed private get valid() {
-        const { game, index } = this.props;
+    private get valid() {
+        const { game, index } = this;
         const errorMessage = game.turnValid(index);
         return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
-    @computed private get renderedColor() {
+    private get ownColor() { return this.game.getColorForUser(this.login.userId); }
+
+    private get renderedColor() {
         const { color, hovered, locked, ownColor } = this;
         if (color !== Color.EMPTY) { return color; }
         if (hovered || locked) {
@@ -112,31 +119,7 @@ export class Cell extends React.Component<CellProps> {
         return Color.EMPTY;
     }
 
-    @computed private get group(): Group {
-        return this.props.game.currentBoard.groupAt(this.props.index);
-    }
-
-    @bind private async initCanvas() {
-        if (!this.canvas) {
-            return;
-        }
-        const ratio = window.devicePixelRatio || 1;
-        const { clientWidth, clientHeight } = this.canvas;
-        const width = clientWidth * ratio;
-        const height = clientHeight * ratio;
-
-        await this.assets.loadImage(tokenInvalid, width, height);
-
-        this.canvas.width = width;
-        this.canvas.height = height;
-
-        this.renderCanvas();
-    }
-
-    @bind private handleCanvasRef(element: HTMLCanvasElement) {
-        this.canvas = element;
-        this.initCanvas();
-    }
+    private get group(): Group { return this.game.currentBoard.groupAt(this.index); }
 
     @bind private handleClick() {
         if (this.color !== Color.EMPTY) {
@@ -164,27 +147,15 @@ export class Cell extends React.Component<CellProps> {
 
     @bind private handleConfirm() {
         this.locked = false;
-        const { onClick } = this.props;
-        if (!onClick) {
-            return;
-        }
         if (!this.valid) {
             return;
         }
-        onClick();
+        this.onConfirm(this.index);
     }
 
-    public componentDidMount() { this.renderCanvas(); }
-    public componentDidUpdate() { this.renderCanvas(); }
+    @bind public draw() {
+        const { width, height } = this;
 
-    @bind private renderCanvas() {
-        if (!this.assets.loaded) { return; }
-        if (!this.canvas) { return; }
-
-        const { width, height } = this.canvas;
-        const ctx = this.canvas.getContext("2d");
-
-        (ctx as any).imageSmoothingEnabled = "high";
 
         const { color, ownColor, valid, isLastTurn, renderedColor, hovered, locked, group } = this;
         const { game, index } = this.props;
