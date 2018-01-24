@@ -1,4 +1,4 @@
-import { Color, GroupStatus } from "../../../common";
+import { Color, GroupStatus } from "../../../../common";
 
 export interface TokenDrawInstructions {
     width: number;

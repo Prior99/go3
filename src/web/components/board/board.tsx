@@ -1,12 +1,12 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
-import { bind } from "decko";
+import { bind, memoize } from "decko";
 import { external, inject, initialize } from "tsdi";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
 import { Game, Color } from "../../../common";
-import { Assets } from "../../utils";
+import { Assets, Rendering } from "../../utils";
 import { Cell } from "./cell";
 import * as css from "./board.scss";
 
@@ -20,8 +20,10 @@ export interface BoardProps {
 export class Board extends React.Component<BoardProps> {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
+    @inject private rendering: Rendering;
 
     private canvas: HTMLCanvasElement;
+    private ctx: CanvasRenderingContext2D;
 
     private handleClick(index: number) {
         const { onPlace } = this.props;
@@ -32,14 +34,21 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
-    @computed private get cells() {
-        const ctx = this.canvas.getContext("2d");
-        const width = this.canvas.width / this.props.game.boardSize;
-        const height = this.canvas.height / this.props.game.boardSize;
+
+    @memoize private cells(gameId: string) {
         const { game } = this.props;
-        return this.props.game.currentBoard.state.map((_, index) => new Cell({
-            game, index, onConfirm: this.handleClick, ctx, width, height,
-        }));
+        const { canvas, handleClick: onConfirm } = this;
+        return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
+    }
+
+    @computed private get instructions() {
+        const { canvas, ctx } = this;
+        return {
+            ctx,
+            width: canvas.width,
+            height: canvas.height,
+            boardSize: this.props.game.boardSize,
+        };
     }
 
     @computed private get winningColor() {
@@ -56,11 +65,30 @@ export class Board extends React.Component<BoardProps> {
         return `Black (${game.blackUser.name}) wins`;
     }
 
+    private drawBoard() {
+        this.rendering.drawBoard(this.instructions);
+    }
+
+    private drawCells() {
+        this.cells(this.props.game.id).forEach(cell => cell.draw());
+    }
+
     @bind private renderCanvas() {
         if (!this.canvas) { return; }
+        const begin = Date.now();
+        // Time measurement start.
+        this.drawBoard();
+        this.drawCells();
+        // Time measurement stop.
+        const took = Date.now() - begin;
+        if (took > 1000 / 60) {
+            console.warn(`Rendering took ${Date.now() - begin}ms, which is above 60Hz threshold of ${1000 / 60}ms.`);
+        }
+        window.requestAnimationFrame(this.renderCanvas);
+    }
 
-        (ctx as any).imageSmoothingEnabled = "high";
-
+    @bind private initCanvas() {
+        this.ctx.imageSmoothingEnabled = true;
         const { game } = this.props;
         const { boardSize } = game;
 
@@ -70,16 +98,17 @@ export class Board extends React.Component<BoardProps> {
         const height = clientHeight * ratio;
         this.canvas.width = width;
         this.canvas.height = height;
-
-    }
+     }
 
     public componentDidMount() { this.renderCanvas(); }
     public componentDidUpdate() { this.renderCanvas(); }
 
     @bind private handleCanvasRef(element: HTMLCanvasElement) {
         this.canvas = element;
+        this.ctx = this.canvas.getContext("2d");
         this.renderCanvas();
-        window.addEventListener("resize", () => this.renderCanvas());
+        window.addEventListener("resize", () => this.initCanvas());
+        this.initCanvas();
     }
 
     public render() {

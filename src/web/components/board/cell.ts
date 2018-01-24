@@ -4,19 +4,18 @@ import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
 import { bind } from "decko";
 
-import { GamesStore, LoginStore, OwnUserStore } from "../../../../common-ui";
-import { Game, Color, Group } from "../../../../common";
-import { Rendering, TokenDrawInstructions } from "../../../utils";
+import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
+import { Game, Color, Group } from "../../../common";
+import { Rendering, TokenDrawInstructions } from "../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
+import { memoize } from "decko/dist/decko";
 
 export interface CellProps {
     readonly game: Game;
     readonly index: number;
     readonly onConfirm: (index: number) => void;
-    readonly ctx: CanvasRenderingContext2D;
-    readonly width: number;
-    readonly height: number;
+    readonly canvas: HTMLCanvasElement;
 }
 
 @external
@@ -29,8 +28,7 @@ export class Cell {
     private index: number;
     private onConfirm: (index: number) => void;
     private ctx: CanvasRenderingContext2D;
-    private width: number;
-    private height: number;
+    private canvas: HTMLCanvasElement;
 
     private locked = false;
     private hovered = false;
@@ -39,15 +37,18 @@ export class Cell {
         this.game = props.game;
         this.index = props.index;
         this.onConfirm = props.onConfirm;
-        this.ctx = props.ctx;
-        this.width = props.width;
-        this.height = props.height;
+        this.canvas = props.canvas;
+        this.ctx = props.canvas.getContext("2d");
     }
+
+    private get width() { return this.canvas.width; }
+    private get height() { return this.canvas.height; }
 
     private get color() { return this.game.currentBoard.at(this.index); }
     private get isLastTurn() { return this.game.currentBoard.placedAt === this.index; }
 
-    private get valid() {
+    @memoize
+    private valid(boardId: string) {
         const { game, index } = this;
         const errorMessage = game.turnValid(index);
         return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
@@ -64,13 +65,16 @@ export class Cell {
         return Color.EMPTY;
     }
 
-    private get group(): Group { return this.game.currentBoard.groupAt(this.index); }
+    @memoize
+    private groupStatus(boardId: string) {
+        return this.game.currentBoard.groupAt(this.index).status;
+    }
 
     private get x() { return this.game.currentBoard.toPos(this.index).col * this.width; }
     private get y() { return this.game.currentBoard.toPos(this.index).row * this.height; }
 
     private get instructions(): TokenDrawInstructions {
-        const { width, height, ctx, renderedColor, isLastTurn, color, group, ownColor, locked, hovered, valid } = this;
+        const { width, height, ctx, renderedColor, isLastTurn, color, ownColor, locked, hovered, game } = this;
         return {
             width,
             height,
@@ -78,8 +82,8 @@ export class Cell {
             color: renderedColor,
             last: isLastTurn,
             preview: color === Color.EMPTY && (locked || hovered),
-            status: group.status,
-            valid,
+            status: this.groupStatus(game.currentBoard.id),
+            valid: this.valid(game.currentBoard.id),
             closedTop: color === Color.EMPTY ? this.closedTop(ownColor) : this.closedTop(color),
             closedBottom: color === Color.EMPTY ? this.closedBottom(ownColor) : this.closedBottom(color),
             closedLeft: color === Color.EMPTY ? this.closedLeft(ownColor) : this.closedLeft(color),
@@ -90,6 +94,8 @@ export class Cell {
             closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
         };
     }
+
+    private get animated() { return this.locked; }
 
     @bind private closedTopLeft(color: Color) {
         const { game, index } = this;
@@ -180,7 +186,19 @@ export class Cell {
     }
 
     @bind public draw() {
-        const { x, y, width, height, instructions, rendering, valid, hovered, locked, ctx, color } = this;
+        if (this.animated) {
+            this.actualDraw();
+            return;
+        }
+        this.guardedDraw(this.hovered, this.game.currentBoard.id, this.index);
+    }
+
+    @memoize private guardedDraw(hovered: boolean, boardId: string, index: number) {
+        this.actualDraw();
+    }
+
+    @bind public actualDraw() {
+        const { x, y, width, height, instructions, rendering, ctx } = this;
         ctx.clearRect(x, y, width, height);
         rendering.drawToken(instructions);
     }

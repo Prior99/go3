@@ -7,6 +7,6 @@ import { defaultColorScheme } from "./default";
 export class ColorSchemeFactory {
     @factory
     public getColorScheme(): ColorScheme {
-        return defaultColorScheme();
+        return defaultColorScheme;
     }
 }

@@ -4,6 +4,7 @@ import { ColorScheme } from "../color-scheme";
 import { BoardDrawInstructions } from "./draw-instructions";
 import { Assets } from "../../assets";
 
+import { BoardRenderingStrategy } from "./rendering-strategy";
 import * as boardWood from "./board-wood.png";
 
 @component
