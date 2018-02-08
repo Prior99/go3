@@ -21,9 +21,12 @@ export class Board extends React.Component<BoardProps> {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
     @inject private rendering: Rendering;
+    @inject private assets: Assets;
 
-    private canvas: HTMLCanvasElement;
-    private ctx: CanvasRenderingContext2D;
+    private backgroundCanvas: HTMLCanvasElement;
+    private backgroundCtx: CanvasRenderingContext2D;
+    private foregroundCanvas: HTMLCanvasElement;
+    private foregroundCtx: CanvasRenderingContext2D;
 
     private handleClick(index: number) {
         const { onPlace } = this.props;
@@ -37,12 +40,12 @@ export class Board extends React.Component<BoardProps> {
 
     @memoize private cells(gameId: string) {
         const { game } = this.props;
-        const { canvas, handleClick: onConfirm } = this;
+        const { foregroundCanvas: canvas, handleClick: onConfirm } = this;
         return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
     }
 
     @computed private get instructions() {
-        const { canvas, ctx } = this;
+        const { backgroundCanvas: canvas, backgroundCtx: ctx } = this;
         return {
             ctx,
             width: canvas.width,
@@ -74,10 +77,9 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private renderCanvas() {
-        if (!this.canvas) { return; }
+        if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
         const begin = Date.now();
         // Time measurement start.
-        this.drawBoard();
         this.drawCells();
         // Time measurement stop.
         const took = Date.now() - begin;
@@ -87,27 +89,42 @@ export class Board extends React.Component<BoardProps> {
         window.requestAnimationFrame(this.renderCanvas);
     }
 
-    @bind private initCanvas() {
-        this.ctx.imageSmoothingEnabled = true;
+    @bind private resizeCanvas() {
         const { game } = this.props;
         const { boardSize } = game;
 
-        const { clientWidth, clientHeight } = this.canvas;
+        const { clientWidth, clientHeight } = this.backgroundCanvas;
         const ratio = window.devicePixelRatio || 1;
         const width = clientWidth * ratio;
         const height = clientHeight * ratio;
-        this.canvas.width = width;
-        this.canvas.height = height;
+
+        this.backgroundCanvas.width = width;
+        this.backgroundCanvas.height = height;
+        this.foregroundCanvas.width = width;
+        this.foregroundCanvas.height = height;
+
+        this.drawBoard();
      }
 
     public componentDidMount() { this.renderCanvas(); }
     public componentDidUpdate() { this.renderCanvas(); }
 
-    @bind private handleCanvasRef(element: HTMLCanvasElement) {
-        this.canvas = element;
-        this.ctx = this.canvas.getContext("2d");
+    @bind private initCanvas() {
+        if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
         this.renderCanvas();
-        window.addEventListener("resize", () => this.initCanvas());
+        window.addEventListener("resize", () => this.resizeCanvas());
+        this.resizeCanvas();
+    }
+
+    @bind private handleForegroundCanvasRef(element: HTMLCanvasElement) {
+        this.foregroundCanvas = element;
+        this.foregroundCtx = this.foregroundCanvas.getContext("2d");
+        this.initCanvas();
+    }
+
+    @bind private handleBackgroundCanvasRef(element: HTMLCanvasElement) {
+        this.backgroundCanvas = element;
+        this.backgroundCtx = this.backgroundCanvas.getContext("2d");
         this.initCanvas();
     }
 
@@ -121,7 +138,18 @@ export class Board extends React.Component<BoardProps> {
         };
         return (
             <div className={css.container}>
-                <canvas className={css.canvas} ref={this.handleCanvasRef} />
+                <canvas
+                    width={0}
+                    height={0}
+                    className={css.foregroundCanvas}
+                    ref={this.handleForegroundCanvasRef}
+                />
+                <canvas
+                    width={0}
+                    height={0}
+                    className={css.backgroundCanvas}
+                    ref={this.handleBackgroundCanvasRef}
+                />
                 {
                     over && (
                         <div className={css.over}>

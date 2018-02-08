@@ -3,10 +3,11 @@ import { observable } from "mobx";
 import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
 import { bind } from "decko";
+import { equals } from "ramda";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
 import { Game, Color, Group } from "../../../common";
-import { Rendering, TokenDrawInstructions } from "../../utils";
+import { Rendering, TokenDrawInstructions, Assets } from "../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
 import { memoize } from "decko/dist/decko";
@@ -23,12 +24,18 @@ export class Cell {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
     @inject private rendering: Rendering;
+    @inject private assets: Assets;
 
     private game: Game;
     private index: number;
     private onConfirm: (index: number) => void;
     private ctx: CanvasRenderingContext2D;
     private canvas: HTMLCanvasElement;
+    private lastRenderingParameters: {
+        canvasWidth: number;
+        canvasHeight: number;
+        boardId: string;
+    };
 
     private locked = false;
     private hovered = false;
@@ -41,8 +48,8 @@ export class Cell {
         this.ctx = props.canvas.getContext("2d");
     }
 
-    private get width() { return this.canvas.width; }
-    private get height() { return this.canvas.height; }
+    private get width() { return Math.round(this.canvas.width / this.game.boardSize); }
+    private get height() { return Math.round(this.canvas.height / this.game.boardSize); }
 
     private get color() { return this.game.currentBoard.at(this.index); }
     private get isLastTurn() { return this.game.currentBoard.placedAt === this.index; }
@@ -186,20 +193,27 @@ export class Cell {
     }
 
     @bind public draw() {
-        if (this.animated) {
+        const { canvas, animated, assets, game } = this;
+        const { width: canvasWidth, height: canvasHeight } = canvas;
+        const boardId = game.currentBoard.id;
+        if (!assets.loaded || canvasWidth === 0 || canvasHeight === 0) { return; }
+        if (animated) {
             this.actualDraw();
             return;
         }
-        this.guardedDraw(this.hovered, this.game.currentBoard.id, this.index);
-    }
-
-    @memoize private guardedDraw(hovered: boolean, boardId: string, index: number) {
-        this.actualDraw();
+        const renderingParameters = { canvasWidth, canvasHeight, boardId };
+        const rerenderNeeded = !equals(renderingParameters, this.lastRenderingParameters);
+        if (rerenderNeeded) {
+            this.lastRenderingParameters = renderingParameters;
+            this.actualDraw();
+        }
     }
 
     @bind public actualDraw() {
         const { x, y, width, height, instructions, rendering, ctx } = this;
         ctx.clearRect(x, y, width, height);
+        ctx.translate(x, y);
         rendering.drawToken(instructions);
+        ctx.translate(-x, -y);
     }
 }

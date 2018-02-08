@@ -13,8 +13,8 @@ export class Rendering {
     public get tokenRenderingStrategy(): TokenRenderingStrategy {
         const { renderingStrategy } = this.ownUser.user;
         switch (renderingStrategy) {
-            case "modern": return this.tsdi.get(TokenClassic);
-            case "classic": return this.tsdi.get(TokenModern);
+            case "modern": return this.tsdi.get(TokenModern);
+            case "classic": return this.tsdi.get(TokenClassic);
             default: throw new Error(`Unknown rendering strategy: "${renderingStrategy}"`);
         }
     }

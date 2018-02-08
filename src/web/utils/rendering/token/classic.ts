@@ -26,13 +26,9 @@ export class TokenClassic extends TokenRenderingStrategy {
             return;
         }
 
-        ctx.fillStyle = this.colorScheme.color[color];
+        ctx.fillStyle = this.colorScheme.color.get(color);
         switch (color) {
             case Color.WHITE:
-                ctx.beginPath();
-                ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
-                ctx.fill();
-                break;
             case Color.BLACK:
                 ctx.beginPath();
                 ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);

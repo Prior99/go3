@@ -17,8 +17,8 @@ export class BoardClassic extends BoardRenderingStrategy {
         await this.assets.loadImage(boardWood);
     }
 
-    public draw(instructions: BoardDrawInstructions) {
-        if (!this.assets.loaded) { return; }
+    public async draw(instructions: BoardDrawInstructions) {
+        await this.loadImages();
         const { ctx, width, height, boardSize } = instructions;
         const cellWidth = width / boardSize;
         const cellHeight = height / boardSize;
