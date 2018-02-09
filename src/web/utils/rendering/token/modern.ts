@@ -89,7 +89,7 @@ export class TokenModern extends TokenRenderingStrategy {
             ctx.lineTo(offset, height / 2);
         }
 
-        ctx.strokeStyle = this.colorScheme.last;
+        ctx.strokeStyle = this.colorScheme.last.string();
         ctx.lineWidth = 4;
         ctx.stroke();
     }
@@ -110,6 +110,7 @@ export class TokenModern extends TokenRenderingStrategy {
             closedBottomRight,
             preview,
             status,
+            opacity,
         } = drawInstructions;
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
@@ -120,7 +121,7 @@ export class TokenModern extends TokenRenderingStrategy {
 
         ctx.beginPath();
         ctx.moveTo(border, height / 2);
-        ctx.strokeStyle = this.colorScheme.status.get(status);
+        ctx.strokeStyle = this.colorScheme.status.get(status).fade(1 - opacity).string();
         ctx.fillStyle = ctx.strokeStyle;
         ctx.lineWidth = 4;
 
@@ -178,7 +179,18 @@ export class TokenModern extends TokenRenderingStrategy {
     }
 
     public draw(drawInstructions: TokenDrawInstructions) {
-        const { color, last, ctx, width, height, closedTop, closedBottom, closedLeft, closedRight } = drawInstructions;
+        const {
+            color,
+            last,
+            ctx,
+            width,
+            height,
+            closedTop,
+            closedBottom,
+            closedLeft,
+            closedRight,
+            opacity
+        } = drawInstructions;
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
         ctx.beginPath();
@@ -211,13 +223,11 @@ export class TokenModern extends TokenRenderingStrategy {
             ctx.rect(0, height / 2, width / 2, height / 2);
         }
 
+
         switch (color) {
             case Color.WHITE:
-                ctx.fillStyle = "rgb(220, 220, 220)";
-                ctx.fill();
-                break;
             case Color.BLACK:
-                ctx.fillStyle = "rgb(20, 20, 20)";
+                ctx.fillStyle = this.colorScheme.color.get(color).fade(1 - opacity).string();
                 ctx.fill();
                 break;
             default: break;

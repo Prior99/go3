@@ -80,8 +80,23 @@ export class Cell {
     private get x() { return this.game.currentBoard.toPos(this.index).col * this.width; }
     private get y() { return this.game.currentBoard.toPos(this.index).row * this.height; }
 
+    private get opacity() {
+        if (this.locked) {
+            return (Date.now() % 1000) / 1000;
+        }
+        if (this.hovered) {
+            return 0.5;
+        }
+        return 1;
+    }
+
+    public inside(x: number, y: number) {
+        return this.x <= x && this.x + this.width >= x &&
+            this.y <= y && this.y + this.width >= y;
+    }
+
     private get instructions(): TokenDrawInstructions {
-        const { width, height, ctx, renderedColor, isLastTurn, color, ownColor, locked, hovered, game } = this;
+        const { width, height, ctx, renderedColor, isLastTurn, color, ownColor, locked, hovered, game, opacity } = this;
         return {
             width,
             height,
@@ -99,6 +114,7 @@ export class Cell {
             closedTopRight: color === Color.EMPTY ? this.closedTopRight(ownColor) : this.closedTopRight(color),
             closedBottomRight: color === Color.EMPTY ? this.closedBottomRight(ownColor) : this.closedBottomRight(color),
             closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
+            opacity,
         };
     }
 
@@ -160,7 +176,7 @@ export class Cell {
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === color;
     }
 
-    @bind private handleClick() {
+    @bind public onClick() {
         if (this.color !== Color.EMPTY) {
             return;
         }
@@ -169,6 +185,10 @@ export class Cell {
         } else {
             this.locked = true;
         }
+    }
+
+    @bind public onUnfocus() {
+        this.locked = false;
     }
 
     @bind private handleEnter() {

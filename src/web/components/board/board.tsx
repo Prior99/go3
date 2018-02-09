@@ -28,7 +28,24 @@ export class Board extends React.Component<BoardProps> {
     private foregroundCanvas: HTMLCanvasElement;
     private foregroundCtx: CanvasRenderingContext2D;
 
-    private handleClick(index: number) {
+    private lastClickedCell: Cell;
+    private lastHoveredCell: Cell;
+
+    @bind private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
+        const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
+        const cell = this.cellAt(x, y)
+        if (this.lastClickedCell !== cell && this.lastClickedCell) {
+            this.lastClickedCell.onUnfocus();
+        }
+        this.lastClickedCell = cell;
+        cell.onClick();
+    }
+
+    @bind private cellAt(x: number, y: number) {
+        return this.cells(this.props.game.id).find(cell => cell.inside(x, y));
+    }
+
+    @bind private handleConfirm(index: number) {
         const { onPlace } = this.props;
         if (!onPlace) {
             return;
@@ -40,7 +57,7 @@ export class Board extends React.Component<BoardProps> {
 
     @memoize private cells(gameId: string) {
         const { game } = this.props;
-        const { foregroundCanvas: canvas, handleClick: onConfirm } = this;
+        const { foregroundCanvas: canvas, handleConfirm: onConfirm } = this;
         return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
     }
 
@@ -139,6 +156,7 @@ export class Board extends React.Component<BoardProps> {
         return (
             <div className={css.container}>
                 <canvas
+                    onClick={this.handleClick}
                     width={0}
                     height={0}
                     className={css.foregroundCanvas}

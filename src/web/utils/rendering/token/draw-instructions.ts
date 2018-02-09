@@ -17,4 +17,5 @@ export interface TokenDrawInstructions {
     preview: boolean;
     status: GroupStatus;
     valid: boolean;
+    opacity: number;
 }

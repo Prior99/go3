@@ -26,7 +26,7 @@ export class TokenClassic extends TokenRenderingStrategy {
             return;
         }
 
-        ctx.fillStyle = this.colorScheme.color.get(color);
+        ctx.fillStyle = this.colorScheme.color.get(color).toString();
         switch (color) {
             case Color.WHITE:
             case Color.BLACK:
@@ -38,7 +38,7 @@ export class TokenClassic extends TokenRenderingStrategy {
         }
 
         if (last) {
-            ctx.strokeStyle = this.colorScheme.last;
+            ctx.strokeStyle = this.colorScheme.last.string();
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.arc(width / 2 - 1, height / 2 - 1, width / 2 - 15, 0, Math.PI * 2);
