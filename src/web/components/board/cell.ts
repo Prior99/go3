@@ -180,6 +180,15 @@ export class Cell {
         return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === color;
     }
 
+    @bind public onHoverStart() {
+        if (this.color !== Color.EMPTY) { return; }
+        this.hovered = true;
+    }
+
+    @bind public onHoverEnd() {
+        this.hovered = false;
+    }
+
     @bind public onClick() {
         if (this.color !== Color.EMPTY) {
             return;

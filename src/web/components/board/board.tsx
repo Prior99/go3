@@ -31,6 +31,20 @@ export class Board extends React.Component<BoardProps> {
     private lastClickedCell: Cell;
     private lastHoveredCell: Cell;
 
+    @bind private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
+        const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
+        const cell = this.cellAt(x, y)
+        if (this.lastHoveredCell !== cell && this.lastHoveredCell) {
+            this.lastHoveredCell.onHoverEnd();
+            if (this.lastClickedCell) {
+                this.lastClickedCell.onUnfocus();
+                delete this.lastClickedCell;
+            }
+        }
+        this.lastHoveredCell = cell;
+        cell.onHoverStart();
+    }
+
     @bind private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
         const cell = this.cellAt(x, y)
@@ -157,6 +171,7 @@ export class Board extends React.Component<BoardProps> {
             <div className={css.container}>
                 <canvas
                     onClick={this.handleClick}
+                    onMouseMove={this.handleMouseMove}
                     width={0}
                     height={0}
                     className={css.foregroundCanvas}
