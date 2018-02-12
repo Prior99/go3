@@ -17,5 +17,6 @@ export interface TokenDrawInstructions {
     preview: boolean;
     status: GroupStatus;
     valid: boolean;
-    opacity: number;
+    hovered: boolean;
+    locked: boolean;
 }

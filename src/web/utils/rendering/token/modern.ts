@@ -1,7 +1,7 @@
 import { component, inject } from "tsdi";
 
 import { ColorScheme } from "../color-scheme";
-import { Color, GroupStatus } from "../../../../common";
+import { Color, GroupStatus, Token } from "../../../../common";
 import { Assets } from "../../assets";
 
 import { TokenDrawInstructions } from "./draw-instructions";
@@ -110,8 +110,8 @@ export class TokenModern extends TokenRenderingStrategy {
             closedBottomRight,
             preview,
             status,
-            opacity,
         } = drawInstructions;
+        const opacity = this.opacity(drawInstructions);
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
         if (color === Color.EMPTY || preview) { return; }
@@ -178,6 +178,17 @@ export class TokenModern extends TokenRenderingStrategy {
         }
     }
 
+    private opacity(instructions: TokenDrawInstructions) {
+        const { hovered, locked } = instructions;
+        if (locked) {
+            return Math.sin(Math.PI * 2 * (Date.now() % 1000) / 1000) / 2 + 0.5;
+        }
+        if (hovered) {
+            return 0.5;
+        }
+        return 1;
+    }
+
     public draw(drawInstructions: TokenDrawInstructions) {
         const {
             color,
@@ -188,9 +199,9 @@ export class TokenModern extends TokenRenderingStrategy {
             closedTop,
             closedBottom,
             closedLeft,
-            closedRight,
-            opacity
+            closedRight
         } = drawInstructions;
+        const opacity = this.opacity(drawInstructions);
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
         ctx.beginPath();

@@ -35,6 +35,8 @@ export class Cell {
         canvasWidth: number;
         canvasHeight: number;
         boardId: string;
+        locked: boolean;
+        hovered: boolean;
     };
 
     private locked = false;
@@ -80,23 +82,24 @@ export class Cell {
     private get x() { return this.game.currentBoard.toPos(this.index).col * this.width; }
     private get y() { return this.game.currentBoard.toPos(this.index).row * this.height; }
 
-    private get opacity() {
-        if (this.locked) {
-            return (Date.now() % 1000) / 1000;
-        }
-        if (this.hovered) {
-            return 0.5;
-        }
-        return 1;
-    }
-
     public inside(x: number, y: number) {
         return this.x <= x && this.x + this.width >= x &&
             this.y <= y && this.y + this.width >= y;
     }
 
     private get instructions(): TokenDrawInstructions {
-        const { width, height, ctx, renderedColor, isLastTurn, color, ownColor, locked, hovered, game, opacity } = this;
+        const {
+            width,
+            height,
+            ctx,
+            renderedColor,
+            isLastTurn,
+            color,
+            ownColor,
+            locked,
+            hovered,
+            game,
+        } = this;
         return {
             width,
             height,
@@ -114,7 +117,8 @@ export class Cell {
             closedTopRight: color === Color.EMPTY ? this.closedTopRight(ownColor) : this.closedTopRight(color),
             closedBottomRight: color === Color.EMPTY ? this.closedBottomRight(ownColor) : this.closedBottomRight(color),
             closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
-            opacity,
+            locked,
+            hovered,
         };
     }
 
@@ -213,16 +217,12 @@ export class Cell {
     }
 
     @bind public draw() {
-        const { canvas, animated, assets, game } = this;
+        const { canvas, animated, assets, game, locked, hovered } = this;
         const { width: canvasWidth, height: canvasHeight } = canvas;
         const boardId = game.currentBoard.id;
         if (!assets.loaded || canvasWidth === 0 || canvasHeight === 0) { return; }
-        if (animated) {
-            this.actualDraw();
-            return;
-        }
-        const renderingParameters = { canvasWidth, canvasHeight, boardId };
-        const rerenderNeeded = !equals(renderingParameters, this.lastRenderingParameters);
+        const renderingParameters = { canvasWidth, canvasHeight, boardId, locked, hovered };
+        const rerenderNeeded = animated || !equals(renderingParameters, this.lastRenderingParameters);
         if (rerenderNeeded) {
             this.lastRenderingParameters = renderingParameters;
             this.actualDraw();

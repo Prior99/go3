@@ -18,15 +18,27 @@ export class TokenClassic extends TokenRenderingStrategy {
         await this.assets.loadImage(tokenInvalid);
     }
 
+    private opacity(instructions: TokenDrawInstructions) {
+        const { hovered, locked } = instructions;
+        if (locked) {
+            return Math.sin(Math.PI * 2 * (Date.now() % 1000) / 1000) / 2 + 0.5;
+        }
+        if (hovered) {
+            return 0.5;
+        }
+        return 1;
+    }
+
     public draw(instructions: TokenDrawInstructions) {
         if (!this.assets.loaded) { return; }
         const { color, ctx, width, height, last, preview, status, valid } = instructions;
+        const opacity = this.opacity(instructions);
         if (preview && !valid) {
             ctx.drawImage(this.assets.get(tokenInvalid, width, height), 0, 0, width, height, 0, 0, width, height);
             return;
         }
 
-        ctx.fillStyle = this.colorScheme.color.get(color).toString();
+        ctx.fillStyle = this.colorScheme.color.get(color).fade(1 - opacity).string();
         switch (color) {
             case Color.WHITE:
             case Color.BLACK:
