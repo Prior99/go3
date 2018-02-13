@@ -51,10 +51,10 @@ export class TokenModern extends TokenRenderingStrategy {
     }
 
     private drawLast(drawInstructions: TokenDrawInstructions) {
-        const { width, height, ctx, last } = drawInstructions;
+        const { width, height, ctx, lastTurn } = drawInstructions;
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
-        if (!last) { return; }
+        if (!lastTurn) { return; }
 
         const offset = 15;
         const radius = width / 2 - offset;
@@ -108,13 +108,14 @@ export class TokenModern extends TokenRenderingStrategy {
             closedTopLeft,
             closedBottomLeft,
             closedBottomRight,
-            preview,
             status,
+            hovered,
+            locked,
         } = drawInstructions;
         const opacity = this.opacity(drawInstructions);
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
 
-        if (color === Color.EMPTY || preview) { return; }
+        if (color === Color.EMPTY || locked || hovered) { return; }
 
         const border = 2;
         const radius = width / 2 - border;
@@ -192,14 +193,13 @@ export class TokenModern extends TokenRenderingStrategy {
     public draw(drawInstructions: TokenDrawInstructions) {
         const {
             color,
-            last,
             ctx,
             width,
             height,
             closedTop,
             closedBottom,
             closedLeft,
-            closedRight
+            closedRight,
         } = drawInstructions;
         const opacity = this.opacity(drawInstructions);
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);

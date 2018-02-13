@@ -31,17 +31,17 @@ export class TokenClassic extends TokenRenderingStrategy {
 
     public draw(instructions: TokenDrawInstructions) {
         if (!this.assets.loaded) { return; }
-        const { color, ctx, width, height, last, preview, status, valid } = instructions;
+        const { color, ctx, width, height, lastTurn, status, valid, hovered, locked } = instructions;
         const opacity = this.opacity(instructions);
-        if (preview && !valid) {
+        if (hovered && !valid) {
             ctx.drawImage(this.assets.get(tokenInvalid, width, height), 0, 0, width, height, 0, 0, width, height);
             return;
         }
 
-        ctx.fillStyle = this.colorScheme.color.get(color).fade(1 - opacity).string();
         switch (color) {
             case Color.WHITE:
             case Color.BLACK:
+                ctx.fillStyle = this.colorScheme.color.get(color).fade(1 - opacity).string();
                 ctx.beginPath();
                 ctx.arc(width / 2, height / 2, width / 2 - 1, 0, Math.PI * 2);
                 ctx.fill();
@@ -49,14 +49,14 @@ export class TokenClassic extends TokenRenderingStrategy {
             default: break;
         }
 
-        if (last) {
+        if (lastTurn) {
             ctx.strokeStyle = this.colorScheme.last.string();
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.arc(width / 2 - 1, height / 2 - 1, width / 2 - 15, 0, Math.PI * 2);
             ctx.stroke();
         }
-        if (!preview && color !== Color.EMPTY) {
+        if (!hovered && !locked && color !== Color.EMPTY) {
             ctx.strokeStyle = this.colorScheme.status[status];
             ctx.lineWidth = 4;
             ctx.beginPath();

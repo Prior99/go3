@@ -13,8 +13,7 @@ export interface TokenDrawInstructions {
     closedBottomLeft: boolean;
     closedTopRight: boolean;
     closedBottomRight: boolean;
-    last: boolean;
-    preview: boolean;
+    lastTurn: boolean;
     status: GroupStatus;
     valid: boolean;
     hovered: boolean;

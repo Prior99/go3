@@ -54,14 +54,7 @@ export class Cell {
     private get height() { return Math.round(this.canvas.height / this.game.boardSize); }
 
     private get color() { return this.game.currentBoard.at(this.index); }
-    private get isLastTurn() { return this.game.currentBoard.placedAt === this.index; }
-
-    @memoize
-    private valid(boardId: string) {
-        const { game, index } = this;
-        const errorMessage = game.turnValid(index);
-        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
-    }
+    private get lastTurn() { return this.game.currentBoard.placedAt === this.index; }
 
     private get ownColor() { return this.game.getColorForUser(this.login.userId); }
 
@@ -74,17 +67,76 @@ export class Cell {
         return Color.EMPTY;
     }
 
-    @memoize
-    private groupStatus(boardId: string) {
-        return this.game.currentBoard.groupAt(this.index).status;
+    private get col() { return this.game.currentBoard.toPos(this.index).col; }
+    private get row() { return this.game.currentBoard.toPos(this.index).row; }
+
+    private get x() { return this.col * this.width; }
+    private get y() { return this.row * this.height; }
+
+    private get animated() { return this.locked; }
+
+    private get closedTopLeft() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === 0 || row === 0) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row - 1 })) === snapColor;
     }
 
-    private get x() { return this.game.currentBoard.toPos(this.index).col * this.width; }
-    private get y() { return this.game.currentBoard.toPos(this.index).row * this.height; }
+    private get closedBottomLeft() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === 0 || row === game.boardSize - 1) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row + 1 })) === snapColor;
+    }
 
-    public inside(x: number, y: number) {
-        return this.x <= x && this.x + this.width >= x &&
-            this.y <= y && this.y + this.width >= y;
+    private get closedTopRight() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === game.boardSize - 1 || row === 0) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row - 1 })) === snapColor;
+    }
+
+    private get closedBottomRight() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === game.boardSize - 1 || row === game.boardSize - 1) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row + 1 })) === snapColor;
+    }
+
+    private get closedTop() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (row === 0) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row - 1 })) === snapColor;
+    }
+
+    private get closedBottom() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (row === game.boardSize - 1) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row + 1 })) === snapColor;
+    }
+
+    private get closedLeft() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === 0) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row })) === snapColor;
+    }
+
+    private get closedRight() {
+        const { game, index, color: actualColor, ownColor } = this;
+        const snapColor = actualColor === Color.EMPTY ? ownColor : actualColor;
+        const { col, row } = game.currentBoard.toPos(index);
+        if (col === game.boardSize - 1) { return true; }
+        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === snapColor;
     }
 
     private get instructions(): TokenDrawInstructions {
@@ -92,92 +144,57 @@ export class Cell {
             width,
             height,
             ctx,
-            renderedColor,
-            isLastTurn,
-            color,
+            renderedColor: color,
+            lastTurn,
             ownColor,
             locked,
             hovered,
             game,
+            closedTop,
+            closedBottom,
+            closedLeft,
+            closedRight,
+            closedTopLeft,
+            closedTopRight,
+            closedBottomRight,
+            closedBottomLeft,
+            status,
+            valid,
         } = this;
         return {
             width,
             height,
-            ctx: this.ctx,
-            color: renderedColor,
-            last: isLastTurn,
-            preview: color === Color.EMPTY && (locked || hovered),
-            status: this.groupStatus(game.currentBoard.id),
-            valid: this.valid(game.currentBoard.id),
-            closedTop: color === Color.EMPTY ? this.closedTop(ownColor) : this.closedTop(color),
-            closedBottom: color === Color.EMPTY ? this.closedBottom(ownColor) : this.closedBottom(color),
-            closedLeft: color === Color.EMPTY ? this.closedLeft(ownColor) : this.closedLeft(color),
-            closedRight: color === Color.EMPTY ? this.closedRight(ownColor) : this.closedRight(color),
-            closedTopLeft: color === Color.EMPTY ? this.closedTopLeft(ownColor) : this.closedTopLeft(color),
-            closedTopRight: color === Color.EMPTY ? this.closedTopRight(ownColor) : this.closedTopRight(color),
-            closedBottomRight: color === Color.EMPTY ? this.closedBottomRight(ownColor) : this.closedBottomRight(color),
-            closedBottomLeft: color === Color.EMPTY ? this.closedBottomLeft(ownColor) : this.closedBottomLeft(color),
+            ctx,
+            color,
+            lastTurn,
+            status,
+            valid,
+            closedTop,
+            closedBottom,
+            closedLeft,
+            closedRight,
+            closedTopLeft,
+            closedTopRight,
+            closedBottomRight,
+            closedBottomLeft,
             locked,
             hovered,
         };
     }
 
-    private get animated() { return this.locked; }
-
-    @bind private closedTopLeft(color: Color) {
+    private get valid() {
         const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === 0 || row === 0) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row - 1 })) === color;
+        const errorMessage = game.turnValid(index);
+        return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
-    @bind private closedBottomLeft(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === 0 || row === game.boardSize - 1) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row: row + 1 })) === color;
+    private get status() {
+        return this.game.currentBoard.groupAt(this.index).status;
     }
 
-    @bind private closedTopRight(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === game.boardSize - 1 || row === 0) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row - 1 })) === color;
-    }
-
-    @bind private closedBottomRight(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === game.boardSize - 1 || row === game.boardSize - 1) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row: row + 1 })) === color;
-    }
-
-    @bind private closedTop(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (row === 0) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row - 1 })) === color;
-    }
-
-    @bind private closedBottom(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (row === game.boardSize - 1) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col, row: row + 1 })) === color;
-    }
-
-    @bind private closedLeft(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === 0) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col - 1, row })) === color;
-    }
-
-    @bind private closedRight(color: Color) {
-        const { game, index } = this;
-        const { col, row } = game.currentBoard.toPos(index);
-        if (col === game.boardSize - 1) { return true; }
-        return game.currentBoard.at(game.currentBoard.toIndex({ col: col + 1, row })) === color;
+    @bind public inside(x: number, y: number) {
+        return this.x <= x && this.x + this.width >= x &&
+            this.y <= y && this.y + this.width >= y;
     }
 
     @bind public onHoverStart() {
