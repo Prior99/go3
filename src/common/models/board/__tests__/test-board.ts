@@ -46,6 +46,7 @@ import { Color } from "../../../utils";
 });
 
 test("constructing a board from an old one", () => {
+    debugger
     const board = testBoard(
         "WWWB " +
         "W WB " +

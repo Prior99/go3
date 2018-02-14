@@ -4,6 +4,8 @@
     right: 0;
     bottom: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .board {
@@ -15,6 +17,16 @@
 
 .container {
     @include fill;
+
+    .foregroundCanvas {
+        @include fill;
+        z-index: 2;
+    }
+
+    .backgroundCanvas {
+        @include fill;
+        z-index: 1;
+    }
 }
 
 .over {
@@ -35,10 +47,4 @@
 
 .winningColor {
     color: rgb(255, 255, 255);
-}
-
-.canvas {
-    height: 100%;
-    width: 100%;
-    z-index: 2;
 }

@@ -48,11 +48,11 @@ export class Group {
     public get status(): GroupStatus {
         const { eyes } = this;
         if (eyes.length >= 2) { return GroupStatus.ALIVE; }
-        if (eyes.length < 1) { return GroupStatus.UNDECIDED; }
+        if (eyes.length < 1) { return GroupStatus.DEAD; }
         const eye = eyes[0];
         if (eye.size < 3) { return GroupStatus.DEAD; }
         if (eye.size === 3) { return GroupStatus.UNDECIDED; }
-
+        return GroupStatus.ALIVE;
     }
 
     public get size(): number {
