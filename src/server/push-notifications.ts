@@ -1,6 +1,7 @@
 import { setVapidDetails, sendNotification } from "web-push";
 import { initialize, inject, component } from "tsdi";
 import { Connection } from "typeorm";
+import * as Raven from "raven";
 
 import { publicKey, privateKey } from "../vapid-keys";
 import { Token, isBrowser } from "../common";
@@ -20,10 +21,14 @@ export class PushNotifications {
             .where("user.id=:userId", { userId })
             .andWhere("token.pushEndpoint is not null")
             .getMany();
-        await Promise.all(tokens.map(async token => {
-            await sendNotification({
-                endpoint: token.pushEndpoint,
-            });
-        }));
+        try {
+            await Promise.all(tokens.map(async token => {
+                await sendNotification({
+                    endpoint: token.pushEndpoint,
+                });
+            }));
+        } catch (err) {
+            Raven.captureException(err);
+        }
     }
 }

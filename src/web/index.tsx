@@ -6,6 +6,7 @@ import { History } from "history";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { Router } from "react-router";
 import { configureController, ControllerOptions } from "hyrest";
+import * as Raven from "raven";
 
 import { isProductionEnvironment, Users, Tokens, Games, Followerships, Feed } from "../common";
 import {
@@ -23,6 +24,10 @@ import { AppContainer } from "./components";
 import * as routes from "../common-ui/routing";
 import "./global.scss";
 import { LoginStore, ErrorStore } from "../common-ui";
+
+if (isProductionEnvironment()) {
+    Raven.config("e4a3122381714de5881af18e38e1c607@sentry.io/287975").install();
+}
 
 declare var baseUrl: string;
 
@@ -65,9 +70,6 @@ export const pages = [
     },
 ];
 
-const tsdi: TSDI = new TSDI();
-tsdi.enableComponentScanner();
-
 function App() {
     return (
         <AppContainer>
@@ -96,32 +98,37 @@ function App() {
     );
 }
 
-const errors = tsdi.get(ErrorStore);
-const controllerOptions: ControllerOptions = {
-    baseUrl,
-    errorHandler: (err) => errors.report({
-        message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
-    }),
-    authorizationProvider: (headers: Headers) => {
-        const loginStore = tsdi.get(LoginStore);
-        if (loginStore.loggedIn) {
-            headers.append("authorization", `Bearer ${loginStore.authToken}`);
-        }
-    },
-};
+Raven.context(() => {
+    const tsdi: TSDI = new TSDI();
+    tsdi.enableComponentScanner();
 
-configureController([
-    Users,
-    Tokens,
-    Games,
-    Followerships,
-    Feed,
-], controllerOptions);
+    const errors = tsdi.get(ErrorStore);
+    const controllerOptions: ControllerOptions = {
+        baseUrl,
+        errorHandler: (err) => errors.report({
+            message: err.answer ? err.answer.message : err.message ? err.message : "Unknown error.",
+        }),
+        authorizationProvider: (headers: Headers) => {
+            const loginStore = tsdi.get(LoginStore);
+            if (loginStore.loggedIn) {
+                headers.append("authorization", `Bearer ${loginStore.authToken}`);
+            }
+        },
+    };
 
-ReactDOM.render(
-    <div>
-        <Router history={tsdi.get("history")}><App /></Router>
-        {!isProductionEnvironment() && <DevTools position={{ bottom: 0 }} />}
-    </div>,
-    document.getElementById("root"),
-);
+    configureController([
+        Users,
+        Tokens,
+        Games,
+        Followerships,
+        Feed,
+    ], controllerOptions);
+
+    ReactDOM.render(
+        <div>
+            <Router history={tsdi.get("history")}><App /></Router>
+            {!isProductionEnvironment() && <DevTools position={{ bottom: 0 }} />}
+        </div>,
+        document.getElementById("root"),
+    );
+});
