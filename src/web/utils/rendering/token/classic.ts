@@ -58,5 +58,12 @@ export class TokenClassic extends TokenRenderingStrategy {
             ctx.arc(width / 2 - 1, height / 2 - 1, width / 2 - 15, 0, Math.PI * 2);
             ctx.stroke();
         }
+        if (!hovered && !locked && color !== Color.EMPTY) {
+            ctx.strokeStyle = this.colorScheme.status.get(status).fade(1 - opacity).string();
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.arc(width / 2, height / 2, width / 2 - 2, 0, Math.PI * 2);
+            ctx.stroke();
+        }
     }
 }
