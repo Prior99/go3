@@ -37,6 +37,7 @@ export class Cell {
         boardId: string;
         locked: boolean;
         hovered: boolean;
+        sessionId: string;
     };
 
     private locked = false;
@@ -242,12 +243,12 @@ export class Cell {
         this.onConfirm(this.index);
     }
 
-    @bind public draw() {
+    @bind public draw(sessionId: string) {
         const { canvas, animated, assets, game, locked, hovered } = this;
         const { width: canvasWidth, height: canvasHeight } = canvas;
         const boardId = game.currentBoard.id;
         if (!assets.loaded || canvasWidth === 0 || canvasHeight === 0) { return; }
-        const renderingParameters = { canvasWidth, canvasHeight, boardId, locked, hovered };
+        const renderingParameters = { canvasWidth, canvasHeight, boardId, locked, hovered, sessionId };
         const rerenderNeeded = animated || !equals(renderingParameters, this.lastRenderingParameters);
         if (rerenderNeeded) {
             this.lastRenderingParameters = renderingParameters;
@@ -255,7 +256,7 @@ export class Cell {
         }
     }
 
-    @bind public actualDraw() {
+    @bind private actualDraw() {
         const { x, y, width, height, instructions, rendering, ctx } = this;
         ctx.clearRect(x, y, width, height);
         ctx.translate(x, y);

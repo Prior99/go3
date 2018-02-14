@@ -3,6 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import { bind, memoize } from "decko";
 import { external, inject, initialize } from "tsdi";
+import * as Uuid from "uuid";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
 import { Game, Color } from "../../../common";
@@ -28,12 +29,14 @@ export class Board extends React.Component<BoardProps> {
     private foregroundCanvas: HTMLCanvasElement;
     private foregroundCtx: CanvasRenderingContext2D;
 
+    private sessionId = Uuid.v4();
+
     private lastClickedCell: Cell;
     private lastHoveredCell: Cell;
 
     @bind private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
-        const cell = this.cellAt(x, y)
+        const cell = this.cellAt(x, y);
         if (this.lastHoveredCell !== cell && this.lastHoveredCell) {
             this.lastHoveredCell.onHoverEnd();
             if (this.lastClickedCell) {
@@ -47,7 +50,7 @@ export class Board extends React.Component<BoardProps> {
 
     @bind private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
-        const cell = this.cellAt(x, y)
+        const cell = this.cellAt(x, y);
         if (this.lastClickedCell !== cell && this.lastClickedCell) {
             this.lastClickedCell.onUnfocus();
         }
@@ -104,7 +107,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     private drawCells() {
-        this.cells(this.props.game.id).forEach(cell => cell.draw());
+        this.cells(this.props.game.id).forEach(cell => cell.draw(this.sessionId));
     }
 
     @bind private renderCanvas() {
@@ -138,22 +141,39 @@ export class Board extends React.Component<BoardProps> {
      }
 
     public componentDidMount() { this.renderCanvas(); }
-    public componentDidUpdate() { this.renderCanvas(); }
+    public componentDidUpdate(oldProps: BoardProps) {
+        if (oldProps.game.id !== this.props.game.id) {
+            this.initCanvas();
+            this.sessionId = Uuid.v4();
+            return;
+        }
+        this.renderCanvas();
+    }
 
     @bind private initCanvas() {
         if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
-        this.renderCanvas();
         window.addEventListener("resize", () => this.resizeCanvas());
         this.resizeCanvas();
+        this.renderCanvas();
     }
 
     @bind private handleForegroundCanvasRef(element: HTMLCanvasElement) {
+        if (!element) {
+            delete this.foregroundCanvas;
+            delete this.foregroundCtx;
+            return;
+        }
         this.foregroundCanvas = element;
         this.foregroundCtx = this.foregroundCanvas.getContext("2d");
         this.initCanvas();
     }
 
     @bind private handleBackgroundCanvasRef(element: HTMLCanvasElement) {
+        if (!element) {
+            delete this.backgroundCanvas;
+            delete this.backgroundCtx;
+            return;
+        }
         this.backgroundCanvas = element;
         this.backgroundCtx = this.backgroundCanvas.getContext("2d");
         this.initCanvas();
