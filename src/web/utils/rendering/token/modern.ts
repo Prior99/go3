@@ -6,6 +6,7 @@ import { Assets } from "../../assets";
 
 import { TokenDrawInstructions } from "./draw-instructions";
 import { TokenRenderingStrategy } from "./rendering-strategy";
+import * as tokenInvalid from "./token-invalid.png";
 
 interface RoundResult {
     topLeftRound: boolean;
@@ -17,6 +18,7 @@ interface RoundResult {
 @component
 export class TokenModern extends TokenRenderingStrategy {
     @inject private colorScheme: ColorScheme;
+    @inject private assets: Assets;
 
     private getRound(drawInstructions: TokenDrawInstructions): RoundResult {
         const { closedTop, closedBottom, closedLeft, closedRight } = drawInstructions;
@@ -94,91 +96,6 @@ export class TokenModern extends TokenRenderingStrategy {
         ctx.stroke();
     }
 
-    private drawLining(drawInstructions: TokenDrawInstructions) {
-        const {
-            width,
-            height,
-            ctx,
-            color,
-            closedRight,
-            closedTop,
-            closedLeft,
-            closedBottom,
-            closedTopRight,
-            closedTopLeft,
-            closedBottomLeft,
-            closedBottomRight,
-            status,
-            hovered,
-            locked,
-        } = drawInstructions;
-        const opacity = this.opacity(drawInstructions);
-        const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
-
-        if (color === Color.EMPTY || locked || hovered) { return; }
-
-        const border = 2;
-        const radius = width / 2 - border;
-
-        ctx.beginPath();
-        ctx.moveTo(border, height / 2);
-        ctx.strokeStyle = this.colorScheme.status.get(status).fade(1 - opacity).string();
-        ctx.fillStyle = ctx.strokeStyle;
-        ctx.lineWidth = 4;
-
-        if (topLeftRound) {
-            ctx.arc(width / 2, height / 2, radius, Math.PI, Math.PI * 1.5);
-        } else {
-            if (!closedLeft) { ctx.lineTo(border, 0); }
-            ctx.moveTo(0, border);
-            if (!closedTop) { ctx.lineTo(width / 2, border); }
-            ctx.moveTo(width / 2, border);
-        }
-        ctx.moveTo(width / 2, border);
-        if (topRightRound) {
-            ctx.arc(width / 2, height / 2, radius, Math.PI * 1.5, Math.PI * 2);
-        } else {
-            if (!closedTop) { ctx.lineTo(width, border); }
-            ctx.moveTo(width - border, 0);
-            if (!closedRight) { ctx.lineTo(width - border, height / 2); }
-            ctx.moveTo(width - border, height / 2);
-        }
-        ctx.moveTo(width - border, height / 2);
-        if (bottomRightRound) {
-            ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 0.5);
-        } else {
-            if (!closedRight) { ctx.lineTo(width - border, height); }
-            ctx.moveTo(width, height - border);
-            if (!closedBottom) { ctx.lineTo(width / 2, height - border); }
-            ctx.moveTo(width / 2, height - border);
-        }
-        ctx.moveTo(width / 2, height - border);
-        if (bottomLeftRound) {
-            ctx.arc(width / 2, height / 2, radius, Math.PI * 0.5, Math.PI);
-        } else {
-            if (!closedBottom) { ctx.lineTo(0, height - border); }
-            ctx.moveTo(border, height);
-            if (!closedLeft) { ctx.lineTo(border, height / 2); }
-            ctx.moveTo(border, height / 2);
-        }
-
-        ctx.lineWidth = 4;
-        ctx.stroke();
-
-        if (!topLeftRound && !closedTopLeft) {
-            ctx.fillRect(0, 0, 4, 4);
-        }
-        if (!topRightRound && !closedTopRight) {
-            ctx.fillRect(width - 4, 0, 4, 4);
-        }
-        if (!bottomRightRound && !closedBottomRight) {
-            ctx.fillRect(width - 4, height - 4, 4, 4);
-        }
-        if (!bottomLeftRound && !closedBottomLeft) {
-            ctx.fillRect(0, height - 4, 4, 4);
-        }
-    }
-
     private opacity(instructions: TokenDrawInstructions) {
         const { hovered, locked } = instructions;
         if (locked) {
@@ -200,6 +117,8 @@ export class TokenModern extends TokenRenderingStrategy {
             closedBottom,
             closedLeft,
             closedRight,
+            hovered,
+            valid,
         } = drawInstructions;
         const opacity = this.opacity(drawInstructions);
         const { topLeftRound, topRightRound, bottomLeftRound, bottomRightRound } = this.getRound(drawInstructions);
@@ -234,6 +153,12 @@ export class TokenModern extends TokenRenderingStrategy {
             ctx.rect(0, height / 2, width / 2, height / 2);
         }
 
+        if (hovered && !valid) {
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(this.assets.get(tokenInvalid), 0, 0, width, height);
+            ctx.globalAlpha = 1;
+            return;
+        }
 
         switch (color) {
             case Color.WHITE:
@@ -245,6 +170,5 @@ export class TokenModern extends TokenRenderingStrategy {
         }
 
         this.drawLast(drawInstructions);
-        this.drawLining(drawInstructions);
     }
 }

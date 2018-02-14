@@ -34,7 +34,9 @@ export class TokenClassic extends TokenRenderingStrategy {
         const { color, ctx, width, height, lastTurn, status, valid, hovered, locked } = instructions;
         const opacity = this.opacity(instructions);
         if (hovered && !valid) {
-            ctx.drawImage(this.assets.get(tokenInvalid, width, height), 0, 0, width, height, 0, 0, width, height);
+            ctx.globalAlpha = 0.5;
+            ctx.drawImage(this.assets.get(tokenInvalid), 0, 0, width, height);
+            ctx.globalAlpha = 1;
             return;
         }
 
@@ -54,13 +56,6 @@ export class TokenClassic extends TokenRenderingStrategy {
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.arc(width / 2 - 1, height / 2 - 1, width / 2 - 15, 0, Math.PI * 2);
-            ctx.stroke();
-        }
-        if (!hovered && !locked && color !== Color.EMPTY) {
-            ctx.strokeStyle = this.colorScheme.status[status];
-            ctx.lineWidth = 4;
-            ctx.beginPath();
-            ctx.arc(width / 2, height / 2, width / 2 - 2, 0, Math.PI * 2);
             ctx.stroke();
         }
     }

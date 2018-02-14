@@ -37,6 +37,7 @@ export class Board extends React.Component<BoardProps> {
     @bind private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
         const cell = this.cellAt(x, y);
+        if (!cell) { return; }
         if (this.lastHoveredCell !== cell && this.lastHoveredCell) {
             this.lastHoveredCell.onHoverEnd();
             if (this.lastClickedCell) {
@@ -51,6 +52,7 @@ export class Board extends React.Component<BoardProps> {
     @bind private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
         const cell = this.cellAt(x, y);
+        if (!cell) { return; }
         if (this.lastClickedCell !== cell && this.lastClickedCell) {
             this.lastClickedCell.onUnfocus();
         }
