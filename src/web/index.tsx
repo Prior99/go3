@@ -25,10 +25,6 @@ import * as routes from "../common-ui/routing";
 import "./global.scss";
 import { LoginStore, ErrorStore } from "../common-ui";
 
-if (isProductionEnvironment()) {
-    Raven.config("e4a3122381714de5881af18e38e1c607@sentry.io/287975").install();
-}
-
 declare var baseUrl: string;
 
 export const pages = [
@@ -98,7 +94,7 @@ function App() {
     );
 }
 
-Raven.context(() => {
+function main() {
     const tsdi: TSDI = new TSDI();
     tsdi.enableComponentScanner();
 
@@ -131,4 +127,13 @@ Raven.context(() => {
         </div>,
         document.getElementById("root"),
     );
-});
+}
+
+if (isProductionEnvironment()) {
+    Raven.config("https://50bc151c137f4eb0b5a0c47ae10c6cac@sentry.io/288572").install();
+    console.info("Sentry reporting active.");
+    Raven.context(main);
+} else {
+    console.info("Sentry reporting not activated.");
+    main();
+}

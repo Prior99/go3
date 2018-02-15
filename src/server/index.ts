@@ -28,10 +28,6 @@ import {
 import { cors, catchError } from "./middlewares";
 import { Database } from "./database";
 
-if (isProductionEnvironment()) {
-    Raven.config("e4a3122381714de5881af18e38e1c607@sentry.io/287975").install();
-}
-
 async function serve() {
     process.on("unhandledRejection", err => { error(err); exit(); });
     process.on("uncaughtException", err => { error(err); exit(); });
@@ -120,6 +116,11 @@ async function serve() {
     info(`Server started on port ${port}.`);
 }
 
-Raven.context(async () => {
-    await serve();
-});
+if (isProductionEnvironment()) {
+    Raven.config("e4a3122381714de5881af18e38e1c607@sentry.io/287975").install();
+    info("Sentry reporting active.");
+    Raven.context(serve);
+} else {
+    info("Sentry reporting not activated.");
+    serve();
+}
