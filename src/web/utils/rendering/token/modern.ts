@@ -1,4 +1,4 @@
-import { component, inject } from "tsdi";
+import { component, inject, initialize } from "tsdi";
 
 import { ColorScheme } from "../color-scheme";
 import { Color, GroupStatus, Token } from "../../../../common";
@@ -19,6 +19,11 @@ interface RoundResult {
 export class TokenModern extends TokenRenderingStrategy {
     @inject private colorScheme: ColorScheme;
     @inject private assets: Assets;
+
+    @initialize
+    private async loadImages() {
+        await this.assets.loadImage(tokenInvalid);
+    }
 
     private getRound(drawInstructions: TokenDrawInstructions): RoundResult {
         const { closedTop, closedBottom, closedLeft, closedRight } = drawInstructions;
@@ -108,6 +113,8 @@ export class TokenModern extends TokenRenderingStrategy {
     }
 
     public draw(drawInstructions: TokenDrawInstructions) {
+        if (!this.assets.loaded) { return; }
+
         const {
             color,
             ctx,

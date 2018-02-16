@@ -126,6 +126,8 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private resizeCanvas() {
+        if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
+
         const { game } = this.props;
         const { boardSize } = game;
 

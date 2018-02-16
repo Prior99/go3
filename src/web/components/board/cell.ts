@@ -141,55 +141,38 @@ export class Cell {
     }
 
     private get instructions(): TokenDrawInstructions {
-        const {
-            width,
-            height,
-            ctx,
-            renderedColor: color,
-            lastTurn,
-            ownColor,
-            locked,
-            hovered,
-            game,
-            closedTop,
-            closedBottom,
-            closedLeft,
-            closedRight,
-            closedTopLeft,
-            closedTopRight,
-            closedBottomRight,
-            closedBottomLeft,
-            status,
-            valid,
-        } = this;
+        const { index } = this;
+        const { id } = this.game.currentBoard;
         return {
-            width,
-            height,
-            ctx,
-            color,
-            lastTurn,
-            status,
-            valid,
-            closedTop,
-            closedBottom,
-            closedLeft,
-            closedRight,
-            closedTopLeft,
-            closedTopRight,
-            closedBottomRight,
-            closedBottomLeft,
-            locked,
-            hovered,
+            width: this.width,
+            height: this.height,
+            ctx: this.ctx,
+            color: this.renderedColor,
+            lastTurn: this.lastTurn,
+            status: this.status(`${id},${index}`),
+            valid: this.valid(`${id},${index}`),
+            closedTop: this.closedTop,
+            closedBottom: this.closedBottom,
+            closedLeft: this.closedLeft,
+            closedRight: this.closedRight,
+            closedTopLeft: this.closedTopLeft,
+            closedTopRight: this.closedTopRight,
+            closedBottomRight: this.closedBottomRight,
+            closedBottomLeft: this.closedBottomLeft,
+            locked: this.locked,
+            hovered: this.hovered,
         };
     }
 
-    private get valid() {
+    @memoize
+    private valid(key: string) {
         const { game, index } = this;
         const errorMessage = game.turnValid(index);
         return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
-    private get status() {
+    @memoize
+    private status(key: string) {
         return this.game.currentBoard.groupAt(this.index).status;
     }
 
