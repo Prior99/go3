@@ -66,37 +66,37 @@ export const pages = [
     },
 ];
 
-function App() {
-    return (
-        <AppContainer>
-            <Switch>
-                {
-                    tsdi.get(LoginStore).loggedIn ? [
-                        <Redirect exact from="/" to={routes.routeDashboard.path()} key="root" />,
-                        <Redirect exact from="/login" to={routes.routeDashboard.path()} key="login" />,
-                        <Redirect exact from="/signup" to={routes.routeDashboard.path()} key="signup" />,
-                    ] : (
-                        <Redirect exact from="/" to={routes.routeLogin.path()} />
-                    )
-                }
-                {
-                    pages
-                        .map((page, index) => (
-                            <Route
-                                key={index}
-                                path={page.route.pattern}
-                                component={page.component}
-                            />
-                        ))
-                }
-            </Switch>
-        </AppContainer>
-    );
-}
-
 function main() {
     const tsdi: TSDI = new TSDI();
     tsdi.enableComponentScanner();
+
+    function App() {
+        return (
+            <AppContainer>
+                <Switch>
+                    {
+                        tsdi.get(LoginStore).loggedIn ? [
+                            <Redirect exact from="/" to={routes.routeDashboard.path()} key="root" />,
+                            <Redirect exact from="/login" to={routes.routeDashboard.path()} key="login" />,
+                            <Redirect exact from="/signup" to={routes.routeDashboard.path()} key="signup" />,
+                        ] : (
+                            <Redirect exact from="/" to={routes.routeLogin.path()} />
+                        )
+                    }
+                    {
+                        pages
+                            .map((page, index) => (
+                                <Route
+                                    key={index}
+                                    path={page.route.pattern}
+                                    component={page.component}
+                                />
+                            ))
+                    }
+                </Switch>
+            </AppContainer>
+        );
+    }
 
     const errors = tsdi.get(ErrorStore);
     const controllerOptions: ControllerOptions = {
@@ -130,7 +130,9 @@ function main() {
 }
 
 if (isProductionEnvironment()) {
-    Raven.config("https://50bc151c137f4eb0b5a0c47ae10c6cac@sentry.io/288572").install();
+    Raven.config("https://50bc151c137f4eb0b5a0c47ae10c6cac@sentry.io/288572", {
+        captureUnhandledRejections: true,
+    }).install();
     console.info("Sentry reporting active.");
     Raven.context(main);
 } else {

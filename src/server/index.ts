@@ -25,7 +25,7 @@ import {
     isProductionEnvironment,
 } from "../common";
 
-import { cors, catchError } from "./middlewares";
+import { cors } from "./middlewares";
 import { Database } from "./database";
 
 async function serve() {
@@ -46,8 +46,10 @@ async function serve() {
     // Make sure the database is initialized.
     const database  = tsdi.get(Database);
     await database.connect();
-
-    http.use(catchError);
+    if (isProductionEnvironment()) {
+        info("Sentry request middleware active.");
+        http.use(Raven.requestHandler());
+    }
     http.use(BodyParser.json({ strict: false }));
     http.use(morgan("tiny", { stream: { write: msg => info(msg.trim()) } }));
     http.use(cors);
@@ -73,6 +75,10 @@ async function serve() {
             return true;
         }),
     );
+    if (isProductionEnvironment()) {
+        info("Sentry error middleware active.");
+        http.use(Raven.errorHandler());
+    }
 
     const availableAIs: { ai: string, aiLevel: number}[] = [];
     if (await gnuGoInstalled()) {
@@ -113,11 +119,14 @@ async function serve() {
         tsdi.close();
         info("Goodbye.");
     }
+
     info(`Server started on port ${port}.`);
 }
 
 if (isProductionEnvironment()) {
-    Raven.config("e4a3122381714de5881af18e38e1c607@sentry.io/287975").install();
+    Raven.config("https://e4a3122381714de5881af18e38e1c607:ed39140b1b83441f9ba3ecdd1f092b1d@sentry.io/287975", {
+        captureUnhandledRejections: true,
+    }).install();
     info("Sentry reporting active.");
     Raven.context(serve);
 } else {
