@@ -30,7 +30,7 @@
     },
     "setupTestFrameworkScriptFile": "<rootDir>/jest-setups.js",
     "testMatch": [
-      "**/__tests__/test-*.(ts|tsx|js)"
+      "<rootDir>/src/**/__tests__/test-*.(ts|tsx|js)"
     ],
     "mapCoverage": true
   },
