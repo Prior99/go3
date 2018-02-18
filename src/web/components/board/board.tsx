@@ -4,6 +4,7 @@ import { observable, computed } from "mobx";
 import { bind, memoize } from "decko";
 import { external, inject, initialize } from "tsdi";
 import * as Uuid from "uuid";
+import { Dimmer, Loader } from "semantic-ui-react";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
 import { Game, Color } from "../../../common";
@@ -15,6 +16,11 @@ export interface BoardProps {
     readonly game?: Game;
     readonly onPlace?: (index: number) => void;
     readonly minimal?: boolean;
+}
+
+function transformDPR(x: number) {
+    const ratio = window.devicePixelRatio || 1;
+    return x * ratio;
 }
 
 @external @observer
@@ -33,6 +39,10 @@ export class Board extends React.Component<BoardProps> {
 
     private lastClickedCell: Cell;
     private lastHoveredCell: Cell;
+
+    private renderLoopActive = false;
+
+    @observable private loaded = false;
 
     @bind private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
@@ -61,7 +71,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private cellAt(x: number, y: number) {
-        return this.cells(this.props.game.id).find(cell => cell.inside(x, y));
+        return this.cells(this.props.game.id).find(cell => cell.inside(transformDPR(x), transformDPR(y)));
     }
 
     @bind private handleConfirm(index: number) {
@@ -113,11 +123,11 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private renderCanvas() {
-        if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
         const begin = Date.now();
-        // Time measurement start.
-        this.drawCells();
-        // Time measurement stop.
+        if (this.backgroundCanvas && this.foregroundCanvas && this.assets.loaded) {
+            this.drawCells();
+            this.loaded = true;
+        }
         const took = Date.now() - begin;
         if (took > 1000 / 60) {
             console.warn(`Rendering took ${Date.now() - begin}ms, which is above 60Hz threshold of ${1000 / 60}ms.`);
@@ -126,15 +136,12 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private resizeCanvas() {
-        if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
-
         const { game } = this.props;
         const { boardSize } = game;
 
         const { clientWidth, clientHeight } = this.backgroundCanvas;
-        const ratio = window.devicePixelRatio || 1;
-        const width = clientWidth * ratio;
-        const height = clientHeight * ratio;
+        const width = transformDPR(clientWidth);
+        const height = transformDPR(clientHeight);
 
         this.backgroundCanvas.width = width;
         this.backgroundCanvas.height = height;
@@ -144,18 +151,22 @@ export class Board extends React.Component<BoardProps> {
         this.drawBoard();
      }
 
-    public componentDidMount() { this.renderCanvas(); }
+    public componentWillReceiveProps() {
+        this.loaded = false;
+    }
+
     public componentDidUpdate(oldProps: BoardProps) {
         if (oldProps.game.id !== this.props.game.id) {
-            this.initCanvas();
+            this.drawBoard();
             this.sessionId = Uuid.v4();
             return;
         }
-        this.renderCanvas();
     }
 
     @bind private initCanvas() {
         if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
+        if (this.renderLoopActive) { return; }
+        this.renderLoopActive = true;
         window.addEventListener("resize", () => this.resizeCanvas());
         this.resizeCanvas();
         this.renderCanvas();
@@ -184,6 +195,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     public render() {
+        const { loaded } = this;
         const { game, minimal } = this.props;
         const { currentBoard: board, over } = game;
         const { size, state } = board;
@@ -194,6 +206,7 @@ export class Board extends React.Component<BoardProps> {
         return (
             <div className={css.container}>
                 <canvas
+                    style={{ opacity: loaded ? 1 : 0 }}
                     onClick={this.handleClick}
                     onMouseMove={this.handleMouseMove}
                     width={0}
@@ -202,11 +215,19 @@ export class Board extends React.Component<BoardProps> {
                     ref={this.handleForegroundCanvasRef}
                 />
                 <canvas
+                    style={{ opacity: loaded ? 1 : 0 }}
                     width={0}
                     height={0}
                     className={css.backgroundCanvas}
                     ref={this.handleBackgroundCanvasRef}
                 />
+                {
+                    !loaded && (
+                        <Dimmer active>
+                            <Loader>Loading</Loader>
+                        </Dimmer>
+                    )
+                }
                 {
                     over && (
                         <div className={css.over}>

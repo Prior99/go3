@@ -6,7 +6,7 @@ import { bind } from "decko";
 import { equals } from "ramda";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
-import { Game, Color, Group } from "../../../common";
+import { Game, Color, Group, GroupStatus } from "../../../common";
 import { Rendering, TokenDrawInstructions, Assets } from "../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
@@ -173,6 +173,7 @@ export class Cell {
 
     @memoize
     private status(key: string) {
+        if (this.color === "empty") { return GroupStatus.ALIVE; }
         return this.game.currentBoard.groupAt(this.index).status;
     }
 

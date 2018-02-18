@@ -29,14 +29,18 @@
     }
 }
 
-.over {
-    @include fill;
-    z-index: 10;
-    background-color: rgba(60, 60, 60, 0.6);
+@mixin shim {
     display: flex;
     align-items: center;
     flex-direction: column;
     justify-content: center;
+}
+
+.over {
+    @include fill;
+    @include shim;
+    z-index: 10;
+    background-color: rgba(60, 60, 60, 0.6);
 }
 
 .gameOver {
