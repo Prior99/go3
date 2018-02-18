@@ -18,6 +18,7 @@ import {
 } from "hyrest";
 import { inject, component } from "tsdi";
 import { Connection } from "typeorm";
+import * as Raven from "raven";
 
 import { Participant, Game, User, Board } from "../models";
 import { gameCreate, owner, turn, world } from "../scopes";
@@ -32,37 +33,42 @@ export class Games {
     @inject private pushNotifications: PushNotifications;
 
     private async invokeAI(id: string) {
-        const game = await this.db.getRepository(Game).createQueryBuilder("game")
-            .leftJoinAndSelect("game.boards", "board")
-            .leftJoinAndSelect("game.participants", "participant")
-            .leftJoinAndSelect("participant.user", "user")
-            .leftJoinAndSelect("board.game", "boardGame")
-            .where("game.id=:id", { id })
-            .orderBy("board.turn", "ASC")
-            .getOne();
-        const aiResult = await invokeAI(game);
-        if (aiResult) {
-            switch (aiResult.action) {
-                case Action.PASS: {
-                    const newBoard = game.currentBoard.pass();
-                    await this.db.getRepository(Board).save(newBoard);
-                    if (game.consecutivePasses >= 1) {
-                        await this.setWinner(game, newBoard.winningColor);
+        try {
+            const game = await this.db.getRepository(Game).createQueryBuilder("game")
+                .leftJoinAndSelect("game.boards", "board")
+                .leftJoinAndSelect("game.participants", "participant")
+                .leftJoinAndSelect("participant.user", "user")
+                .leftJoinAndSelect("board.game", "boardGame")
+                .where("game.id=:id", { id })
+                .orderBy("board.turn", "ASC")
+                .getOne();
+            const aiResult = await invokeAI(game);
+            if (aiResult) {
+                switch (aiResult.action) {
+                    case Action.PASS: {
+                        const newBoard = game.currentBoard.pass();
+                        await this.db.getRepository(Board).save(newBoard);
+                        if (game.consecutivePasses >= 1) {
+                            await this.setWinner(game, newBoard.winningColor);
+                        }
+                        return;
                     }
-                    return;
+                    case Action.PLACE: {
+                        await this.db.getRepository(Board).save(
+                            game.currentBoard.place(game.currentBoard.toIndex(aiResult.position)),
+                        );
+                        return;
+                    }
+                    case Action.RESIGN: {
+                        await this.setWinner(game, oppositeColor(game.getColorForUser(game.currentUser.id)));
+                        await this.db.getRepository(Board).save(game.currentBoard.resign());
+                    }
+                    default: return;
                 }
-                case Action.PLACE: {
-                    await this.db.getRepository(Board).save(
-                        game.currentBoard.place(game.currentBoard.toIndex(aiResult.position)),
-                    );
-                    return;
-                }
-                case Action.RESIGN: {
-                    await this.setWinner(game, oppositeColor(game.getColorForUser(game.currentUser.id)));
-                    await this.db.getRepository(Board).save(game.currentBoard.resign());
-                }
-                default: return;
             }
+        } catch (err) {
+            console.error("GTP Error:", err);
+            Raven.captureException(err);
         }
     }
 
