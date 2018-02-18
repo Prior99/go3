@@ -130,6 +130,7 @@ if (isProductionEnvironment()) {
     info("Sentry reporting active.");
     Raven.context(serve);
 } else {
+    Raven.config(false).install();
     info("Sentry reporting not activated.");
     serve();
 }
