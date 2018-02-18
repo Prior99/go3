@@ -28,6 +28,7 @@ export class PushNotifications {
                 });
             }));
         } catch (err) {
+            console.error("Unable to send web push notification:", err);
             Raven.captureException(err);
         }
     }
