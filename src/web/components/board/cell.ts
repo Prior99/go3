@@ -197,8 +197,11 @@ export class Cell {
         }
         if (this.locked === true) {
             this.handleConfirm();
+            this.locked = false;
+            this.hovered = false;
         } else {
             this.locked = true;
+            this.hovered = false;
         }
     }
 
