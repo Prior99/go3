@@ -31,7 +31,7 @@ export class UsersStore {
         return Array.from(this.users.values());
     }
 
-    @memoize(id => id) @bind @action
+    @memoize() @bind @action
     public async load(id: string) {
         const existing = this.users.get(id);
         if (existing) {

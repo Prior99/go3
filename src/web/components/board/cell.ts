@@ -209,19 +209,6 @@ export class Cell {
         this.locked = false;
     }
 
-    @bind private handleEnter() {
-        this.hovered = true;
-    }
-
-    @bind private handleLeave() {
-        this.hovered = false;
-        this.handleCancel();
-    }
-
-    @bind private handleCancel() {
-        this.locked = false;
-    }
-
     @bind private handleConfirm() {
         this.locked = false;
         if (!this.valid) {

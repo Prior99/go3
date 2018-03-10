@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import { DataType, scope, required, is, specify, uuid } from "hyrest";
 import { bind } from "bind-decorator";
+import { memoize } from "lodash-decorators";
 import { computed } from "mobx";
 
 import { Color, oppositeColor } from "../../utils";
@@ -126,7 +127,8 @@ export class Board {
         return this.state.every((value, index) => other.state[index] === value);
     }
 
-    @bind public groupAt(index: number): Group {
+    @memoize(index => `${this.id},${index}}`)
+    public groupAt(index: number): Group {
         const visited = [];
         const queue = [index];
         while (queue.length > 0) {

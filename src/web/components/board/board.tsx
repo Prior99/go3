@@ -51,10 +51,11 @@ export class Board extends React.Component<BoardProps> {
         if (!cell) { return; }
         if (this.lastHoveredCell !== cell && this.lastHoveredCell) {
             this.lastHoveredCell.onHoverEnd();
-            if (this.lastClickedCell) {
-                this.lastClickedCell.onUnfocus();
-                delete this.lastClickedCell;
-            }
+            delete this.lastHoveredCell;
+        }
+        if (this.lastClickedCell !== cell && this.lastClickedCell) {
+            this.lastClickedCell.onUnfocus();
+            delete this.lastClickedCell;
         }
         this.lastHoveredCell = cell;
         cell.onHoverStart();
@@ -72,7 +73,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private cellAt(x: number, y: number) {
-        return this.cells(this.props.game.id).find(cell => cell.inside(transformDPR(x), transformDPR(y)));
+        return this.cells().find(cell => cell.inside(transformDPR(x), transformDPR(y)));
     }
 
     @bind private handleConfirm(index: number) {
@@ -85,8 +86,8 @@ export class Board extends React.Component<BoardProps> {
 
     @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
 
-    @memoize(sessionId => sessionId)
-    private cells(sessionId: string) {
+    @memoize(() => this.sessionId)
+    private cells() {
         const { game } = this.props;
         const { foregroundCanvas: canvas, handleConfirm: onConfirm } = this;
         return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
@@ -121,7 +122,7 @@ export class Board extends React.Component<BoardProps> {
     }
 
     @bind private drawCells() {
-        this.cells(this.sessionId).forEach(cell => cell.draw(this.sessionId));
+        this.cells().forEach(cell => cell.draw(this.sessionId));
     }
 
     @bind private renderCanvas() {
