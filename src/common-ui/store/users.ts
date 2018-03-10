@@ -1,5 +1,6 @@
 import { observable, computed, action } from "mobx";
-import { bind, memoize } from "decko";
+import { bind } from "bind-decorator";
+import { memoize } from "lodash-decorators";
 import { History } from "history";
 import { component, inject } from "tsdi";
 
@@ -15,8 +16,7 @@ export class UsersStore {
     @observable private userStats: Map<string, UserStats> = new Map();
     @observable public loading = false;
 
-    @bind @action
-    public async searchUsers(search: string) {
+    @bind @action public async searchUsers(search: string) {
         this.loading = true;
         const users = await this.usersController.findUsers(search);
         users.forEach(user => {
@@ -31,7 +31,7 @@ export class UsersStore {
         return Array.from(this.users.values());
     }
 
-    @bind @action @memoize
+    @memoize(id => id) @bind @action
     public async load(id: string) {
         const existing = this.users.get(id);
         if (existing) {
@@ -42,22 +42,19 @@ export class UsersStore {
         return user;
     }
 
-    @bind
-    public byId(id: string) {
+    @bind public byId(id: string) {
         const user = this.users.get(id);
         if (!user) { this.load(id); }
         return user;
     }
 
-    @bind @action
-    public async loadStats(id: string) {
+    @bind @action public async loadStats(id: string) {
         const stats = await this.usersController.getUserStats(id);
         this.userStats.set(id, stats);
         return stats;
     }
 
-    @bind
-    public statsById(id: string) {
+    @bind public statsById(id: string) {
         const stats = this.userStats.get(id);
         if (!stats) { this.loadStats(id); }
         return stats;

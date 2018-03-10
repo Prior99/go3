@@ -2,7 +2,8 @@ import * as React from "react";
 import { observable } from "mobx";
 import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
-import { bind } from "decko";
+import { memoize } from "lodash-decorators";
+import { bind } from "bind-decorator";
 import { equals } from "ramda";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
@@ -10,7 +11,6 @@ import { Game, Color, Group, GroupStatus } from "../../../common";
 import { Rendering, TokenDrawInstructions, Assets } from "../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
-import { memoize } from "decko/dist/decko";
 
 export interface CellProps {
     readonly game: Game;
@@ -149,8 +149,8 @@ export class Cell {
             ctx: this.ctx,
             color: this.renderedColor,
             lastTurn: this.lastTurn,
-            status: this.status(`${id},${index}`),
-            valid: this.valid(`${id},${index}`),
+            status: this.status({ id, index }),
+            valid: this.valid({ id, index }),
             closedTop: this.closedTop,
             closedBottom: this.closedBottom,
             closedLeft: this.closedLeft,
@@ -164,15 +164,15 @@ export class Cell {
         };
     }
 
-    @memoize
-    private valid(key: string) {
+    @memoize(({ id, index }) => `${id},${index}`)
+    private valid(_: { id: string, index: number }) {
         const { game, index } = this;
         const errorMessage = game.turnValid(index);
         return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
-    @memoize
-    private status(key: string) {
+    @memoize(({ id, index }) => `${id},${index}`)
+    private status(_: { id: string, index: number }) {
         if (this.color === "empty") { return GroupStatus.ALIVE; }
         return this.game.currentBoard.groupAt(this.index).status;
     }

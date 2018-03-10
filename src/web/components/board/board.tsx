@@ -1,7 +1,8 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
-import { bind, memoize } from "decko";
+import { bind } from "bind-decorator";
+import { memoize } from "lodash-decorators";
 import { external, inject, initialize } from "tsdi";
 import * as Uuid from "uuid";
 import { Dimmer, Loader } from "semantic-ui-react";
@@ -84,7 +85,8 @@ export class Board extends React.Component<BoardProps> {
 
     @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
 
-    @memoize private cells(gameId: string) {
+    @memoize(sessionId => sessionId)
+    private cells(sessionId: string) {
         const { game } = this.props;
         const { foregroundCanvas: canvas, handleConfirm: onConfirm } = this;
         return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
@@ -114,12 +116,12 @@ export class Board extends React.Component<BoardProps> {
         return `Black (${game.blackUser.name}) wins`;
     }
 
-    private drawBoard() {
+    @bind private drawBoard() {
         this.rendering.drawBoard(this.instructions);
     }
 
-    private drawCells() {
-        this.cells(this.props.game.id).forEach(cell => cell.draw(this.sessionId));
+    @bind private drawCells() {
+        this.cells(this.sessionId).forEach(cell => cell.draw(this.sessionId));
     }
 
     @bind private renderCanvas() {
@@ -151,16 +153,28 @@ export class Board extends React.Component<BoardProps> {
         this.drawBoard();
      }
 
+    public componentDidMount() {
+        this.sessionId = Uuid.v4();
+    }
+
     public componentWillReceiveProps() {
+        this.sessionId = Uuid.v4();
         this.loaded = false;
     }
 
     public componentDidUpdate(oldProps: BoardProps) {
         if (oldProps.game.id !== this.props.game.id) {
             this.drawBoard();
-            this.sessionId = Uuid.v4();
             return;
         }
+    }
+
+    public componentWillUnmount() {
+        this.backgroundCanvas = undefined;
+        this.foregroundCanvas = undefined;
+        this.foregroundCtx = undefined;
+        this.backgroundCtx = undefined;
+        this.renderLoopActive = false;
     }
 
     @bind private initCanvas() {

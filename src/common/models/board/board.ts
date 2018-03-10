@@ -10,7 +10,7 @@ import {
     JoinColumn,
 } from "typeorm";
 import { DataType, scope, required, is, specify, uuid } from "hyrest";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { computed } from "mobx";
 
 import { Color, oppositeColor } from "../../utils";

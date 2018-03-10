@@ -3,7 +3,7 @@ import { Card, Image } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, observable } from "mobx";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { History } from "history";
 
 import { User, formatRank } from "../../../common";

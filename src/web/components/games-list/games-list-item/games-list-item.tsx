@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { external, inject } from "tsdi";
 import { computed } from "mobx";
 import { History } from "history";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { formatDistance } from "date-fns";
 
 import { Game, Color, formatBoardSize, oppositeColor, formatRank } from "../../../../common";

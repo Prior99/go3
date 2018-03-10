@@ -3,7 +3,7 @@ import { Card, Button, Form, Image } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, action, observable } from "mobx";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { History } from "history";
 
 import { User, formatRank } from "../../../common";
@@ -49,8 +49,7 @@ export class UserCard extends React.Component<UserCardProps> {
         this.browserHistory.push(routeGame.path(game.id));
     }
 
-    @bind
-    private toUser() {
+    @bind private toUser() {
         this.browserHistory.push(routeUser.path(this.props.user.id));
     }
 

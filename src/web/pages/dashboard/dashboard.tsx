@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { external, inject } from "tsdi";
 import { observable } from "mobx";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { Menu } from "semantic-ui-react";
 
 import { requireLogin, GamesStore, LoginStore } from "../../../common-ui";

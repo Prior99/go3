@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, action, observable } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { Form, Button, Input, Dropdown } from "semantic-ui-react";
 
 import { Content } from "../../components";

@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { component, initialize } from "tsdi";
 
 import { breakpointL } from "../breakpoints";
@@ -9,16 +9,15 @@ export class SidebarStore {
     @observable public visibilityToggled = false;
     @observable public alwaysOpen = this.calculateAlwaysOpen();
 
-    private calculateAlwaysOpen() {
+    @bind private calculateAlwaysOpen() {
         return window.innerWidth >= breakpointL;
     }
 
-    @bind
-    private onWindowResize() {
+    @bind private onWindowResize() {
         this.alwaysOpen = this.calculateAlwaysOpen();
     }
 
-    @initialize public init() {
+    @initialize @bind public init() {
         window.addEventListener("resize", this.onWindowResize);
     }
 

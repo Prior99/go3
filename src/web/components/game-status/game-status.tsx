@@ -3,7 +3,7 @@ import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, observable } from "mobx";
 import { Menu, Label, Modal, Header, Icon, Button } from "semantic-ui-react";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { GamesStore, LoginStore } from "../../../common-ui";
 

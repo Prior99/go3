@@ -4,7 +4,7 @@ import { observable, computed } from "mobx";
 import { inject, external } from "tsdi";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { UsersStore } from "../../../common-ui";
 
@@ -18,8 +18,7 @@ export class WinLossLineChart extends React.Component<WinLossLineChartProps> {
 
     @computed private get userStats() { return this.users.statsById(this.props.userId); }
 
-    @bind
-    private xAxisTickFormatter(index: number) {
+    @bind private xAxisTickFormatter(index: number) {
         return format(this.userStats.winLossChart[index].date, "YYYY-MM-DD");
     }
 

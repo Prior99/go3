@@ -1,6 +1,6 @@
 import { observable, action, autorun } from "mobx";
 import { component, inject, initialize } from "tsdi";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { Game, formatPosition } from "../../common";
 import { drawBoard, ServiceWorkerManager } from "..";
@@ -20,8 +20,7 @@ export class NotificationsStore {
         this.useServiceWorker = true;
     }
 
-    @initialize
-    private async init() {
+    @initialize @bind private async init() {
         const permission = await Notification.requestPermission();
         if (permission !== "granted") {
             this.forbidden = true;

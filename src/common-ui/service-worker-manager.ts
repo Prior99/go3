@@ -1,5 +1,5 @@
 import { component, initialize, inject } from "tsdi";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { publicKey, urlB64ToUint8Array } from "../vapid-keys";
 import { GamesStore, NotificationsStore, LoginStore } from ".";
@@ -17,7 +17,7 @@ export class ServiceWorkerManager {
 
     public get hasSubscription() { return Boolean(this.pushSubscription); }
 
-    public async updateSubscription() {
+    @bind public async updateSubscription() {
         if (!this.loginStore.loggedIn) {
             return;
         }
@@ -26,18 +26,15 @@ export class ServiceWorkerManager {
         this.notifications.useServiceWorkerApi();
     }
 
-    @bind
-    private async onPush(event: MessageEvent) {
+    @bind private async onPush(event: MessageEvent) {
         await this.games.refreshAll();
     }
 
-    @bind
-    private async onNotify(event: MessageEvent) {
+    @bind private async onNotify(event: MessageEvent) {
         this.notifications.checkNotifications();
     }
 
-    @initialize
-    private async register() {
+    @initialize @bind private async register() {
         if (!window.navigator || !window.navigator.serviceWorker) {
             return;
         }

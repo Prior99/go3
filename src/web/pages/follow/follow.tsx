@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, action, computed } from "mobx";
 import { Form, Button, Card, Menu } from "semantic-ui-react";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { requireLogin, OwnUserStore  } from "../../../common-ui";
 import { Content, UserCardList, UserSelect } from "../../components";
@@ -20,7 +20,7 @@ export class PageFollow extends React.Component {
     @observable private userId: string;
     @observable private tab = PageFollowTab.FOLLOWING;
 
-    @bind @action private handleUserId(userId: string) { this.userId = userId; }
+    @action private handleUserId(userId: string) { this.userId = userId; }
 
     @bind private async handleAddFollowing(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();

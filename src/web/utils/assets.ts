@@ -1,5 +1,5 @@
 import { component } from "tsdi";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import * as downscale from "downscale";
 
 function getKey(url: string, width?: number, height?: number) {

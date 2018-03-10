@@ -1,6 +1,6 @@
 import * as React from "react";
 import { observable, action, computed } from "mobx";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 import { observer } from "mobx-react";
 import { Button, Form } from "semantic-ui-react";
 import { inject, external } from "tsdi";

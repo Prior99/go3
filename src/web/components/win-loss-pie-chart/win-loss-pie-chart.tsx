@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
 import { PieChart, Pie, Sector, RechartsFunction } from "recharts";
-import { bind } from "decko";
+import { bind } from "bind-decorator";
 
 import { UsersStore } from "../../../common-ui";
 import { ActiveShape } from "./active-shape";
@@ -33,10 +33,7 @@ export class WinLossPieChart extends React.Component<WinLossPieChartProps> {
         ];
     }
 
-    @bind @action
-    private doPieEnter(_, index: number) {
-        this.activeIndex = index;
-    }
+    @bind @action private doPieEnter(_, index: number) { this.activeIndex = index; }
 
     public render() {
         const { data, activeIndex } = this;
