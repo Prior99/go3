@@ -41,6 +41,14 @@ async function serve() {
 
     const tsdi: TSDI = new TSDI();
 
+    async function exit() {
+        info("Exiting...");
+        if (server) { server.close(); }
+        tsdi.close();
+        info("Goodbye.");
+        process.exit(0);
+    }
+
     tsdi.enableComponentScanner();
 
     // Make sure the database is initialized.
@@ -51,7 +59,12 @@ async function serve() {
         http.use(Raven.requestHandler());
     }
     http.use(BodyParser.json({ strict: false }));
-    http.use(morgan("tiny", { stream: { write: msg => info(msg.trim()) } }));
+    morgan.token("remote-user", ({ headers }) => {
+        const { authorization } = headers;
+        if (typeof authorization !== "string") { return "anonymous"; }
+        return authorization.substr(7, authorization.length);
+    });
+    http.use(morgan("common", { stream: { write: msg => info(msg.trim()) } }));
     http.use(cors);
     http.use(
         hyrest(
@@ -102,25 +115,8 @@ async function serve() {
         await database.conn.getRepository(User).save({ name, ai, aiLevel, email });
     }));
 
+    info(`Listening on port ${port}.`);
     server = http.listen(port);
-
-    async function exit() {
-        info("Exiting...");
-        if (server) {
-            server.close();
-        }
-        try {
-            if (database && database.conn && database.conn.isConnected) {
-                await database.conn.close();
-            }
-        } catch (err) {
-            error("Could not stop database connection", err);
-        }
-        tsdi.close();
-        info("Goodbye.");
-    }
-
-    info(`Server started on port ${port}.`);
 }
 
 if (isProductionEnvironment()) {

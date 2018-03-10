@@ -1,6 +1,6 @@
-import { component, factory, initialize } from "tsdi";
+import { destroy, component, factory, initialize } from "tsdi";
 import { createConnection, Connection, ConnectionOptions } from "typeorm";
-import { info } from "winston";
+import { error, info } from "winston";
 import * as Yaml from "yamljs";
 import { existsSync } from "fs";
 
@@ -52,6 +52,19 @@ export class Database {
             ...envConfig(),
         });
         info("Connected to database.");
+    }
+
+    @destroy
+    public async destroy() {
+        try {
+            if (this.conn && this.conn.isConnected) {
+                await this.conn.close();
+            }
+        } catch (err) {
+            error("Could not stop database connection", err);
+            return;
+        }
+        info("Database stopped.");
     }
 
     @factory

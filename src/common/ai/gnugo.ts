@@ -12,8 +12,12 @@ export async function invokeGnuGo(game: Game, level: number): Promise<Move> {
             }
             return reject(err);
         });
-        const move = await invokeGtpAI(game, child.stdin, child.stdout);
-        return resolve(move);
+        try {
+            const move = await invokeGtpAI(game, child.stdin, child.stdout);
+            return resolve(move);
+        } catch (err) {
+            reject(err);
+        }
     });
 }
 
