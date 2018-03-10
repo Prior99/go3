@@ -23,6 +23,8 @@ import { Group } from "./group";
 
 @Entity()
 export class Board {
+    private groupCache = new Map<number, Group>();
+
     constructor(parent?: Board, index?: number) {
         if (typeof parent !== "undefined") {
             this.parent = parent;
@@ -127,8 +129,10 @@ export class Board {
         return this.state.every((value, index) => other.state[index] === value);
     }
 
-    @memoize(index => `${this.id},${index}}`)
-    public groupAt(index: number): Group {
+    @bind public groupAt(index: number): Group {
+        if (this.groupCache.has(index)) {
+            return this.groupCache.get(index);
+        }
         const visited = [];
         const queue = [index];
         while (queue.length > 0) {
@@ -141,7 +145,9 @@ export class Board {
                 .filter(neighbour => !visited.includes(neighbour));
             queue.push(...unvisitedneighbours);
         }
-        return new Group(visited, this);
+        const group = new Group(visited, this);
+        this.groupCache.set(index, group);
+        return group;
     }
 
     @bind public toPos(index: number): Position {

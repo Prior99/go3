@@ -3,8 +3,63 @@
 exports[`constructing a board from an old one 1`] = `
 Board {
   "game": undefined,
+  "groupCache": Map {
+    7 => Group {
+      "board": [Circular],
+      "indices": Array [
+        7,
+        2,
+        1,
+        0,
+        5,
+        10,
+        11,
+        12,
+      ],
+    },
+    11 => Group {
+      "board": [Circular],
+      "indices": Array [
+        11,
+        10,
+        5,
+        0,
+        1,
+        2,
+        7,
+        12,
+      ],
+    },
+    5 => Group {
+      "board": [Circular],
+      "indices": Array [
+        5,
+        0,
+        1,
+        2,
+        7,
+        12,
+        11,
+        10,
+      ],
+    },
+    1 => Group {
+      "board": [Circular],
+      "indices": Array [
+        1,
+        0,
+        5,
+        10,
+        11,
+        12,
+        7,
+        2,
+      ],
+    },
+  },
   "parent": Board {
     "created": 2017-11-15T12:00:00.000Z,
+    "groupCache": Map {},
     "id": "some-id",
     "prisonersBlack": 10,
     "prisonersWhite": 10,
@@ -316,8 +371,10 @@ Array [
 exports[`passing 1`] = `
 Board {
   "game": undefined,
+  "groupCache": Map {},
   "parent": Board {
     "created": 2017-11-15T12:00:00.000Z,
+    "groupCache": Map {},
     "id": "some-id",
     "state": Array [
       "black",
@@ -353,8 +410,21 @@ Board {
 exports[`placing a token 1`] = `
 Board {
   "game": undefined,
+  "groupCache": Map {
+    20 => Group {
+      "board": [Circular],
+      "indices": Array [
+        20,
+        15,
+        10,
+        5,
+        0,
+      ],
+    },
+  },
   "parent": Board {
     "created": 2017-11-15T12:00:00.000Z,
+    "groupCache": Map {},
     "id": "some-id",
     "prisonersBlack": 0,
     "prisonersWhite": 0,
@@ -425,8 +495,10 @@ Board {
 exports[`placing a token without triggering game logics 1`] = `
 Board {
   "game": undefined,
+  "groupCache": Map {},
   "parent": Board {
     "created": 2017-11-15T12:00:00.000Z,
+    "groupCache": Map {},
     "id": "some-id",
     "prisonersBlack": 0,
     "prisonersWhite": 0,
@@ -496,8 +568,10 @@ Board {
 exports[`resigning 1`] = `
 Board {
   "game": undefined,
+  "groupCache": Map {},
   "parent": Board {
     "created": 2017-11-15T12:00:00.000Z,
+    "groupCache": Map {},
     "id": "some-id",
     "state": Array [
       "empty",
