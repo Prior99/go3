@@ -1,6 +1,6 @@
 import * as React from "react";
 import { observable, action, computed } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { observer } from "mobx-react";
 import { Button, Form } from "semantic-ui-react";
 import { inject, external } from "tsdi";
@@ -10,6 +10,7 @@ import { routeGame, requireLogin, GamesStore } from "../../../common-ui";
 import { Content, UserSelect, BoardSizeSelect } from "../../components";
 
 @requireLogin @observer @external
+@bindAll()
 export class PageCreateGame extends React.Component {
     @inject private gamesStore: GamesStore;
     @inject private browserHistory: History;
@@ -17,9 +18,9 @@ export class PageCreateGame extends React.Component {
     @observable private userId: string;
     @observable private size: number;
 
-    @bind @action private handleUserId(userId: string) { this.userId = userId; }
-    @bind @action private handleBoardSize(size: number) { this.size = size; }
-    @bind private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+    @action private handleUserId(userId: string) { this.userId = userId; }
+    @action private handleBoardSize(size: number) { this.size = size; }
+    private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         const game = await this.gamesStore.createGame(this.userId, this.size);
         this.browserHistory.push(routeGame.path(game.id));

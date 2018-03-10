@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, action } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { Segment } from "semantic-ui-react";
 
 import { requireLogin, GamesStore  } from "../../../common-ui";
@@ -18,6 +18,7 @@ export interface PageGameProps {
 }
 
 @requireLogin @external @observer
+@bindAll()
 export class PageGame extends React.Component<PageGameProps> {
     @inject private games: GamesStore;
 
@@ -27,7 +28,7 @@ export class PageGame extends React.Component<PageGameProps> {
         return this.game.currentBoard ? this.game.currentBoard.state : undefined;
     }
 
-    @bind @action private async place(index: number) {
+    @action private async place(index: number) {
         await this.games.turn(this.game, index);
     }
 

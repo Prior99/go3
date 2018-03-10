@@ -4,7 +4,7 @@ import { observer } from "mobx-react";
 import { external, inject } from "tsdi";
 import { computed } from "mobx";
 import { History } from "history";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { formatDistance } from "date-fns";
 
 import { Game, Color, formatBoardSize, oppositeColor, formatRank } from "../../../../common";
@@ -18,11 +18,12 @@ export interface GamesListItemProps {
 }
 
 @observer @external
+@bindAll()
 export class GamesListItem extends React.Component<GamesListItemProps> {
     @inject private browserHistory: History;
     @inject private login: LoginStore;
 
-    @bind private handleClick() {
+    private handleClick() {
         this.browserHistory.push(routeGame.path(this.props.game.id));
     }
 

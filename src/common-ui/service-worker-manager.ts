@@ -1,11 +1,12 @@
 import { component, initialize, inject } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { publicKey, urlB64ToUint8Array } from "../vapid-keys";
 import { GamesStore, NotificationsStore, LoginStore } from ".";
 import { Tokens } from "../common";
 
 @component({ name: "ServiceWorkerManager", eager: true })
+@bindAll()
 export class ServiceWorkerManager {
     @inject("LoginStore") private loginStore: LoginStore;
     @inject private tokens: Tokens;
@@ -26,12 +27,10 @@ export class ServiceWorkerManager {
         this.notifications.useServiceWorkerApi();
     }
 
-    @bind
     private async onPush(event: MessageEvent) {
         await this.games.refreshAll();
     }
 
-    @bind
     private async onNotify(event: MessageEvent) {
         this.notifications.checkNotifications();
     }

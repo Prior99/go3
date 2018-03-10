@@ -4,7 +4,7 @@ import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
 import { History } from "history";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { computed } from "mobx";
 
 import { FeedItem, FeedEvent } from "../../../../common";
@@ -16,6 +16,7 @@ export interface FeedListEntryGameOverProps {
 }
 
 @observer @external
+@bindAll()
 export class FeedListEntryGameOver extends React.Component<FeedListEntryGameOverProps> {
     @inject private users: UsersStore;
     @inject private login: LoginStore;
@@ -29,12 +30,10 @@ export class FeedListEntryGameOver extends React.Component<FeedListEntryGameOver
         return this.props.item.game.participants.find(participant => !participant.winner).user;
     }
 
-    @bind
     private toWinner() {
         this.browserHistory.push(routeUser.path(this.winner.id));
     }
 
-    @bind
     private toLoser() {
         this.browserHistory.push(routeUser.path(this.loser.id));
     }

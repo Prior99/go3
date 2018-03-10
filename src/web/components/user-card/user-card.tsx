@@ -3,7 +3,7 @@ import { Card, Button, Form, Image } from "semantic-ui-react";
 import { inject, external } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, action, observable } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { History } from "history";
 
 import { User, formatRank } from "../../../common";
@@ -15,6 +15,7 @@ export interface UserCardProps {
 }
 
 @external @observer
+@bindAll()
 export class UserCard extends React.Component<UserCardProps> {
     @inject private ownUser: OwnUserStore;
     @inject private games: GamesStore;
@@ -39,17 +40,16 @@ export class UserCard extends React.Component<UserCardProps> {
     @computed private get user() { return this.users.byId(this.props.user.id); }
     @computed private get avatar() { return this.user && this.user.avatarUrl; }
 
-    @bind @action private async unfollow() { await this.ownUser.removeFollowing(this.props.user.id); }
-    @bind @action private async follow() { await this.ownUser.addFollowing(this.props.user.id); }
-    @bind @action private togglePlay() { this.createGameVisible = !this.createGameVisible; }
-    @bind @action private handleBoardSize(size: number) { this.size = size; }
-    @bind @action private async handleCreateGame(event: React.SyntheticEvent<HTMLFormElement>) {
+    @action private async unfollow() { await this.ownUser.removeFollowing(this.props.user.id); }
+    @action private async follow() { await this.ownUser.addFollowing(this.props.user.id); }
+    @action private togglePlay() { this.createGameVisible = !this.createGameVisible; }
+    @action private handleBoardSize(size: number) { this.size = size; }
+    @action private async handleCreateGame(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         const game = await this.games.createGame(this.props.user.id, this.size);
         this.browserHistory.push(routeGame.path(game.id));
     }
 
-    @bind
     private toUser() {
         this.browserHistory.push(routeUser.path(this.props.user.id));
     }

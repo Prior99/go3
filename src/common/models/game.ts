@@ -8,7 +8,7 @@ import {
 } from "typeorm";
 import { is, scope, DataType, oneOf, specify, required, length, uuid } from "hyrest";
 import { computed, observable } from "mobx";
-import { bind } from "decko";
+import { bind } from "lodash-decorators"
 
 import { world, gameCreate, turn } from "../scopes";
 import { boardSizes, formatBoardSize, Color, oppositeColor, newRating, GameResult } from "../utils";
@@ -44,7 +44,7 @@ export class Game {
     @observable
     public boards: Board[];
 
-    public getUserByColor(color: Color): User {
+    @bind() public getUserByColor(color: Color): User {
         return this.participants.find(participant => participant.color === color).user;
     }
 
@@ -52,7 +52,7 @@ export class Game {
     @computed public get whiteUser() { return this.getUserByColor(Color.WHITE); }
     @computed public get currentUser() { return this.getUserByColor(this.currentBoard.currentColor); }
 
-    public getOpponent(userId: string) {
+    @bind() public getOpponent(userId: string) {
         if (this.blackUser.id === userId) {
             return this.whiteUser;
         }
@@ -61,7 +61,7 @@ export class Game {
         }
     }
 
-    public getColorForUser(userId: string) {
+    @bind() public getColorForUser(userId: string) {
         if (this.blackUser.id === userId) {
             return Color.BLACK;
         }
@@ -83,7 +83,7 @@ export class Game {
 
     @computed public get currentBoard() { return this.boards ? this.boards[this.boards.length - 1] : undefined; }
 
-    public turnValid(index: number) {
+    @bind() public turnValid(index: number) {
         if (this.currentBoard.at(index) !== Color.EMPTY) {
             return "Already occupied.";
         }
@@ -129,24 +129,24 @@ export class Game {
         return this.participants.every(participant => participant.winner === false);
     }
 
-    public equals(other: Game) {
+    @bind() public equals(other: Game) {
         return this.id === other.id &&
             this.participants.every((participant, index) => participant.equals(other.participants[index])) &&
             this.currentBoard.equals(other.currentBoard);
     }
 
-    public getParticipantForUser(userId: string) {
+    @bind() public getParticipantForUser(userId: string) {
         return this.participants.find(({ user }) => user.id === userId);
     }
 
-    public getResultFor(userId: string) {
+    @bind() public getResultFor(userId: string) {
         const participant = this.getParticipantForUser(userId);
         const other = this.participants.find(current => current !== participant);
         return participant.winner ? GameResult.WIN :
             other.winner ? GameResult.LOSS : GameResult.TIE;
     }
 
-    public newRating(userId: string) {
+    @bind() public newRating(userId: string) {
         const participant = this.getParticipantForUser(userId);
         const other = this.participants.find(current => current !== participant);
         return newRating(participant.rating, other.rating, this.getResultFor(userId));

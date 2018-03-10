@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { component, initialize, inject } from "tsdi";
 
 import { User, UserStats, Followership, Users, Followerships } from "../../common";
@@ -7,6 +7,7 @@ import { User, UserStats, Followership, Users, Followerships } from "../../commo
 import { LoginStore } from ".";
 
 @component("OwnUserStore")
+@bindAll()
 export class OwnUserStore {
     @inject private users: Users;
     @inject private followerships: Followerships;
@@ -17,8 +18,7 @@ export class OwnUserStore {
     @observable public following: Map<string, Followership> = new Map();
     @observable public followers: Map<string, Followership> = new Map();
 
-    @initialize @bind @action
-    public async loadUser() {
+    @initialize @action public async loadUser() {
         if (this.login.loggedIn) {
             this.user = await this.users.getOwnUser(this.login.userId);
             this.userStats = await this.users.getUserStats(this.login.userId);
@@ -27,12 +27,10 @@ export class OwnUserStore {
         }
     }
 
-    @bind
     private storeFollower(followership: Followership) {
         this.followers.set(followership.id, followership);
     }
 
-    @bind
     private storeFollowing(fllowership: Followership) {
         this.following.set(fllowership.id, fllowership);
     }
@@ -61,15 +59,13 @@ export class OwnUserStore {
         return Array.from(this.followers.values()).find(followership => followership.follower.id === id);
     }
 
-    @bind @action
-    public async removeFollowing(userId: string) {
+    @action public async removeFollowing(userId: string) {
         const followership = this.followershipByFollowingId(userId);
         await this.followerships.deleteFollowership(followership.id);
         this.following.delete(followership.id);
     }
 
-    @bind @action
-    public async addFollowing(userId: string) {
+    @action public async addFollowing(userId: string) {
         const followership = await this.followerships.createFollowership({
             follower: { id: this.user.id } as User,
             followed: { id: userId } as User,
@@ -77,8 +73,7 @@ export class OwnUserStore {
         this.storeFollowing(followership);
     }
 
-    @bind @action
-    public async updateUser(password: string, renderingStrategy: string) {
+    @action public async updateUser(password: string, renderingStrategy: string) {
         this.user = await this.users.updateUser(this.user.id, {
             password, renderingStrategy,
         } as User);

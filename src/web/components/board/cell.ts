@@ -2,7 +2,7 @@ import * as React from "react";
 import { observable } from "mobx";
 import * as classNames from "classnames";
 import { inject, external, initialize } from "tsdi";
-import { bind } from "decko";
+import { bindAll, memoize } from "lodash-decorators";
 import { equals } from "ramda";
 
 import { GamesStore, LoginStore, OwnUserStore } from "../../../common-ui";
@@ -10,7 +10,6 @@ import { Game, Color, Group, GroupStatus } from "../../../common";
 import { Rendering, TokenDrawInstructions, Assets } from "../../utils";
 
 import * as tokenInvalid from "./token-invalid.png";
-import { memoize } from "decko/dist/decko";
 
 export interface CellProps {
     readonly game: Game;
@@ -20,6 +19,7 @@ export interface CellProps {
 }
 
 @external
+@bindAll()
 export class Cell {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
@@ -164,34 +164,34 @@ export class Cell {
         };
     }
 
-    @memoize
+    @memoize(key => key)
     private valid(key: string) {
         const { game, index } = this;
         const errorMessage = game.turnValid(index);
         return this.login.userId === game.currentUser.id && typeof errorMessage === "undefined";
     }
 
-    @memoize
+    @memoize(key => key)
     private status(key: string) {
         if (this.color === "empty") { return GroupStatus.ALIVE; }
         return this.game.currentBoard.groupAt(this.index).status;
     }
 
-    @bind public inside(x: number, y: number) {
+    public inside(x: number, y: number) {
         return this.x <= x && this.x + this.width >= x &&
             this.y <= y && this.y + this.width >= y;
     }
 
-    @bind public onHoverStart() {
+    public onHoverStart() {
         if (this.color !== Color.EMPTY) { return; }
         this.hovered = true;
     }
 
-    @bind public onHoverEnd() {
+    public onHoverEnd() {
         this.hovered = false;
     }
 
-    @bind public onClick() {
+    public onClick() {
         if (this.color !== Color.EMPTY) {
             return;
         }
@@ -205,24 +205,24 @@ export class Cell {
         }
     }
 
-    @bind public onUnfocus() {
+    public onUnfocus() {
         this.locked = false;
     }
 
-    @bind private handleEnter() {
+    private handleEnter() {
         this.hovered = true;
     }
 
-    @bind private handleLeave() {
+    private handleLeave() {
         this.hovered = false;
         this.handleCancel();
     }
 
-    @bind private handleCancel() {
+    private handleCancel() {
         this.locked = false;
     }
 
-    @bind private handleConfirm() {
+    private handleConfirm() {
         this.locked = false;
         if (!this.valid) {
             return;
@@ -230,7 +230,7 @@ export class Cell {
         this.onConfirm(this.index);
     }
 
-    @bind public draw(sessionId: string) {
+    public draw(sessionId: string) {
         const { canvas, animated, assets, game, locked, hovered } = this;
         const { width: canvasWidth, height: canvasHeight } = canvas;
         const boardId = game.currentBoard.id;
@@ -243,7 +243,7 @@ export class Cell {
         }
     }
 
-    @bind private actualDraw() {
+    private actualDraw() {
         const { x, y, width, height, instructions, rendering, ctx } = this;
         ctx.clearRect(x, y, width, height);
         ctx.translate(x, y);

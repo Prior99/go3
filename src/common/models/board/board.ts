@@ -10,7 +10,7 @@ import {
     JoinColumn,
 } from "typeorm";
 import { DataType, scope, required, is, specify, uuid } from "hyrest";
-import { bind } from "decko";
+import { bind } from "lodash-decorators";
 import { computed } from "mobx";
 
 import { Color, oppositeColor } from "../../utils";
@@ -108,7 +108,7 @@ export class Board {
 
     public get size() { return Math.sqrt(this.state.length); }
 
-    @bind public at(at: number): Color {
+    @bind() public at(at: number): Color {
         return this.state[at];
     }
 
@@ -119,14 +119,14 @@ export class Board {
         return Color.WHITE;
     }
 
-    @bind public equals(other: Board) {
+    @bind() public equals(other: Board) {
         if (!other) {
             return false;
         }
         return this.state.every((value, index) => other.state[index] === value);
     }
 
-    @bind public groupAt(index: number): Group {
+    @bind() public groupAt(index: number): Group {
         const visited = [];
         const queue = [index];
         while (queue.length > 0) {
@@ -142,18 +142,18 @@ export class Board {
         return new Group(visited, this);
     }
 
-    @bind public toPos(index: number): Position {
+    @bind() public toPos(index: number): Position {
         return {
             col: index % this.size,
             row: Math.floor(index / this.size),
         };
     }
 
-    @bind public toIndex(pos: Position) {
+    @bind() public toIndex(pos: Position) {
         return pos.col + pos.row * this.size;
     }
 
-    @bind public neighbours(index: number): number[] {
+    @bind() public neighbours(index: number): number[] {
         const { col, row } = this.toPos(index);
         const result = [];
         if (col + 1 < this.size) { result.push({ col: col + 1, row }); }
@@ -163,43 +163,43 @@ export class Board {
         return result.map(this.toIndex);
     }
 
-    @bind public neighboursOfColor(index: number, color: Color) {
+    @bind() public neighboursOfColor(index: number, color: Color) {
         return this.neighbours(index).filter(neighbour => this.at(neighbour) === color);
     }
 
-    @bind public neighboursOfSameColor(index: number) {
+    @bind() public neighboursOfSameColor(index: number) {
         return this.neighboursOfColor(index, this.at(index));
     }
 
-    @bind public place(index: number): Board {
+    @bind() public place(index: number): Board {
         return new Board(this, index);
     }
 
-    @bind public pass(): Board {
+    @bind() public pass(): Board {
         const nextBoard = new Board(this);
         nextBoard.turn++;
         return nextBoard;
     }
 
-    @bind public resign(): Board {
+    @bind() public resign(): Board {
         const nextBoard = new Board(this);
         nextBoard.turn++;
         nextBoard.resigned = true;
         return nextBoard;
     }
 
-    @bind public mockPlace(index: number): Board {
+    @bind() public mockPlace(index: number): Board {
         const board = new Board(this);
         board.state[index] = this.currentColor;
         board.turn++;
         return board;
     }
 
-    @bind public prisoners(color: Color) {
+    @bind() public prisoners(color: Color) {
         return color === Color.BLACK ? this.prisonersBlack : this.prisonersWhite;
     }
 
-    @bind public getScore(forColor: Color) {
+    @bind() public getScore(forColor: Color) {
         const visited: number[] = [];
         let score = this.prisoners(forColor);
         this.state.forEach((color, index) => {

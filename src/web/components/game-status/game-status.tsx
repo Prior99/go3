@@ -3,11 +3,12 @@ import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
 import { computed, observable } from "mobx";
 import { Menu, Label, Modal, Header, Icon, Button } from "semantic-ui-react";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { GamesStore, LoginStore } from "../../../common-ui";
 
 @external @observer
+@bindAll()
 export class GameStatus extends React.Component {
     @inject private games: GamesStore;
     @inject private login: LoginStore;
@@ -18,9 +19,9 @@ export class GameStatus extends React.Component {
         return this.login.userId === this.games.currentGame.currentUser.id;
     }
 
-    @bind private async handlePass() { this.passRequested = true; }
-    @bind private async cancelPass() { this.passRequested = false; }
-    @bind private async confirmPass() {
+    private async handlePass() { this.passRequested = true; }
+    private async cancelPass() { this.passRequested = false; }
+    private async confirmPass() {
         this.passRequested = false;
         await this.games.pass(this.games.currentGame);
     }

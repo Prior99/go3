@@ -1,10 +1,11 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { component, initialize } from "tsdi";
 
 import { breakpointL } from "../breakpoints";
 
 @component
+@bindAll()
 export class SidebarStore {
     @observable public visibilityToggled = false;
     @observable public alwaysOpen = this.calculateAlwaysOpen();
@@ -13,7 +14,6 @@ export class SidebarStore {
         return window.innerWidth >= breakpointL;
     }
 
-    @bind
     private onWindowResize() {
         this.alwaysOpen = this.calculateAlwaysOpen();
     }
@@ -26,7 +26,7 @@ export class SidebarStore {
         return this.visibilityToggled || this.alwaysOpen;
     }
 
-    @bind @action public toggleVisibility() {
+    @action public toggleVisibility() {
         this.visibilityToggled = ! this.visibilityToggled;
     }
 }

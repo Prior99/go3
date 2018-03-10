@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
-import { bind, memoize } from "decko";
+import { bindAll, memoize } from "lodash-decorators";
 import { external, inject, initialize } from "tsdi";
 import * as Uuid from "uuid";
 import { Dimmer, Loader } from "semantic-ui-react";
@@ -24,6 +24,7 @@ function transformDPR(x: number) {
 }
 
 @external @observer
+@bindAll()
 export class Board extends React.Component<BoardProps> {
     @inject private login: LoginStore;
     @inject private ownUser: OwnUserStore;
@@ -44,7 +45,7 @@ export class Board extends React.Component<BoardProps> {
 
     @observable private loaded = false;
 
-    @bind private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
+    private handleMouseMove(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
         const cell = this.cellAt(x, y);
         if (!cell) { return; }
@@ -59,7 +60,7 @@ export class Board extends React.Component<BoardProps> {
         cell.onHoverStart();
     }
 
-    @bind private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
+    private handleClick(event: React.SyntheticEvent<HTMLCanvasElement>) {
         const { offsetX: x, offsetY: y } = event.nativeEvent as MouseEvent;
         const cell = this.cellAt(x, y);
         if (!cell) { return; }
@@ -70,11 +71,11 @@ export class Board extends React.Component<BoardProps> {
         cell.onClick();
     }
 
-    @bind private cellAt(x: number, y: number) {
+    private cellAt(x: number, y: number) {
         return this.cells(this.props.game.id).find(cell => cell.inside(transformDPR(x), transformDPR(y)));
     }
 
-    @bind private handleConfirm(index: number) {
+    private handleConfirm(index: number) {
         const { onPlace } = this.props;
         if (!onPlace) {
             return;
@@ -84,7 +85,8 @@ export class Board extends React.Component<BoardProps> {
 
     @computed private get ownColor() { return this.props.game.getColorForUser(this.login.userId); }
 
-    @memoize private cells(gameId: string) {
+    @memoize(sessionId => sessionId)
+    private cells(sessionId: string) {
         const { game } = this.props;
         const { foregroundCanvas: canvas, handleConfirm: onConfirm } = this;
         return this.props.game.currentBoard.state.map((_, index) => new Cell({ game, index, onConfirm, canvas }));
@@ -119,10 +121,10 @@ export class Board extends React.Component<BoardProps> {
     }
 
     private drawCells() {
-        this.cells(this.props.game.id).forEach(cell => cell.draw(this.sessionId));
+        this.cells(this.sessionId).forEach(cell => cell.draw(this.sessionId));
     }
 
-    @bind private renderCanvas() {
+    private renderCanvas() {
         const begin = Date.now();
         if (this.backgroundCanvas && this.foregroundCanvas && this.assets.loaded) {
             this.drawCells();
@@ -135,7 +137,7 @@ export class Board extends React.Component<BoardProps> {
         window.requestAnimationFrame(this.renderCanvas);
     }
 
-    @bind private resizeCanvas() {
+    private resizeCanvas() {
         const { game } = this.props;
         const { boardSize } = game;
 
@@ -151,19 +153,31 @@ export class Board extends React.Component<BoardProps> {
         this.drawBoard();
      }
 
+    public componentDidMount() {
+        this.sessionId = Uuid.v4();
+    }
+
     public componentWillReceiveProps() {
+        this.sessionId = Uuid.v4();
         this.loaded = false;
     }
 
     public componentDidUpdate(oldProps: BoardProps) {
         if (oldProps.game.id !== this.props.game.id) {
             this.drawBoard();
-            this.sessionId = Uuid.v4();
             return;
         }
     }
 
-    @bind private initCanvas() {
+    public componentWillUnmount() {
+        this.backgroundCanvas = undefined;
+        this.foregroundCanvas = undefined;
+        this.foregroundCtx = undefined;
+        this.backgroundCtx = undefined;
+        this.renderLoopActive = false;
+    }
+
+    private initCanvas() {
         if (!this.backgroundCanvas || !this.foregroundCanvas) { return; }
         if (this.renderLoopActive) { return; }
         this.renderLoopActive = true;
@@ -172,7 +186,7 @@ export class Board extends React.Component<BoardProps> {
         this.renderCanvas();
     }
 
-    @bind private handleForegroundCanvasRef(element: HTMLCanvasElement) {
+    private handleForegroundCanvasRef(element: HTMLCanvasElement) {
         if (!element) {
             delete this.foregroundCanvas;
             delete this.foregroundCtx;
@@ -183,7 +197,7 @@ export class Board extends React.Component<BoardProps> {
         this.initCanvas();
     }
 
-    @bind private handleBackgroundCanvasRef(element: HTMLCanvasElement) {
+    private handleBackgroundCanvasRef(element: HTMLCanvasElement) {
         if (!element) {
             delete this.backgroundCanvas;
             delete this.backgroundCtx;

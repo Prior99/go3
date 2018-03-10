@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, action } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { Icon } from "semantic-ui-react";
 
 import { Content, UserStats, UserCharts, UserTable } from "../../components";
@@ -18,6 +18,7 @@ export interface PageUserProps {
 }
 
 @external @observer
+@bindAll()
 export class PageUser extends React.Component<PageUserProps> {
     @inject private users: UsersStore;
     @inject private ownUser: OwnUserStore;
@@ -31,8 +32,8 @@ export class PageUser extends React.Component<PageUserProps> {
         return Boolean(this.ownUser.followershipByFollowingId(this.id));
     }
 
-    @bind @action private async unfollow() { await this.ownUser.removeFollowing(this.id); }
-    @bind @action private async follow() { await this.ownUser.addFollowing(this.id); }
+    @action private async unfollow() { await this.ownUser.removeFollowing(this.id); }
+    @action private async follow() { await this.ownUser.addFollowing(this.id); }
 
     public render() {
         const { user } = this;

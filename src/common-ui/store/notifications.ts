@@ -1,12 +1,13 @@
 import { observable, action, autorun } from "mobx";
 import { component, inject, initialize } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { Game, formatPosition } from "../../common";
 import { drawBoard, ServiceWorkerManager } from "..";
 import { GamesStore, OwnUserStore } from ".";
 
 @component({ name: "NotificationsStore", eager: true })
+@bindAll()
 export class NotificationsStore {
     @inject private games: GamesStore;
     @inject private ownUser: OwnUserStore;
@@ -34,7 +35,7 @@ export class NotificationsStore {
         });
     }
 
-    @bind private notify(game: Game) {
+    private notify(game: Game) {
         const opponent = game.getOpponent(this.ownUser.user.id).name;
         const { turn } = game;
         const position = formatPosition(game.currentBoard.toPos(game.currentBoard.placedAt), game.boardSize);
@@ -62,7 +63,7 @@ export class NotificationsStore {
         }
     }
 
-    @bind public checkNotifications() {
+    public checkNotifications() {
         this.games.all.forEach(game => {
             const shouldNotify = this.lastTurns.has(game.id) &&
                 game.turn > this.lastTurns.get(game.id) &&

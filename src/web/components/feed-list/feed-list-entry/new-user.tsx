@@ -4,7 +4,7 @@ import { Feed, Image } from "semantic-ui-react";
 import { external, inject } from "tsdi";
 import { formatDistance } from "date-fns";
 import { History } from "history";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { FeedItem, FeedEvent } from "../../../../common";
 import { routeUser, UsersStore, LoginStore } from "../../../../common-ui";
@@ -14,12 +14,12 @@ export interface FeedListEntryNewUserProps {
 }
 
 @observer @external
+@bindAll()
 export class FeedListEntryNewUser extends React.Component<FeedListEntryNewUserProps> {
     @inject private users: UsersStore;
     @inject private login: LoginStore;
     @inject private browserHistory: History;
 
-    @bind
     private toUser() {
         this.browserHistory.push(routeUser.path(this.props.item.user.id));
     }

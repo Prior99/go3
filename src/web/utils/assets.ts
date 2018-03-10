@@ -1,5 +1,5 @@
 import { component } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import * as downscale from "downscale";
 
 function getKey(url: string, width?: number, height?: number) {
@@ -10,6 +10,7 @@ function getKey(url: string, width?: number, height?: number) {
 }
 
 @component
+@bindAll()
 export class Assets {
     private images = new Map<string, HTMLImageElement>();
     private loading = new Map<string, ((HTMLImageElement) => void)[]>();
@@ -17,7 +18,7 @@ export class Assets {
 
     public get loaded() { return this.loading.size === 0; }
 
-    @bind public loadImage(url: string, width?: number, height?: number) {
+    public loadImage(url: string, width?: number, height?: number) {
         if (typeof width === "undefined" || typeof height === "undefined") {
             return this.downloadImage(url);
         }
@@ -42,7 +43,7 @@ export class Assets {
         });
     }
 
-    @bind private downloadImage(url: string) {
+    private downloadImage(url: string) {
         return new Promise<HTMLImageElement>(resolve => {
             if (this.images.has(url)) {
                 return resolve(this.images.get(url));
@@ -61,7 +62,7 @@ export class Assets {
         });
     }
 
-    @bind public get(url: string, width?: number, height?: number) {
+    public get(url: string, width?: number, height?: number) {
         return this.images.get(getKey(url, width, height));
     }
 }

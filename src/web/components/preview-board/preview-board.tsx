@@ -1,7 +1,7 @@
 import * as React from "react";
 import { external, inject } from "tsdi";
 import { observer } from "mobx-react";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { Board, Color } from "../../../common";
 import { GamesStore, drawBoard } from "../../../common-ui";
@@ -12,10 +12,11 @@ export interface PreviewBoardProps {
 }
 
 @external @observer
+@bindAll()
 export class PreviewBoard extends React.Component<PreviewBoardProps> {
     private canvas: HTMLCanvasElement;
 
-    @bind private handleCanvasRef(element: HTMLCanvasElement) {
+    private handleCanvasRef(element: HTMLCanvasElement) {
         this.canvas = element;
         window.addEventListener("resize", () => this.renderBoard());
     }
@@ -28,7 +29,7 @@ export class PreviewBoard extends React.Component<PreviewBoardProps> {
         this.renderBoard();
     }
 
-    @bind private renderBoard() {
+    private renderBoard() {
         if (!this.canvas) {
             return;
         }

@@ -1,6 +1,6 @@
 import { ReadLine, createInterface } from "readline";
 import { Board, formatPosition, parsePosition, Position, Game, Color } from "..";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { Action, Move } from "./ai";
 import { oppositeColor } from "..";
@@ -27,6 +27,7 @@ export async function invokeGtpAI(
     return move;
 }
 
+@bindAll()
 export class Gtp {
     private input: NodeJS.WritableStream;
     private output: ReadLine;
@@ -39,7 +40,7 @@ export class Gtp {
         this.boardSize = boardSize;
     }
 
-    @bind private readBoolean(): Promise<Boolean> {
+    private readBoolean(): Promise<Boolean> {
         return new Promise((resolve, reject) => {
             this.output.once("line", data => {
                 const error = getError(data);
@@ -55,7 +56,7 @@ export class Gtp {
         });
     }
 
-    @bind private readMove(): Promise<Move> {
+    private readMove(): Promise<Move> {
         return new Promise((resolve, reject) => {
             this.output.once("line", data => {
                 const error = getError(data);
@@ -72,7 +73,7 @@ export class Gtp {
         });
     }
 
-    @bind private readEmpty(): Promise<undefined> {
+    private readEmpty(): Promise<undefined> {
         return new Promise((resolve, reject) => {
             this.output.once("line", data => {
                 const error = getError(data);
@@ -84,33 +85,33 @@ export class Gtp {
         });
     }
 
-    @bind private async knownCommand(command: string) {
+    private async knownCommand(command: string) {
         this.write("known_command", command);
         return await this.readBoolean();
     }
 
-    @bind private write(command: string, ...args: any[]) {
+    private write(command: string, ...args: any[]) {
         this.input.write([command, ...args].join(" "));
         this.input.write("\n");
     }
 
-    @bind private async execute(command: string, ...args: any[]) {
+    private async execute(command: string, ...args: any[]) {
         this.write(command, ...args);
     }
 
-    @bind public async play(board: Board) {
+    public async play(board: Board) {
         const { placedAt, currentColor, size } = board;
         const formattedPosition = formatPosition(board.toPos(board.placedAt), size);
         await this.execute("play", oppositeColor(currentColor), formattedPosition);
         await this.readEmpty();
     }
 
-    @bind public async setBoardsize() {
+    public async setBoardsize() {
         await this.execute("boardsize", this.boardSize);
         await this.readEmpty();
     }
 
-    @bind public async replayGame(game: Game) {
+    public async replayGame(game: Game) {
         await this.setBoardsize();
         for (let board of game.boards) {
             if (board.placedAt === null) {
@@ -120,13 +121,13 @@ export class Gtp {
         }
     }
 
-    @bind public async genMove(color: Color) {
+    public async genMove(color: Color) {
         await this.execute("genmove", color);
         const move = await this.readMove();
         return move;
     }
 
-    @bind public close(): Promise<undefined> {
+    public close(): Promise<undefined> {
         this.execute("quit");
         this.input.end();
         return new Promise((resolve, reject) => {

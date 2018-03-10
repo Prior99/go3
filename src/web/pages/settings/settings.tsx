@@ -2,7 +2,7 @@ import * as React from "react";
 import { computed, action, observable } from "mobx";
 import { observer } from "mobx-react";
 import { inject, external } from "tsdi";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { Form, Button, Input, Dropdown } from "semantic-ui-react";
 
 import { Content } from "../../components";
@@ -13,6 +13,7 @@ import * as iconClassic from "./classic.png";
 import * as iconModern from "./modern.png";
 
 @external @observer
+@bindAll()
 export class PageSettings extends React.Component {
     @inject private ownUser: OwnUserStore;
 
@@ -27,12 +28,12 @@ export class PageSettings extends React.Component {
         return this.selectedStrategy;
     }
 
-    @bind @action private handleSelectStrategy(_, { value }: { value: RenderingStrategy }) {
+    @action private handleSelectStrategy(_, { value }: { value: RenderingStrategy }) {
         this.selectedStrategy = value;
     }
-    @bind @action private handlePassword({ target }: React.SyntheticInputEvent) { this.password = target.value; }
-    @bind @action private handleRepeat({ target }: React.SyntheticInputEvent) { this.repeat = target.value; }
-    @bind private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
+    @action private handlePassword({ target }: React.SyntheticInputEvent) { this.password = target.value; }
+    @action private handleRepeat({ target }: React.SyntheticInputEvent) { this.repeat = target.value; }
+    private async handleSubmit(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         await this.ownUser.updateUser(this.password || undefined, this.renderingStrategy);
         this.password = "";

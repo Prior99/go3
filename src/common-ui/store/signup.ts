@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { History } from "history";
 import { component, inject } from "tsdi";
 
@@ -8,6 +8,7 @@ import { LoginStore, OwnUserStore } from ".";
 import { routeDashboard } from "../routing";
 
 @component
+@bindAll()
 export class SignupStore {
     @inject private login: LoginStore;
     @inject private users: Users;
@@ -16,8 +17,7 @@ export class SignupStore {
 
     @observable public signupResult: Boolean;
 
-    @bind @action
-    public async signup(email: string, password: string, name: string) {
+    @action public async signup(email: string, password: string, name: string) {
         const body = { email, password };
         const response = await this.users.createUser({ email, password, name } as User);
         if (response) {

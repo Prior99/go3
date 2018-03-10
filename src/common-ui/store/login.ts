@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import * as isomorphicFetch from "isomorphic-fetch";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
@@ -24,6 +24,7 @@ interface ApiError {
 }
 
 @component("LoginStore")
+@bindAll()
 export class LoginStore {
     @inject private users: Users;
     @inject private tokens: Tokens;
@@ -45,8 +46,7 @@ export class LoginStore {
         return typeof this.authToken !== "undefined" && typeof this.userId !== "undefined";
     }
 
-    @bind @action
-    public async login(email: string, password: string) {
+    @action public async login(email: string, password: string) {
         const body = { email, password };
         const response = await this.tokens.createToken({ email, password } as User);
         if (response) {
@@ -62,15 +62,13 @@ export class LoginStore {
         return response;
     }
 
-    @bind @action
-    public logout() {
+    @action public logout() {
         this.clearStorage();
         this.authToken = undefined;
         this.userId = undefined;
         window.location.reload();
     }
 
-    @bind
     private save() {
         const deserialized: LocalStorageApi = {
             storageVersion: softwareVersion,
@@ -82,12 +80,10 @@ export class LoginStore {
         localStorage.setItem(localStorageIdentifier, serialized);
     }
 
-    @bind
     private clearStorage() {
         localStorage.removeItem(localStorageIdentifier);
     }
 
-    @bind
     private load() {
         const serialized = localStorage.getItem(localStorageIdentifier);
         if (serialized === null) {

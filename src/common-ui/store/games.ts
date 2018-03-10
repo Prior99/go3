@@ -1,5 +1,5 @@
 import { observable, computed, action, extendObservable } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { History } from "history";
 import { component, inject, initialize } from "tsdi";
 import * as pathToRegexp from "path-to-regexp";
@@ -19,6 +19,7 @@ function parseGameId(url: string) {
 }
 
 @component("GamesStore")
+@bindAll()
 export class GamesStore {
     @inject private browserHistory: History;
     @inject private gamesController: Games;
@@ -42,7 +43,6 @@ export class GamesStore {
         this.refreshGamesInterval = setInterval(this.refreshGames, 10000);
     }
 
-    @bind
     public disableAutoRefresh() {
         if (this.refreshBoardsInterval) {
             clearInterval(this.refreshBoardsInterval);
@@ -53,7 +53,6 @@ export class GamesStore {
         this.autoRefreshDisabled = true;
     }
 
-    @bind
     private async refreshGameId() {
         this.currentGameId = parseGameId(this.browserHistory.location.pathname);
         if (this.currentGameId) {
@@ -67,16 +66,15 @@ export class GamesStore {
         }
     }
 
-    @bind private async refreshGames() {
+    private async refreshGames() {
         await this.loadGames();
     }
 
-    @bind public async refreshAll() {
+    public async refreshAll() {
         await this.refreshGames();
         await this.refreshBoards();
     }
 
-    @bind
     private async refreshBoards() {
         if (this.currentGame) {
             const newBoards = await this.gamesController.listBoards(this.currentGameId, this.currentGame.turn);
@@ -95,7 +93,6 @@ export class GamesStore {
         }
     }
 
-    @bind
     private addBoard(game: Game, board: Board) {
         if (game.boards.find(other => other.id === board.id)) {
             return;
@@ -103,7 +100,6 @@ export class GamesStore {
         game.boards.push(board);
     }
 
-    @bind
     private async storeGame(game: Game) {
         const old = this.byId(game.id);
         if (old && old.equals(game)) {
@@ -118,8 +114,7 @@ export class GamesStore {
         await Promise.all(game.participants.map(({ user }) => this.users.load(user.id)));
     }
 
-    @bind @action
-    public async loadGames() {
+    @action public async loadGames() {
         this.loading = true;
         if (this.login.loggedIn) {
             const games = await this.usersController.listGames(this.login.userId, true);
@@ -128,15 +123,13 @@ export class GamesStore {
         this.loading = false;
     }
 
-    @bind @action
-    public async loadGame(id: string) {
+    @action public async loadGame(id: string) {
         const game = await this.gamesController.getGame(id);
         await this.storeGame(game);
         return game;
     }
 
-    @bind @action
-    public async createGame(userId: string, size: number) {
+    @action public async createGame(userId: string, size: number) {
         this.loading = true;
         const game = await this.gamesController.createGame({
             participants: [
@@ -156,8 +149,7 @@ export class GamesStore {
         return game;
     }
 
-    @bind @action
-    private async loadBoards(gameId: string) {
+    @action private async loadBoards(gameId: string) {
         if (!this.byId(gameId)) {
             return;
         }
@@ -170,19 +162,16 @@ export class GamesStore {
         return Array.from(this.games.values());
     }
 
-    @bind
     public byId(id: string) {
         return this.games.get(id);
     }
 
-    @bind @action
-    public async turn(game: Game, index: number) {
+    @action public async turn(game: Game, index: number) {
         const board = await this.gamesController.turn(game.id, index);
         this.addBoard(game, board);
     }
 
-    @bind @action
-    public async pass(game: Game) {
+    @action public async pass(game: Game) {
         const board = await this.gamesController.pass(game.id);
         this.addBoard(game, board);
         if (game.consecutivePasses >= 1) {

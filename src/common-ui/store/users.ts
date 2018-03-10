@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { bind, memoize } from "decko";
+import { bindAll, memoize } from "lodash-decorators";
 import { History } from "history";
 import { component, inject } from "tsdi";
 
@@ -8,6 +8,7 @@ import { User, UserStats, Users } from "../../common";
 import { LoginStore, OwnUserStore } from ".";
 
 @component
+@bindAll()
 export class UsersStore {
     @inject private usersController: Users;
 
@@ -15,7 +16,7 @@ export class UsersStore {
     @observable private userStats: Map<string, UserStats> = new Map();
     @observable public loading = false;
 
-    @bind @action
+    @action
     public async searchUsers(search: string) {
         this.loading = true;
         const users = await this.usersController.findUsers(search);
@@ -31,7 +32,7 @@ export class UsersStore {
         return Array.from(this.users.values());
     }
 
-    @bind @action @memoize
+    @memoize(id => id) @action
     public async load(id: string) {
         const existing = this.users.get(id);
         if (existing) {
@@ -42,21 +43,18 @@ export class UsersStore {
         return user;
     }
 
-    @bind
     public byId(id: string) {
         const user = this.users.get(id);
         if (!user) { this.load(id); }
         return user;
     }
 
-    @bind @action
-    public async loadStats(id: string) {
+    @action public async loadStats(id: string) {
         const stats = await this.usersController.getUserStats(id);
         this.userStats.set(id, stats);
         return stats;
     }
 
-    @bind
     public statsById(id: string) {
         const stats = this.userStats.get(id);
         if (!stats) { this.loadStats(id); }

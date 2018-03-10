@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { external, inject } from "tsdi";
 import { observable } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { Menu } from "semantic-ui-react";
 
 import { requireLogin, GamesStore, LoginStore } from "../../../common-ui";
@@ -14,13 +14,14 @@ enum PageDashboardTab {
 }
 
 @requireLogin @observer @external
+@bindAll()
 export class PageDashboard extends React.Component {
     @inject private games: GamesStore;
     @inject private login: LoginStore;
 
     @observable private tab = PageDashboardTab.FEED;
 
-    @bind private handleTab(_, { name }) {
+    private handleTab(_, { name }) {
         this.tab = name === "Feed" ? PageDashboardTab.FEED :
             undefined;
     }

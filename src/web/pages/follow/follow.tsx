@@ -2,7 +2,7 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { observable, action, computed } from "mobx";
 import { Form, Button, Card, Menu } from "semantic-ui-react";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { requireLogin, OwnUserStore  } from "../../../common-ui";
 import { Content, UserCardList, UserSelect } from "../../components";
@@ -14,20 +14,21 @@ enum PageFollowTab {
 }
 
 @requireLogin @external @observer
+@bindAll()
 export class PageFollow extends React.Component {
     @inject private ownUser: OwnUserStore;
 
     @observable private userId: string;
     @observable private tab = PageFollowTab.FOLLOWING;
 
-    @bind @action private handleUserId(userId: string) { this.userId = userId; }
+    @action private handleUserId(userId: string) { this.userId = userId; }
 
-    @bind private async handleAddFollowing(event: React.SyntheticEvent<HTMLFormElement>) {
+    private async handleAddFollowing(event: React.SyntheticEvent<HTMLFormElement>) {
         event.preventDefault();
         await this.ownUser.addFollowing(this.userId);
     }
 
-    @bind private handleTab(_, { name }) {
+    private handleTab(_, { name }) {
         this.tab = name === "Following" ? PageFollowTab.FOLLOWING :
             name === "Followers" ? PageFollowTab.FOLLOWERS :
             undefined;

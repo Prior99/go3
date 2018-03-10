@@ -1,23 +1,21 @@
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { initialize, component, inject } from "tsdi";
 
 import { routes, routeGame, routeGames } from "../common-ui/routing";
 
 @component({ eager: true })
+@bindAll()
 export class Go3ServiceWorker {
     private serviceWorker: ServiceWorkerGlobalScope = self as any;
 
-    @bind
     public async onInstall(event: ExtendableEvent) {
         this.serviceWorker.skipWaiting();
     }
 
-    @bind
     public async onActivate(event: ExtendableEvent) {
         this.serviceWorker.clients.claim();
     }
 
-    @bind
     public async onPush(event: PushEvent) {
         const clients = await this.serviceWorker.clients.matchAll();
         if (clients.length === 0) {
@@ -28,12 +26,10 @@ export class Go3ServiceWorker {
         return;
     }
 
-    @bind
     public async onFetch(event: FetchEvent) {
         return fetch(event.request);
     }
 
-    @bind
     public async onNotificationClick(event: any) {
         const gameId = event.notification.data || event.notification.tag;
         event.notification.close();

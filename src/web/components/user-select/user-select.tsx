@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { User } from "../../../common";
 import { UsersStore } from "../../../common-ui";
@@ -14,12 +14,13 @@ export interface UserSelectProps {
 }
 
 @external @observer
+@bindAll()
 export class UserSelect extends React.Component<UserSelectProps> {
     @inject private users: UsersStore;
 
     @observable private query: string;
 
-    @bind private search(query: string) {
+    private search(query: string) {
         this.query = query;
         this.users.searchUsers(query);
     }
@@ -31,11 +32,11 @@ export class UserSelect extends React.Component<UserSelectProps> {
         }));
     }
 
-    @bind @action private handleSearchChange(_, { searchQuery }: DropdownProps) {
+    @action private handleSearchChange(_, { searchQuery }: DropdownProps) {
         this.search(searchQuery);
     }
 
-    @bind @action private handleIdChange(_, { value }: DropdownProps) {
+    @action private handleIdChange(_, { value }: DropdownProps) {
         const { onChange } = this.props;
         if (!onChange) { return; }
         onChange(value as string);

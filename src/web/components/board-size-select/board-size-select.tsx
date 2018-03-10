@@ -3,7 +3,7 @@ import { observer } from "mobx-react";
 import { observable, computed, action } from "mobx";
 import { inject, external } from "tsdi";
 import { Dropdown, DropdownProps } from "semantic-ui-react";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 
 import { boardSizes, formatBoardSize, User } from "../../../common";
 
@@ -13,8 +13,9 @@ export interface BoardSizeSelectProps {
 }
 
 @external @observer
+@bindAll()
 export class BoardSizeSelect extends React.Component<BoardSizeSelectProps> {
-    @bind @action private handleSizeChange(_, { value }: DropdownProps) {
+    @action private handleSizeChange(_, { value }: DropdownProps) {
         const { onChange } = this.props;
         if (!onChange) { return; }
         onChange(value as number);

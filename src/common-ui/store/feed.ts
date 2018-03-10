@@ -1,16 +1,16 @@
 import { observable, computed, action } from "mobx";
-import { bind } from "decko";
+import { bindAll } from "lodash-decorators";
 import { component, initialize, inject } from "tsdi";
 
 import { FeedItem, Feed } from "../../common";
 
-@component
+@component @bindAll()
 export class FeedStore {
     @inject private feed: Feed;
 
     @observable private feedItems: FeedItem[] = [];
 
-    @initialize @bind @action
+    @initialize @action
     public async loadFeed() {
         this.feedItems = await this.feed.getFeed();
     }
